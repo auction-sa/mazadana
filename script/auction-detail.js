@@ -22,6 +22,7 @@
         return dateString.replace('—', '-').trim();
     }
 
+
     /**
      * Parse Arabic date/time string to JavaScript Date object
      * Handles formats like "2025-12-28 12:00 صباحً" or "2025-12-28 12:00 مساءً"
@@ -556,8 +557,14 @@
                 </div>
                 <div class="info-item">
                     <i data-lucide="map-pin" class="info-icon"></i>
-                    <span class="info-label">المدينة: ${auction.auction_location || 'غير محدد'}</span>
+                    <span class="info-label">المدن: ${auction.auction_location || 'غير محدد'}</span>
                 </div>
+                ${auction.auction_approval_number ? `
+                <div class="info-item">
+                    <i data-lucide="copy" class="info-icon" style="transform: scaleX(-1);"></i>
+                    <span class="info-label">رقم الوافقة لإقامة المزاد: <span class="copyable-approval-number" style="cursor: pointer; text-decoration: underline; color: #2c5aa0;" data-approval-number="${auction.auction_approval_number}">${auction.auction_approval_number}</span></span>
+                </div>
+                ` : ''}
             </div>
             
 
@@ -612,6 +619,41 @@
         if (typeof lucide !== 'undefined') {
             deferHeavyOperations(() => {
                 lucide.createIcons();
+            });
+        }
+
+        // Add click handler for copyable approval number
+        const copyableApprovalNumber = container.querySelector('.copyable-approval-number');
+        if (copyableApprovalNumber) {
+            copyableApprovalNumber.addEventListener('click', async function () {
+                const approvalNumber = this.getAttribute('data-approval-number');
+                if (approvalNumber) {
+                    try {
+                        await navigator.clipboard.writeText(approvalNumber);
+                        if (window.showToastMessage) {
+                            window.showToastMessage('تم نسخ رقم الموافقة بنجاح', 2000);
+                        }
+                    } catch (err) {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = approvalNumber;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-999999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            if (window.showToastMessage) {
+                                window.showToastMessage('تم نسخ رقم الموافقة بنجاح', 2000);
+                            }
+                        } catch (fallbackErr) {
+                            if (window.showToastMessage) {
+                                window.showToastMessage('فشل نسخ رقم الموافقة', 2000);
+                            }
+                        }
+                        document.body.removeChild(textArea);
+                    }
+                }
             });
         }
     }

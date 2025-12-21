@@ -54,6 +54,7 @@
             'script/navigation-history.js',      // Browser history management
             'script/section-navigation.js',      // Section switching
             'script/scrollable-container-height.js', // Dynamic scrollable container heights
+            'script/floating-message.js',        // Floating message/toast notifications (must load before files that use it)
             'script/property-data.js',         // Property detail page
             'script/banner-slider.js',           // Banner slider
             'script/install-pwa.js',             // PWA installation
