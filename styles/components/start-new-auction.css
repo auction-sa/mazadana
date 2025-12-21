@@ -263,8 +263,12 @@
     gap: 0.75rem;
 }
 
-.datetime-group .form-input {
+.datetime-group .add-new-auction-form-input {
     flex: 1;
+}
+
+.datetime-group .add-new-auction-form-input[style*="display: none"] {
+    display: none !important;
 }
 
 .timezone-display {
