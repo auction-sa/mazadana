@@ -11,9 +11,8 @@
     gap: 0.5rem;
 }
 
-.form-label {
+.add-new-auction-form-label {
     font-size: 0.95rem;
-    font-weight: 600;
     color: #333;
     margin-bottom: 0.25rem;
 }
@@ -93,7 +92,7 @@
     color: #666;
     transition: all 0.3s ease;
     z-index: 2;
-    border-radius: 8px;
+    border-radius: 5px;
     min-width: 36px;
     min-height: 36px;
     /* Consistent sizing with other input elements */

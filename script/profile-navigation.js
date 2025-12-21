@@ -30,7 +30,8 @@
         SETTINGS: 'settings',       // Settings page
         FAVORITES: 'favorites',    // Favorites page
         POLICY_TERMS: 'policy-terms',  // Policy Terms / Privacy Policy page
-        HELP_CENTER: 'help-center'  // Help Center page
+        HELP_CENTER: 'help-center',  // Help Center page
+        START_AUCTION: 'start-auction'  // Start New Auction page
     };
 
     // ============================================================================
@@ -120,8 +121,26 @@
                     }
                 }
             }
+        },
+        [ProfileRoutes.START_AUCTION]: {
+            headerId: 'start-auction-header',
+            viewId: 'add-new-auction-view',
+            hash: '#/profile/start-auction',
+            historyDelay: 400,
+            init: () => {
+                if (typeof window.StartNewAuctionPage !== 'undefined') {
+                    if (typeof window.StartNewAuctionPage.renderView === 'function') {
+                        window.StartNewAuctionPage.renderView();
+                    }
+                    if (typeof window.StartNewAuctionPage.init === 'function') {
+                        setTimeout(() => {
+                            window.StartNewAuctionPage.init();
+                        }, 100);
+                    }
+                }
+            }
         }
-        // Future pages (start-auction, add-property, manage-properties) can be added here
+        // Future pages (add-property, manage-properties) can be added here
     };
 
     // ============================================================================
@@ -168,6 +187,10 @@
         if (helpCenterHeader && !keepSet.has(helpCenterHeader.id)) {
             helpCenterHeader.style.display = 'none';
         }
+        const startAuctionHeader = document.getElementById('start-auction-header');
+        if (startAuctionHeader && !keepSet.has(startAuctionHeader.id)) {
+            startAuctionHeader.style.display = 'none';
+        }
     }
 
     function hideSecondaryViews(exceptViewId) {
@@ -187,6 +210,10 @@
         const helpCenterView = document.getElementById('help-center-view');
         if (helpCenterView && helpCenterView.id !== exceptViewId) {
             helpCenterView.classList.remove('active');
+        }
+        const addNewAuctionView = document.getElementById('add-new-auction-view');
+        if (addNewAuctionView && addNewAuctionView.id !== exceptViewId) {
+            addNewAuctionView.classList.remove('active');
         }
     }
 
@@ -212,10 +239,14 @@
         if (accountInfoView) accountInfoView.classList.remove('active');
         hideSecondaryViews(config.viewId);
 
-        // Also hide help-center-view if not the target
+        // Also hide help-center-view and add-new-auction-view if not the target
         const helpCenterView = document.getElementById('help-center-view');
         if (helpCenterView && helpCenterView.id !== config.viewId) {
             helpCenterView.classList.remove('active');
+        }
+        const addNewAuctionView = document.getElementById('add-new-auction-view');
+        if (addNewAuctionView && addNewAuctionView.id !== config.viewId) {
+            addNewAuctionView.classList.remove('active');
         }
 
         // Show the target view
@@ -645,6 +676,11 @@
                 // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
                 break;
 
+            case 'start-auction':
+                navigateActionToRoute(ProfileRoutes.START_AUCTION);
+                // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
+                break;
+
             case 'logout':
                 // User clicked "تسجيل الخروج"
                 // Ask for confirmation before logging out
@@ -832,6 +868,15 @@
             });
         }
 
+        // ROUTE 6: Navigate to Start Auction page (single-page helper)
+        else if (route === ProfileRoutes.START_AUCTION && profileSinglePages[ProfileRoutes.START_AUCTION]) {
+            showSingleProfilePage(ProfileRoutes.START_AUCTION, profileSinglePages[ProfileRoutes.START_AUCTION], {
+                menuView,
+                accountInfoView,
+                profileSection
+            });
+        }
+
         // ROUTE 4: Navigate back to Menu
         else if (route === ProfileRoutes.MENU) {
             // Show the profile page title
@@ -861,6 +906,10 @@
             const helpCenterView = document.getElementById('help-center-view');
             if (helpCenterView) {
                 helpCenterView.classList.remove('active');
+            }
+            const addNewAuctionView = document.getElementById('add-new-auction-view');
+            if (addNewAuctionView) {
+                addNewAuctionView.classList.remove('active');
             }
 
 

@@ -66,6 +66,7 @@
             'script/website-scroll-control.js',
             'script/policy-terms.js',             // Policy terms page (includes terms and privacy content)
             'script/help-center.js',               // Help center page
+            'script/start-new-auction.js',        // Start new auction wizard page
             'script/user-settings.js'            // User settings
         ];
 
