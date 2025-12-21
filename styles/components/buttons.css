@@ -1,0 +1,50 @@
+/* Buttons */
+.edit-btn,
+.add-address-btn {
+    width: 100%;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary-color);
+    color: var(--bg-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-family: inherit;
+    margin-top: 1rem;
+}
+
+.edit-btn:hover,
+.add-address-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.edit-btn:active,
+.add-address-btn:active {
+    transform: translateY(0);
+}
+
+.edit-icon,
+.add-icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--bg-white);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.add-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+    stroke: white;
+    stroke-width: 2.5;
+    fill: none;
+}

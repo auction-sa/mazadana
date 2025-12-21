@@ -1,0 +1,76 @@
+/* Favorites Page Styles */
+
+/* Ensure favorites-container doesn't scroll - only favorites-content should scroll */
+.favorites-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    padding-top: 60px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Ensure favorites header is fixed at the top */
+#favorites-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+}
+
+/* Favorites Content - Scrollable Container */
+.favorites-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Favorites Icon */
+.favorites-icon {
+    width: 80px;
+    height: 80px;
+    color: var(--text-primary);
+    opacity: 0.3;
+    stroke-width: 1.5;
+}
+
+/* Favorites Empty Text */
+.favorites-empty-text {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .favorites-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .favorites-empty-text {
+        font-size: var(--font-size-base);
+    }
+}
+
+@media (max-width: 480px) {
+    .favorites-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .favorites-empty-text {
+        font-size: var(--font-size-sm);
+    }
+}

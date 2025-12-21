@@ -1,0 +1,193 @@
+/* Help Center Page Styles - Mobile First */
+
+.help-center-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    padding-top: 45px;
+    box-sizing: border-box;
+    position: relative;
+    background: transparent;
+    min-height: 100vh;
+}
+
+/* Gradient that starts from header and extends to middle of actions */
+.help-center-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: linear-gradient(180deg, #1a465e 0%, #4a9ba8 50%, #e8e8e8 100%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Ensure help center header is fixed at the top */
+#help-center-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+}
+
+/* Help center back button icon - white color */
+#help-center-header .account-tabs-title {
+    color: #ffffff !important;
+}
+
+#help-center-back-btn .back-icon {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+.help-center-content-wrapper {
+    padding: var(--spacing-lg) var(--spacing-sm);
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+/* Greeting Section */
+.help-center-greeting {
+    text-align: right;
+    padding: 0 var(--spacing-md) var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+.greeting-title {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+    color: #ffffff;
+    margin: 0 0 var(--spacing-xs) 0;
+    line-height: 1.4;
+}
+
+.greeting-subtitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-medium);
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Help Action Cards Container */
+.help-center-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-2xl);
+    position: relative;
+    z-index: 1;
+}
+
+/* Remove separate gradient from actions - now handled by greeting::after */
+
+
+/* Individual Help Action Card */
+.help-action-card {
+    width: 100%;
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-sizing: border-box;
+}
+
+.help-action-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.help-action-card:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.help-action-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.help-action-text-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.help-action-text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.help-action-icon-left {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.help-action-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+/* Footer Section */
+.help-center-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+}
+
+.delete-account-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    /* Red color */
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: opacity var(--transition-base);
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .help-center-content-wrapper {
+        padding: var(--spacing-xl) var(--spacing-lg);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .greeting-title {
+        font-size: 2rem;
+    }
+
+    .greeting-subtitle {
+        font-size: 1.5rem;
+    }
+}

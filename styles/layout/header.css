@@ -1,0 +1,63 @@
+/* Top Header */
+.top-header {
+    background: linear-gradient(135deg, #0b2c4a 0%, #0b2c4a 100%);
+    color: white;
+    padding: 0.4rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+    position: relative;
+}
+
+.header-profile-btn,
+.header-search-btn {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.header-profile-btn:hover,
+.header-search-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.header-profile-btn:active,
+.header-search-btn:active {
+    transform: scale(0.95);
+}
+
+.profile-icon,
+.search-icon {
+    width: 20px;
+    height: 20px;
+    color: white;
+    stroke: white;
+    stroke-width: 2;
+    fill: none;
+}
+
+.logo {
+    font-size: var(--spacing-md);
+    font-weight: 400;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}

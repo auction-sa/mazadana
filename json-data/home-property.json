@@ -1,0 +1,36 @@
+[
+    {
+      "id": 1,
+      "title": "فيلا فاخرة مطلة على البحر",
+      "price": "2,400,000",
+      "location": "جدة - أبحر الشمالية",
+      "area": "450 م²",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+      "compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+      "compName": "Bandar For Renting",
+      "specialWord": "Hot"
+    },
+    {
+      "id": 2,
+      "title": "شقة حديثة في برج سكني",
+      "price": "980,000",
+      "location": "الرياض - الياسمين",
+      "area": "160 م²",
+      "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+      "compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+      "compName": "Bandar For Renting",
+      "specialWord": "Hot"
+    },
+    {
+      "id": 3,
+      "title": "دور أرضي مع حديقة",
+      "price": "1,350,000",
+      "location": "الخبر - العليا",
+      "area": "300 م²",
+      "image": "https://images.unsplash.com/photo-1605146769289-440113cc3d00",
+      "compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+      "compName": "Bandar For Renting",
+      "specialWord": "Hot"
+    }
+  ]
+  

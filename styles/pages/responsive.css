@@ -1,0 +1,392 @@
+/* Responsive Styles - Mobile First */
+@media (max-width: 767px) {
+    .profile-name {
+        font-size: var(--font-size-base) !important;
+    }
+
+    .menu-section {
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .menu-section-title {
+        font-size: var(--spacing-md);
+        padding-bottom: 0.5rem;
+    }
+
+    .menu-item {
+        padding: 0.7rem;
+    }
+
+    .menu-item-text {
+        font-size: var(--font-size-xs) !important;
+    }
+
+    .menu-item-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .profile-close-btn {
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Account Info Mobile Styles */
+    .account-info-container {
+        padding-top: 0.5rem;
+        padding-bottom: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+
+    .account-tabs {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .account-tab {
+        padding: 0.6rem !important;
+        font-size: var(--font-size-sm) !important;
+    }
+
+    .account-tabs-header {
+        padding: var(--spacing-md) var(--spacing-lg);
+        gap: var(--spacing-sm);
+    }
+
+    .back-to-profile-btn,
+    .back-btn,
+    .back-to-tabs-btn {
+        width: 36px;
+        height: 36px;
+        right: var(--spacing-md);
+    }
+
+    .back-to-profile-btn .back-icon,
+    .back-btn .back-icon,
+    .back-to-tabs-btn .back-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .account-tabs-title {
+        font-size: var(--font-size-sm);
+    }
+
+    .account-info-container {
+        max-width: 100%;
+    }
+
+    .account-tab {
+        min-width: 120px;
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    .info-row {
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .info-label {
+        font-size: var(--font-size-sm) !important;
+        gap: var(--spacing-xs);
+        flex-shrink: 0;
+    }
+
+    .info-value {
+        font-size: var(--font-size-sm) !important;
+        margin-top: 0;
+        padding-right: 0;
+        text-align: left;
+        flex: 1;
+    }
+
+
+    .edit-btn,
+    .add-address-btn {
+        font-size: var(--font-size-xs) !important;
+    }
+
+    .empty-state {
+        padding: var(--spacing-xl) var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+
+    .empty-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .empty-text {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) {
+    .banner-slider {
+        height: 200px;
+    }
+
+    .banner-content h2 {
+        font-size: 2rem;
+    }
+
+    .banner-content p {
+        font-size: 1.2rem;
+    }
+
+    .profile-view,
+    #property-detail-section {
+        width: 70%;
+        justify-self: center;
+    }
+
+    .access-box {
+        padding: 1.5rem 1rem;
+    }
+
+    .access-icon {
+        font-size: 2.5rem;
+    }
+
+    .access-box h3 {
+        font-size: 1rem;
+    }
+
+    .access-box p {
+        font-size: 0.85rem;
+    }
+
+    .property-image-home-page {
+        height: 240px;
+    }
+
+    .property-title-home-page {
+        font-size: var(--spacing-md);
+    }
+
+    .home-page-property-section-title {
+        font-size: var(--font-size-xxl);
+    }
+
+    .profile-stats {
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .nav-label {
+        font-size: 0.75rem;
+    }
+
+    .nav-icon {
+        font-size: 1.75rem;
+    }
+
+    .settings-container {
+        width: 80%;
+    }
+
+    .auction-property-main-page-detail-top-image {
+        width: 30rem;
+    }
+}
+
+
+/* Desktop Styles */
+@media (max-width: 1024px) {
+    .flip-digit-box {
+        width: 1.5rem;
+        height: 2.5rem;
+    }
+}
+
+
+@media (min-width: 480px) {
+    .auction-property-main-page-detail-flip-clock-container {
+        justify-content: space-around;
+        padding: 0 15vw;
+    }
+
+    .auction-property-main-page-detail-asset-card{
+        padding: 1rem;
+    }
+
+    .asset-thumbnail {
+        width: 8rem;
+        height: 8rem;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        background: var(--bg-hover, #f5f5f5);
+        order: 1;
+        flex-shrink: 0;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+    body {
+        padding-bottom: 0;
+    }
+
+    .top-nav {
+        display: block;
+    }
+
+    .profile-page-title,
+    .account-tabs-header {
+        background: transparent;
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        max-width: none;
+        box-shadow: none;
+        z-index: auto;
+        border-radius: var(--radius-sm);
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .account-tabs-header {
+        border-radius: var(--radius-sm);
+    }
+
+    .auction-property-main-page-detail-container {
+        padding-top: 1rem;
+    }
+
+    /* Ensure top-nav doesn't hide content - add padding to account for fixed nav */
+    .profile-page-title {
+        margin-top: 0;
+        padding-top: var(--spacing-lg);
+    }
+
+    .top-header {
+        padding: 0.9rem 0;
+    }
+
+    .header-content {
+        justify-content: space-between;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: var(--spacing-lg);
+        flex: 0 1 auto;
+        margin: 0 1.5rem;
+    }
+
+    /* Show Top Navigation on Desktop */
+    .top-nav {
+        display: block;
+        background: white;
+        border-bottom: 1px solid #e8e8e8;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 68px;
+        z-index: 99;
+        padding: 0.5rem 0;
+    }
+
+    .banner-content h2 {
+        font-size: 2.5rem;
+    }
+
+    .banner-content p {
+        font-size: 1.4rem;
+    }
+
+    .access-box {
+        padding: 2rem 1.5rem;
+    }
+
+    .property-image-home-page {
+        height: 200px;
+    }
+
+    .property-card-home-page {
+        min-width: 320px;
+        max-width: 380px;
+    }
+
+    #app-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .profile-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .profile-header-card {
+        padding: 2.5rem 2rem;
+    }
+
+    .profile-info-card {
+        padding: 2.5rem 2rem;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-image-upload {
+        width: 45px;
+        height: 45px;
+    }
+
+    /* Hide Bottom Navigation on Desktop */
+    .bottom-nav {
+        display: none;
+    }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1440px) {
+    .banner-slider {
+        height: 300px;
+    }
+
+    .top-nav {
+        top: 74px;
+    }
+
+    .top-nav-container {
+        max-width: 1400px;
+    }
+
+    .property-card-home-page {
+        min-width: 360px;
+        max-width: 420px;
+    }
+
+    .header-profile-btn,
+    .header-search-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .profile-icon,
+    .search-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .add-icon {
+        width: 26px;
+        height: 26px;
+    }
+}

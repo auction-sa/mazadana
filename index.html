@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مزادنا للعقارات السعودية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <!-- Install PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b2c4a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مزادنا للعقارات السعودية">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-title" content="مزادنا للعقارات السعودية">
+    <meta name="msapplication-TileColor" content="#0b2c4a">
+
+
+
+    <!-- This file loads all other JavaScript modules from the 'script' folder -->
+    <script src="script.js" defer></script>
+
+</head>
+
+<body>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="header-content">
+            <button class="header-search-btn" data-section="profile-section" aria-label="بحث">
+                <i data-lucide="search" class="search-icon"></i>
+            </button>
+            <h1 class="logo">مزادنا للعقارات السعودية</h1>
+            <button class="header-profile-btn" data-section="profile-section" aria-label="حسابي">
+                <i data-lucide="user" class="profile-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Top Quick Access Navigation (Desktop Only) -->
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <a href="#" class="top-nav-item active" data-section="home-section">
+                <i data-lucide="home" class="top-nav-icon"></i>
+                <span class="top-nav-label">الرئيسية</span>
+            </a>
+            <a href="#" class="top-nav-item" data-section="buy-section">
+                <i data-lucide="tag" class="top-nav-icon"></i>
+                <span class="top-nav-label">للبيع</span>
+            </a>
+            <a href="#" class="top-nav-item" data-section="rent-section">
+                <i data-lucide="key" class="top-nav-icon"></i>
+                <span class="top-nav-label">للإيجار</span>
+            </a>
+            <a href="#" class="top-nav-item" data-section="auction-section">
+                <i data-lucide="hammer" class="top-nav-icon"></i>
+                <span class="top-nav-label">المزادات</span>
+            </a>
+            <a href="#" class="top-nav-item" data-section="my-actions-section">
+                <i data-lucide="chart-line" class="top-nav-icon"></i>
+                <span class="top-nav-label">مشاركاتي</span>
+            </a>
+        </div>
+    </nav>
+
+
+
+
+
+    <div id="app-content">
+
+
+
+        <!-- Home Section: Featured Properties -->
+        <section id="home-section" class="tab-section active">
+
+            <div id="home-section-container" class="scrollable-container">
+
+                <!-- Banner Slider -->
+                <section class="banner-section">
+                    <div class="banner-slider">
+                        <div class="banner-slide active" data-slide="0">
+                            <div class="banner-overlay"></div>
+                            <div class="banner-content">
+                                <h2>اكتشف عقارات أحلامك</h2>
+                                <p>أفضل العروض العقارية في المملكة العربية السعودية</p>
+                            </div>
+                        </div>
+                        <div class="banner-slide" data-slide="1">
+                            <div class="banner-overlay"></div>
+                            <div class="banner-content">
+                                <h2>مزادات حية مباشرة</h2>
+                                <p>شارك في المزادات الإلكترونية واحصل على أفضل الصفقات</p>
+                            </div>
+                        </div>
+                        <div class="banner-slide" data-slide="2">
+                            <div class="banner-overlay"></div>
+                            <div class="banner-content">
+                                <h2>بيع وإيجار بسهولة</h2>
+                                <p>منصة موثوقة لبيع وإيجار العقارات في جميع أنحاء المملكة</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-indicators">
+                        <span class="indicator active" data-indicator="0"></span>
+                        <span class="indicator" data-indicator="1"></span>
+                        <span class="indicator" data-indicator="2"></span>
+                    </div>
+                </section>
+
+
+
+                <div class="section-content">
+                    <!-- Auction Cards Section -->
+                    <div id="auctions-section" class="home-subsection">
+                        <h2 class="home-page-property-section-title">المزادات المتاحة</h2>
+                        <div class="horizontal-scroll-wrapper">
+                            <div id="home-auctions-grid" class="horizontal-scroll-container">
+                            </div>
+                            <div id="home-auctions-indicators" class="scroll-indicators"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sell Cards Section -->
+                    <div id="buy-section" class="home-subsection">
+                        <h2 class="home-page-property-section-title">عقارات للبيع</h2>
+                        <div class="horizontal-scroll-wrapper">
+                            <div id="home-buy-grid" class="horizontal-scroll-container">
+                            </div>
+                            <div id="home-buy-indicators" class="scroll-indicators"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rent Cards Section -->
+                    <div id="rent-section" class="home-subsection">
+                        <h2 class="home-page-property-section-title">عقارات للإيجار</h2>
+                        <div class="horizontal-scroll-wrapper">
+                            <div id="home-rent-grid" class="horizontal-scroll-container">
+                            </div>
+                            <div id="home-rent-indicators" class="scroll-indicators"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+
+
+
+        <!-- Profile Section: Menu and Account Info -->
+        <section id="profile-section" class="tab-section">
+            <div class="section-content">
+                <!-- Headers will be dynamically inserted here -->
+                <div id="profile-section-headers"></div>
+                <!-- Profile Menu View -->
+                <div id="profile-menu-view" class="profile-view scrollable-container active">
+                    <div class="profile-container">
+                        <!-- Profile Header Component will be rendered here -->
+                        <div id="profile-header-container"></div>
+
+                        <!-- Menu Sections will be rendered here -->
+                        <div id="profile-menu-sections"></div>
+                    </div>
+                </div>
+
+                <!-- Account Info View (rendered by user-acc-data.js) -->
+                <div id="profile-account-info-view" class="profile-view"></div>
+
+                <!-- Settings View (rendered by user-settings.js) -->
+                <div id="profile-settings-view" class="profile-view"></div>
+
+                <!-- Favorites View (rendered by user-fav.js) -->
+                <div id="profile-favorites-view" class="profile-view"></div>
+
+                <!-- Terms and Conditions View (rendered by policy-terms.js) -->
+                <div id="policy-terms-view" class="profile-view"></div>
+
+                <!-- Terms and Conditions View (rendered by help-center.js) -->
+                <div id="help-center-view" class="profile-view"></div>
+            </div>
+        </section>
+
+
+
+
+        <!-- My Actions Section: User Participations -->
+        <section id="my-actions-section" class="tab-section"></section>
+
+        <!-- Property Detail Section: Auction Property Details -->
+        <section id="property-detail-section" class="tab-section">
+            <div class="settings-container">
+                <!-- Header -->
+                <div id="auction-property-main-page-detail-header" class="account-tabs-header" style="display: none;">
+                    <button class="back-to-profile-btn" id="property-detail-back-btn" aria-label="العودة">
+                        <i data-lucide="arrow-right" class="back-icon"></i>
+                    </button>
+                    <h2 class="account-tabs-title">تفاصيل المزاد</h2>
+                </div>
+
+                <!-- Content Container -->
+                <div class="auction-property-main-page-detail-container scrollable-container">
+                    <!-- Content will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+
+
+
+
+    </div>
+
+
+
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-section="home-section">
+            <i data-lucide="home" class="nav-icon"></i>
+            <span class="nav-label">الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-section="auction-section">
+            <i data-lucide="hammer" class="nav-icon"></i>
+            <span class="nav-label">المزادات</span>
+        </a>
+        <a href="#" class="nav-item" data-section="buy-section">
+            <i data-lucide="tag" class="nav-icon"></i>
+            <span class="nav-label">للبيع</span>
+        </a>
+        <a href="#" class="nav-item" data-section="rent-section">
+            <i data-lucide="key" class="nav-icon"></i>
+            <span class="nav-label">للإيجار</span>
+        </a>
+        <a href="#" class="nav-item" data-section="my-actions-section">
+            <i data-lucide="chart-line" class="nav-icon"></i>
+            <span class="nav-label">مشاركاتي</span>
+        </a>
+    </nav>
+
+
+
+
+    <script>
+        // Initialize Lucide icons after DOM loads
+        function initLucideIcons() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucideIcons);
+        } else {
+            initLucideIcons();
+        }
+
+        // Export for use in other scripts
+        window.initLucideIcons = initLucideIcons;
+
+
+
+
+        // Disable Right Click and Certain Keyboard Shortcuts
+        /* document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("keydown", e => {
+            const key = e.key.toUpperCase();
+
+            // Block F12, Ctrl+U, Ctrl+S
+            if (key === "F12" || (e.ctrlKey && ["U", "S"].includes(key))) {
+                e.preventDefault();
+            }
+
+            // Block Ctrl+Shift+I/J/C
+            if (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(key)) {
+                e.preventDefault();
+            }
+        }); */
+
+    </script>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+/* Profile View Transitions */
+.profile-view {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+}
+
+.profile-view.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

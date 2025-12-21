@@ -1,0 +1,164 @@
+/* Profile Form */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* Space between icon and input */
+    width: 100%;
+}
+
+.input-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: #000000 !important;
+    stroke: #000000;
+    stroke-width: 2;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* In RTL, icon appears on the right side naturally (first in DOM) */
+}
+
+.form-input {
+    flex: 1;
+    min-width: 0;
+    /* Allow input to shrink if needed */
+    padding: 0.875rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #333;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: inherit;
+    text-align: left;
+    /* Default: all inputs align left */
+    /* In RTL, input appears on the left side naturally (second in DOM) */
+}
+
+.form-input:focus {
+    border-color: #2c5aa0;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.form-input::placeholder {
+    color: #999;
+}
+
+/* Only profile-fullname input aligns right for Arabic text */
+.profile-fullname-input {
+    text-align: right !important;
+}
+
+/* All other inputs with dir="ltr" stay left-aligned */
+.form-input[dir="ltr"] {
+    text-align: left;
+}
+
+/* National ID with Toggle Visibility - no extra padding needed since icon is outside */
+
+.toggle-visibility-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all 0.3s ease;
+    z-index: 2;
+    border-radius: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    /* Consistent sizing with other input elements */
+}
+
+.toggle-visibility-btn:hover {
+    background: #f0f0f0;
+    color: #2c5aa0;
+}
+
+.toggle-visibility-btn:active {
+    transform: scale(0.95);
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        filter 0.3s ease;
+    user-select: none;
+    pointer-events: none;
+    color: #000000 !important;
+    stroke: #000000;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.toggle-visibility-btn.active .eye-icon {
+    transform: scale(1.15);
+    filter: brightness(1.1);
+}
+
+.toggle-visibility-btn:hover .eye-icon {
+    transform: scale(1.1);
+}
+
+.toggle-visibility-btn.active:hover .eye-icon {
+    transform: scale(1.2);
+}
+
+/* Adjust input padding when toggle button is present */
+.input-wrapper.with-toggle {
+    gap: 0.75rem;
+    /* Keep consistent gap spacing */
+}
+
+.input-wrapper.with-toggle .input-icon {
+    order: 1;
+    /* Icon stays on the right in RTL */
+}
+
+.input-wrapper.with-toggle .form-input {
+    order: 2;
+    /* Input in the middle */
+    padding: 0.875rem 1rem;
+    /* Normal padding, no extra space needed since toggle is outside */
+}
+
+.input-wrapper.with-toggle .toggle-visibility-btn {
+    order: 3;
+    /* Toggle button on the left in RTL */
+    margin-right: 0;
+    /* No extra margin needed with gap */
+}

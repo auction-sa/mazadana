@@ -1,0 +1,214 @@
+/* Account Tabs */
+.account-tabs {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    gap: var(--spacing-xs);
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: var(--spacing-lg);
+    margin-top: 0;
+    width: 100%;
+    opacity: 1;
+    transform: translateX(0);
+    visibility: visible;
+    height: auto;
+    overflow: visible;
+    transition: opacity var(--transition-base), transform var(--transition-base), height var(--transition-base), margin-bottom var(--transition-base), visibility var(--transition-base);
+    position: relative;
+    z-index: 2;
+}
+
+.account-tabs.hidden {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    height: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: hidden;
+    transition: opacity var(--transition-base), transform var(--transition-base), height 0s, margin-bottom 0s;
+}
+
+/* Unified Back Button Styling - Used by all back buttons */
+.back-to-profile-btn,
+.back-btn,
+.back-to-tabs-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 0;
+    border: none;
+    background: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    margin-right: 0.5rem;
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.back-to-profile-btn .back-icon,
+.back-btn .back-icon,
+.back-to-tabs-btn .back-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+    stroke: var(--text-primary);
+    stroke-width: 2;
+}
+
+.account-tabs-header {
+    background: transparent;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    min-height: 50px;
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 999;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Inline styles have highest specificity and will override display:none */
+/* These rules provide fallback support for when inline styles are set */
+.account-tabs-header[style*="flex"],
+.account-tabs-header[style*="block"] {
+    display: flex !important;
+}
+
+.account-tabs-header::after {
+    display: none;
+}
+
+/* Unified Title Styling - Used by account-tabs-title, card-title, and settings-title */
+.account-tabs-title,
+.card-title,
+.settings-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    padding: 0 60px;
+    /* Match button width + spacing */
+    box-sizing: border-box;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.account-tab {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-align: right;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.account-tab-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.account-tab-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--text-light);
+    stroke: var(--text-light);
+    stroke-width: 2;
+    flex-shrink: 0;
+    transition: transform var(--transition-base), color var(--transition-base);
+}
+
+.account-tab:hover .account-tab-arrow {
+    transform: translateX(-4px);
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+}
+
+.tab-text {
+    display: block;
+    transition: color var(--transition-base);
+    flex: 1;
+    text-align: right;
+}
+
+/* Account Tab Content - overlapped with account-tabs using grid */
+.account-tab-content {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility 0s var(--transition-base);
+}
+
+/* When account-tabs is hidden, account-tab-content becomes visible */
+.account-tabs.hidden~.account-tab-content {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2;
+    visibility: visible;
+    transition: opacity var(--transition-base), visibility 0s;
+}
+
+.tab-view {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    visibility: hidden;
+}
+
+.tab-view.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    visibility: visible;
+    animation: fadeInSlide 0.3s ease forwards;
+    position: relative;
+    z-index: 3;
+    height: auto;
+    min-height: auto;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

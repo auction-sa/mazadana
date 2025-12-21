@@ -1,0 +1,165 @@
+/* iOS Installation Guide Overlay */
+.ios-install-guide {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        visibility 0.3s;
+    direction: rtl;
+}
+
+.ios-install-guide.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ios-install-guide-content {
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xl);
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    box-shadow: var(--shadow-xl);
+    text-align: right;
+}
+
+.ios-install-guide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ios-install-guide-header h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ios-install-guide-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast),
+        color var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.ios-install-guide-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.ios-install-guide-close:active {
+    transform: scale(0.95);
+}
+
+.ios-install-guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.ios-install-step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.step-number {
+    background: var(--primary-color);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+}
+
+.ios-install-step p {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    flex: 1;
+}
+
+.share-icon {
+    display: inline-block;
+    font-size: 1.2em;
+    margin: 0 0.2em;
+    vertical-align: middle;
+}
+
+.ios-install-guide-arrow {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    animation: bounce-arrow 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes bounce-arrow {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(10px);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .ios-install-guide {
+        padding: var(--spacing-md);
+    }
+
+    .ios-install-guide-content {
+        padding: var(--spacing-lg);
+        max-width: 100%;
+    }
+
+    .ios-install-guide-header h3 {
+        font-size: var(--font-size-base);
+    }
+
+    .ios-install-step p {
+        font-size: var(--font-size-sm);
+    }
+
+    .ios-install-guide-arrow {
+        bottom: -40px;
+    }
+}

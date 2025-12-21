@@ -1,0 +1,48 @@
+/* Font Awesome Icons - Solid Black */
+.fas,
+.fa,
+i[class*="fa-"] {
+    color: #000000;
+}
+
+/* Ensure all icons are solid black */
+i.fas,
+i.fa {
+    color: #000000 !important;
+}
+
+/* Lucide Icons - Outlined Black */
+[data-lucide] {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    color: #000000;
+    stroke: currentColor;
+    fill: none;
+}
+
+/* Navigation Icons */
+.nav-icon,
+.top-nav-icon {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    color: #000000 !important;
+    stroke: currentColor;
+}
+
+/* Active state icons stay black */
+.nav-item.active .nav-icon,
+.top-nav-item.active .top-nav-icon {
+    color: #000000 !important;
+    stroke: #000000;
+}
+
+/* Hover state icons stay black but can have slight opacity change */
+.nav-item:hover .nav-icon,
+.top-nav-item:hover .top-nav-icon,
+.access-box:hover .access-icon {
+    color: #000000 !important;
+    opacity: 0.8;
+    stroke: #000000;
+}

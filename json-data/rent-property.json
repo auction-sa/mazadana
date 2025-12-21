@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "rentProperty_title": "شقة مفروشة للإيجار الشهري",
+    "rentProperty_price": "4,200 / شهرياً",
+    "rentProperty_location": "الرياض - الملقا",
+    "property_area": "110 م²",
+    "property_totalBed": "4",
+    "property_totalBathroom": "5",
+    "rentProperty_image": "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
+    "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "rentProperty_compName": "ابو عبد الله للإيجار",
+    "specialWord": "Hot",
+    "rentProperty_viewCount": "12"
+
+  },
+  {
+    "id": 2,
+    "rentProperty_title": "استوديو عصري للإيجار",
+    "rentProperty_price": "2,300 / شهرياً",
+    "rentProperty_location": "جدة - الفيصلية",
+    "property_area": "70 م²",
+    "property_totalBed": "4",
+    "property_totalBathroom": "5",
+    "rentProperty_image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+    "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "rentProperty_compName": "ابو عبد الله للإيجار",
+    "rentProperty_specialWord": "Hot"
+  },
+  {
+    "id": 3,
+    "rentProperty_title": "دور علوي للإيجار السنوي",
+    "rentProperty_price": "38,000 / سنوياً",
+    "rentProperty_location": "الدمام - الشاطئ",
+    "property_area": "210 م²",
+    "property_totalBed": "4",
+    "property_totalBathroom": "5",
+    "rentProperty_image": "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "rentProperty_compName": "ابو عبد الله للإيجار",
+    "specialWord": "Hot"
+  }
+]

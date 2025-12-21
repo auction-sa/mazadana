@@ -1,0 +1,226 @@
+[
+  {
+    "id": 1,
+    "auction_title": "مزاد النخبة",
+    "auction_bidStartDate": "2025/12/11 — 08:00 مساءً",
+    "auction_bidEndDate": "2025/12/28 — 12:00 صباحً",
+    "auction_location": "مكة المكرمة",
+    "auction_image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    "auction_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "auction_compName": "بندر مزاد المملكة",
+    "auction_specialWord": "جديد",
+    "auction_numberOfAssets": 3,
+    "auction_viewCount": 3,
+  
+    
+    "assets": [
+      {
+        "id": 1,
+        "auctionAsset_title": "ارض زراعية للبيع",
+        "auctionAsset_deedNumber": "54425594522",
+        "auctionAsset_bidStartDate": "2025/12/11 — 08:00 مساءً",
+        "auctionAsset_bidEndDate": "2025/12/28 — 12:00 صباحً",
+        "auctionAsset_location": "مكة المكرمة",
+        "auctionAsset_bidAmount": "10,000",
+        "auctionAsset_startingPrice": "650,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+        ],
+        "auctionAsset_viewCount": "2",
+        "auctionAsset_numberOfBidders": "4"
+      },
+  
+      {
+        "id": 2,
+        "auctionAsset_title": "فيلا حديثة",
+        "deedNumber": "544776594522",
+        "bidStartDate": "2025/10/22 — 05:00 مساءً",
+        "bidEndDate": "2025/10/30 — 10:00 مساءً",
+        "auctionAsset_location": "الرياض",
+        "auctionAsset_bidAmount": "20,500",
+        "auctionAsset_startingPrice": "1,200,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+          "https://images.unsplash.com/photo-1528807017028-cb87eb598862"
+        ],
+        "auctionAsset_viewCount": "8",
+        "auctionAsset_numberOfBidders": "1"
+      },
+  
+      {
+        "id": 3,
+        "auctionAsset_title": "شقة فاخرة",
+        "deedNumber": "54432578526594522",
+        "bidStartDate": "2025/12/25 — 07:00 مساءً",
+        "bidEndDate": "2025/12/31 — 01:00 صباحً",
+        "auctionAsset_location": "جدة",
+        "auctionAsset_bidAmount": "5,000",
+        "auctionAsset_startingPrice": "350,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+          "https://images.unsplash.com/photo-1505692794400-55c2b6995e57"
+        ],
+        "auctionAsset_viewCount": "2",
+        "auctionAsset_numberOfBidders": "4"
+      }
+    ]
+  },
+  
+
+
+
+
+
+  {
+    "id": 2,
+    "auction_title": "فيلا نصف تشطيب بالمزاد",
+    "auction_bidStartDate": "2025-12-20 6:00 مساءً",
+    "auction_bidEndDate": "2025/12/20 — 12:00 صباحً",
+    "auction_location": "الطائف",
+    "auction_image": "https://images.unsplash.com/photo-1599423300746-b62533397364",
+    "auction_compLogo": "https://static.vecteezy.com/system/resources/thumbnails/047/656/219/small/abstract-logo-design-for-any-corporate-brand-business-company-vector.jpg",
+    "auction_compName": "نسرين للأراضي الزراعية",
+    "auction_specialWord": "مميز",
+    "auction_numberOfAssets": 3,
+    "auction_viewCount": 2,
+
+
+    "assets": [
+      {
+        "id": 1,
+        "auctionAsset_title": "ارض زراعية للبيع",
+        "deedNumber": "54432578522",
+        "bidStartDate": "2025/12/20 — 08:00 مساءً",
+        "bidEndDate": "2025/12/28 — 12:00 صباحً",
+        "auctionAsset_location": "مكة المكرمة",
+        "auctionAsset_bidAmount": "10,000",
+        "auctionAsset_startingPrice": "650,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+        ],
+        "auctionAsset_viewCount": "2",
+        "auctionAsset_numberOfBidders": "4"
+        
+      },
+  
+      {
+        "id": 2,
+        "auctionAsset_title": "فيلا حديثة",
+        "deedNumber": "544378594522",
+        "bidStartDate": "2025/12/22 — 05:00 مساءً",
+        "bidEndDate": "2025/12/30 — 10:00 مساءً",
+        "auctionAsset_location": "الرياض",
+        "auctionAsset_bidAmount": "20,500",
+        "auctionAsset_startingPrice": "1,200,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+          "https://images.unsplash.com/photo-1528807017028-cb87eb598862"
+        ],
+        "auctionAsset_viewCount": "39",
+        "auctionAsset_numberOfBidders": "9"
+        
+      },
+  
+      {
+        "id": 3,
+        "auctionAsset_title": "شقة فاخرة",
+        "deedNumber": "544378594522",
+        "bidStartDate": "2025/12/25 — 07:00 مساءً",
+        "bidEndDate": "2025/12/31 — 01:00 صباحً",
+        "auctionAsset_location": "جدة",
+        "auctionAsset_bidAmount": "5,000",
+        "auctionAsset_startingPrice": "350,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+          "https://images.unsplash.com/photo-1505692794400-55c2b6995e57"
+        ],
+        "auctionAsset_viewCount": "14",
+        "auctionAsset_numberOfBidders": "3"
+        
+      }
+    ]
+
+  },
+
+  
+  {
+    "id": 3,
+    "auction_title": "عمارة تجارية بالمزاد",
+    "auction_bidStartDate": "2025/12/28 — 02:00 مساءً",
+    "auction_bidEndDate": "2025/12/30 — 12:00 صباحً",
+    "auction_location": "الرياض - النسيم",
+    "auction_image": "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+    "auction_compLogo": "https://marketplace.canva.com/EAGaybKnslM/1/0/800w/canva-blue-simple-modern-minimalist-building-company-logo-uVmgkHNBmPs.jpg",
+    "auction_compName": "ابو عبد الله للمزاد",
+    "auction_numberOfAssets": 3,
+    "auction_viewCount": 4,
+
+    
+    "assets": [
+      {
+        "id": 1,
+        "auctionAsset_title": "ارض زراعية للبيع",
+        "deedNumber": "544378666522",
+        "bidStartDate": "2025/12/20 — 08:00 مساءً",
+        "bidEndDate": "2025/12/28 — 12:00 صباحً",
+        "auctionAsset_location": "مكة المكرمة",
+        "auctionAsset_bidAmount": "10,000",
+        "auctionAsset_startingPrice": "650,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+        ],
+        "auctionAsset_viewCount": "2",
+        "auctionAsset_numberOfAssets": "4"
+      },
+  
+      {
+        "id": 2,
+        "auctionAsset_title": "فيلا حديثة",
+        "deedNumber": "544378594522",
+        "bidStartDate": "2025/12/22 — 05:00 مساءً",
+        "bidEndDate": "2025/12/30 — 10:00 مساءً",
+        "auctionAsset_location": "الرياض",
+        "auctionAsset_bidAmount": "20,500",
+        "auctionAsset_startingPrice": "1,200,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+          "https://images.unsplash.com/photo-1528807017028-cb87eb598862"
+        ],
+        "auctionAsset_viewCount": "9",
+        "auctionAsset_numberOfAssets": "1"
+      },
+  
+      {
+        "id": 3,
+        "auctionAsset_title": "شقة فاخرة",
+        "deedNumber": "544378594522",
+        "bidStartDate": "2025/12/25 — 07:00 مساءً",
+        "bidEndDate": "2025/12/31 — 01:00 صباحً",
+        "auctionAsset_location": "جدة",
+        "auctionAsset_bidAmount": "5,000",
+        "auctionAsset_startingPrice": "350,000",
+        "auctionAsset_image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+        "auctionAsset_propertyImages": [
+          "https://images.unsplash.com/photo-1507089947368-19c1da9775ae",
+          "https://images.unsplash.com/photo-1505692794400-55c2b6995e57"
+        ],
+        "auctionAsset_viewCount": "2",
+        "auctionAsset_numberOfAssets": "0"
+      }
+    ]
+  }
+]

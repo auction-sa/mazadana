@@ -1,0 +1,135 @@
+/* Policy Terms Page Styles - Mobile First */
+
+.policy-terms-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    padding-top: 45px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Ensure policy terms header is fixed at the top (same as settings header) */
+#policy-terms-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+}
+
+.policy-terms-content-wrapper {
+    padding: 0 var(--spacing-sm);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Policy Content Styles */
+.policy-terms-content {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Policy title removed - now in header */
+
+.policy-intro {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0 0 var(--spacing-xl) 0;
+    text-align: right;
+    padding: var(--spacing-md);
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+}
+
+/* Policy Sections */
+.policy-section {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.policy-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.policy-section-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+    text-align: right;
+}
+
+.policy-text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--text-primary);
+    line-height: 1.8;
+    margin: 0 0 var(--spacing-md) 0;
+    text-align: right;
+    text-align: justify;
+}
+
+/* Policy Footer */
+.policy-footer {
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-lg);
+    border-top: 2px solid var(--border-light);
+    text-align: center;
+}
+
+/* Responsive Design - Tablet and Desktop */
+@media (min-width: 768px) {
+    .policy-terms-content-wrapper {
+        padding: 0 var(--spacing-md);
+        max-width: 800px;
+    }
+
+    .policy-intro {
+        font-size: var(--font-size-lg);
+        padding: var(--spacing-lg);
+    }
+
+    .policy-section-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .policy-text {
+        font-size: var(--font-size-lg);
+    }
+}
+
+@media (min-width: 1024px) {
+    .policy-terms-content-wrapper {
+        max-width: 900px;
+        padding: 0 var(--spacing-lg);
+    }
+
+    .policy-section {
+        margin-bottom: var(--spacing-2xl);
+    }
+}
+
+/* Ensure proper spacing on very small screens */
+@media (max-width: 480px) {
+
+    .policy-text {
+        font-size: var(--font-size-sm);
+    }
+
+    .policy-intro {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-sm);
+    }
+}

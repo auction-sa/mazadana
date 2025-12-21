@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "buyProperty_title": "فيلا للبيع جديدة بالكامل",
+    "buyProperty_price": "1,850,000",
+    "buyProperty_location": "الرياض - النرجس",
+    "property_area": "380 م²",
+    "property_totalBed": "4",
+    "property_totalBathroom": "5",
+    "buyProperty_image": "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
+    "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "buyProperty_compName": "ابو عبد الله للبيع",
+    "buyProperty_specialWord": "Hot",
+    "buyProperty_viewCount": 3
+  },
+  {
+    "id": 2,
+    "buyProperty_title": "شقة تمليك قريبة من الخدمات",
+    "buyProperty_price": "720,000",
+    "buyProperty_location": "جدة - الصفا",
+    "property_area": "140 م²",
+    "property_totalBed": "6",
+    "property_totalBathroom": "7",
+    "buyProperty_image": "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
+    "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "buyProperty_compName": "ابو عبد الله للبيع",
+    "buyProperty_specialWord": "Hot",
+    "buyProperty_viewCount": 3
+  },
+  {
+    "id": 3,
+    "buyProperty_title": "عمارة استثمارية",
+    "buyProperty_price": "4,500,000",
+    "buyProperty_location": "المدينة المنورة - قباء",
+    "property_area": "900 م²",
+    "property_totalBed": "3",
+    "property_totalBathroom": "3",
+    "buyProperty_image": "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12",
+    "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+    "buyProperty_compName": "ابو عبد الله للبيع",
+    "buyProperty_specialWord": "Hot",
+    "buyProperty_viewCount": 3
+  }
+]

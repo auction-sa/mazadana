@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Calistoga&family=Noto+Kufi+Arabic:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&family=Rubik+Wet+Paint&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+
+/* CSS Variables */
+:root {
+    /* Colors */
+    --primary-color: #2c5aa0;
+    --primary-dark: #1e3d6f;
+    --primary-light: #e8f4f8;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-light: #999;
+    --border-color: #e0e0e0;
+    --border-light: #f0f0f0;
+    --bg-white: #ffffff;
+    --bg-light: #fafafa;
+    --bg-hover: #f0f0f0;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    /* Layout */
+    --top-header-height: 60px;
+    /* Approximate height of top-header on mobile */
+    --top-nav-height: 60px;
+    /* Height of top navigation bar on desktop */
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 2.5rem;
+
+    /* Border Radius */
+    --radius-sm: 5px;
+    --radius-full: 50%;
+
+    /* Typography */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-xxl: 1.5rem;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.4s ease;
+}

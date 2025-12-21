@@ -1,0 +1,169 @@
+/* Tab Sections */
+#app-content {
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.tab-section {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+        opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+        visibility 0.35s;
+    visibility: hidden;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    pointer-events: none;
+    contain: layout style paint;
+}
+
+
+.tab-section.active {
+    position: relative;
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+        opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+        visibility 0.35s;
+    will-change: transform, opacity;
+}
+
+/* Property Detail Section - Slide and Fade Animation */
+#property-detail-section {
+    transform-origin: center center;
+    /* Performance optimizations for smooth animations */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    contain: layout style paint;
+}
+
+#property-detail-section.active {
+    transform: translateY(0) translate3d(0, 0, 0) !important;
+    /* GPU acceleration with fallback */
+}
+
+/* Profile Section Content - Scrollable Container */
+.scrollable-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    position: relative;
+    padding-bottom: 1rem !important;
+}
+
+/* Pull to Refresh Spinner */
+.pull-to-refresh-spinner {
+    position: fixed;
+    top: 30px;
+    /* Will be dynamically updated to logo center position */
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    /* Start centered at logo (-half of 40px height) */
+    width: 40px;
+    height: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999 !important;
+    pointer-events: none;
+    isolation: isolate;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform, opacity;
+}
+
+.pull-to-refresh-spinner.active {
+    display: flex;
+}
+
+.pull-to-refresh-spinner .spinner-circle {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(44, 90, 160, 0.2);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Home Section Horizontal Scroll Sections */
+.home-subsection {
+    margin-bottom: 3rem;
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        visibility 0.3s;
+    visibility: visible;
+    will-change: transform, opacity;
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.home-subsection:last-child {
+    margin-bottom: 0;
+}
+
+.home-page-property-section-title {
+    position: relative;
+    display: inline-block;
+    /* important */
+    width: fit-content;
+    /* text width */
+    max-width: 100%;
+    color: #2c5aa0;
+    font-size: var(--spacing-md);
+    font-weight: 700;
+    margin: 0 0.8rem 0.75rem 0;
+}
+
+.home-page-property-section-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* matches text width */
+    height: 2px;
+    background: #cacaca;
+    border-radius: 2px;
+}
+
+/* Optimize section content animations for smooth performance */
+.section-content {
+    will-change: transform, opacity;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    contain: layout style paint;
+}
+
+/* Ensure smooth transitions for section content */
+.section-content {
+    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        visibility 0.3s;
+}
