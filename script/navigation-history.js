@@ -197,6 +197,37 @@
             return;
         }
 
+        // If we're in property-detail-section, go back to home-section (especially important for mobile)
+        if (currentState.section === 'property-detail-section') {
+            // Hide header if it exists (cleanup is handled by the back button handler in auction-detail.js)
+            const header = document.getElementById('auction-property-main-page-detail-header');
+            if (header) {
+                header.style.display = 'none';
+            }
+
+            // Navigate back to home-section
+            if (typeof window.switchToSection === 'function') {
+                window.switchToSection('home-section');
+                // Scroll scrollable containers within home-section to top
+                if (typeof window.scrollScrollableContainersToTop === 'function') {
+                    setTimeout(() => {
+                        window.scrollScrollableContainersToTop('home-section');
+                    }, 50);
+                }
+            } else {
+                // Fallback: trigger navigation click
+                const homeNavItem = document.querySelector('[data-section="home-section"]');
+                if (homeNavItem) {
+                    homeNavItem.click();
+                }
+            }
+            setTimeout(() => {
+                pushHistoryState(null, false);
+                isHandlingBackNavigation = false;
+            }, 100);
+            return;
+        }
+
         // If we're in auction-section (or other subsections), go back to home
         if (currentState.section === 'auction-section' || currentState.section === 'buy-section' || currentState.section === 'rent-section') {
             if (typeof window.switchToSection === 'function') {

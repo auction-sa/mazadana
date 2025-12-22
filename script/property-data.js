@@ -812,6 +812,38 @@
                     // Make card cursor pointer
                     cardElement.style.cursor = 'pointer';
                 }
+
+                // Add click handler for "شارك الآن" button in auction cards
+                if (renderFunction === 'renderAuctionCard' && cardElement.classList.contains('auction-card-home-page')) {
+                    const ctaButton = cardElement.querySelector('.property-cta-btn-home-page');
+                    if (ctaButton) {
+                        ctaButton.addEventListener('click', function (e) {
+                            e.stopPropagation(); // Prevent card click from firing
+
+                            // Open property detail page
+                            const auctionId = property.id;
+
+                            // Determine status badge to pass to detail page for dynamic category tab
+                            const badgeStatus = getAuctionBadgeStatus(property.auction_bidStartDate, property.auction_bidEndDate);
+
+                            if (auctionId) {
+                                if (typeof window.openPropertyDetail === 'function') {
+                                    window.openPropertyDetail(auctionId, badgeStatus);
+                                    // Scroll scrollable containers within property-detail-section to top
+                                    if (typeof window.scrollScrollableContainersToTop === 'function') {
+                                        setTimeout(() => {
+                                            window.scrollScrollableContainersToTop('property-detail-section');
+                                        }, 15); // Wait for section to open
+                                    }
+                                } else {
+                                    console.error('openPropertyDetail function not available');
+                                }
+                            } else {
+                                console.error('Property ID not found:', property);
+                            }
+                        });
+                    }
+                }
             }
         });
 
