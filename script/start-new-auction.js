@@ -9,7 +9,6 @@
 
     // Pikaday date picker instances
     let startDatePicker = null;
-    let endDatePicker = null;
 
     // Form data storage (auto-saved as user progresses)
     let formData = {
@@ -36,6 +35,7 @@
             bidIncrement: '',
             auctionStartDate: '',
             auctionStartTime: '',
+            auctionDaysAmount: '',
             auctionEndDate: '',
             auctionEndTime: ''
         },
@@ -382,13 +382,22 @@
                          <small class="form-helper">متى يبدأ المزاد</small>
                      </div>
 
+                     <!-- Auction Start Date & Time -->
+                     <div class="form-group">
+                         <label class="add-new-auction-form-label">عدد أيام تشغيل المزاد</label>
+                         <div class="datetime-group">
+                            <input type="number" class="add-new-auction-form-input" id="auction-days-amount" value="${data.auctionDaysAmount}" 
+                                  placeholder="0" min="0" step="1" dir="ltr">
+                         </div>
+                         <small class="form-helper">كم يوم لتشغيل المزاد</small>
+                     </div>
+
                      <!-- Auction End Date & Time -->
                      <div class="form-group">
                          <label class="add-new-auction-form-label">تاريخ ووقت إنتهاء المزاد</label>
                          <div class="datetime-group">
-                             <input type="text" class="add-new-auction-form-input" id="auction-end-date" value="${data.auctionEndDate ? formatDateForDisplay(data.auctionEndDate) : ''}" placeholder="اختر التاريخ" readonly>
-                             <input type="time" class="add-new-auction-form-input" id="auction-end-time" value="${data.auctionEndTime}" style="display: none;">
-                             <input type="text" class="add-new-auction-form-input" id="auction-end-time-display" value="${data.auctionEndTime ? formatTimeForDisplay(data.auctionEndTime) : ''}" placeholder="اختر الوقت" readonly>
+                             <input type="text" class="add-new-auction-form-input" id="auction-end-date" placeholder="تاريخ انتهاء المزاد" readonly>
+                             <input type="text" class="add-new-auction-form-input" id="auction-end-time-display" value="${data.auctionEndTime ? formatTimeForDisplay(data.auctionEndTime) : ''}" placeholder="وقت انهاء المزاد" readonly>
                          </div>
                          <small class="form-helper">متى ينتهي المزاد</small>
                      </div>
@@ -442,7 +451,6 @@
                                     <small>إثبات ملكية العقار</small>
                                 `}
                             </div>
-                            <button type="button" class="skip-later-btn" data-file="proof-ownership">إكمال لاحقاً</button>
                         </div>
                     </div>
 
@@ -473,7 +481,6 @@
                                     <small>ملف موافقة المزاد</small>
                                 `}
                             </div>
-                            <button type="button" class="skip-later-btn" data-file="auction-approval-pdf">إكمال لاحقاً</button>
                         </div>
                     </div>
 
@@ -792,17 +799,21 @@
         const progressBar = document.getElementById('wizard-progress-bar');
         if (progressBar) {
             const progress = ((currentStep - 1) / 4) * 100;
-            progressBar.style.width = progress + '%';
             const percentage = Math.round(progress);
 
-            // Hide percentage on step 1 (0%)
+            // Set minimum width to 10% for step 1, but keep percentage text at 0%
+            let barWidth = progress;
             if (currentStep === 1) {
-                progressBar.setAttribute('data-percentage', '');
-                progressBar.classList.add('hide-percentage');
-            } else {
-                progressBar.setAttribute('data-percentage', percentage + '%');
-                progressBar.classList.remove('hide-percentage');
+                barWidth = 10; // Visual width 10%
             }
+
+            // Ensure progress bar width doesn't exceed 100%
+            barWidth = Math.min(barWidth, 100);
+            progressBar.style.width = barWidth + '%';
+
+            // Always show percentage (0% for step 1, actual percentage for other steps)
+            progressBar.setAttribute('data-percentage', percentage + '%');
+            progressBar.classList.remove('hide-percentage');
         }
     }
 
@@ -890,13 +901,56 @@
     }
 
     /**
+     * Calculate and set end date based on start date and days amount
+     */
+    function calculateEndDate() {
+        const startDateInput = document.getElementById('auction-start-date');
+        const endDateInput = document.getElementById('auction-end-date');
+        const daysAmountInput = document.getElementById('auction-days-amount');
+        const startTimeDisplay = document.getElementById('auction-start-time-display');
+        const endTimeDisplay = document.getElementById('auction-end-time-display');
+
+        if (!startDateInput || !endDateInput || !daysAmountInput) return;
+
+        const startDateValue = startDateInput.getAttribute('data-date-value');
+        const daysAmount = parseInt(daysAmountInput.value, 10);
+
+        if (startDateValue && !isNaN(daysAmount) && daysAmount > 0) {
+            try {
+                const startDate = new Date(startDateValue);
+                if (!isNaN(startDate.getTime())) {
+                    // Add days to start date
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + daysAmount);
+
+                    // Format and set end date
+                    const endDateStorage = formatDateForStorage(endDate);
+                    const endDateDisplay = formatDateForDisplay(endDateStorage);
+                    endDateInput.setAttribute('data-date-value', endDateStorage);
+                    endDateInput.value = endDateDisplay;
+                }
+            } catch (e) {
+                console.warn('Error calculating end date:', e);
+            }
+        } else {
+            // Clear end date if invalid
+            endDateInput.value = '';
+            endDateInput.removeAttribute('data-date-value');
+        }
+
+        // Always sync end time with start time
+        if (startTimeDisplay && endTimeDisplay) {
+            endTimeDisplay.value = startTimeDisplay.value;
+        }
+    }
+
+    /**
      * Save step 3 data
      */
     function saveStep3() {
         const startDateInput = document.getElementById('auction-start-date');
-        const endDateInput = document.getElementById('auction-end-date');
         const startTimeInput = document.getElementById('auction-start-time');
-        const endTimeInput = document.getElementById('auction-end-time');
+        const endDateInput = document.getElementById('auction-end-date');
 
         formData.step3 = {
             startPrice: document.getElementById('start-price')?.value || '',
@@ -904,8 +958,9 @@
             bidIncrement: document.getElementById('bid-increment')?.value || '',
             auctionStartDate: startDateInput?.getAttribute('data-date-value') || '',
             auctionStartTime: startTimeInput?.value || '',
+            auctionDaysAmount: document.getElementById('auction-days-amount')?.value || '',
             auctionEndDate: endDateInput?.getAttribute('data-date-value') || '',
-            auctionEndTime: endTimeInput?.value || ''
+            auctionEndTime: startTimeInput?.value || '' // End time same as start time
         };
         autoSaveData();
     }
@@ -1210,34 +1265,6 @@
         lucide.createIcons();
     }
 
-    /**
-     * Validate step 3 dates
-     */
-    function validateStep3Dates() {
-        const startDateInput = document.getElementById('auction-start-date');
-        const endDateInput = document.getElementById('auction-end-date');
-        const startDate = startDateInput?.getAttribute('data-date-value');
-        const startTime = document.getElementById('auction-start-time')?.value;
-        const endDate = endDateInput?.getAttribute('data-date-value');
-        const endTime = document.getElementById('auction-end-time')?.value;
-
-        if (startDate && endDate) {
-            const start = new Date(startDate + 'T' + (startTime || '00:00'));
-            const end = new Date(endDate + 'T' + (endTime || '00:00'));
-
-            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-                alert('يرجى التأكد من صحة التواريخ المدخلة');
-                return false;
-            }
-
-            if (end <= start) {
-                alert('تاريخ ووقت الانتهاء يجب أن يكون بعد تاريخ ووقت البداية');
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * Scroll to top smoothly
@@ -1445,17 +1472,25 @@
     function initializeTimePickers() {
         const startTimeInput = document.getElementById('auction-start-time');
         const startTimeDisplay = document.getElementById('auction-start-time-display');
-        const endTimeInput = document.getElementById('auction-end-time');
         const endTimeDisplay = document.getElementById('auction-end-time-display');
 
         // Initialize start time picker
         if (startTimeInput && startTimeDisplay) {
             // Update display when native input changes
             startTimeInput.addEventListener('change', function () {
+                const endTimeDisplay = document.getElementById('auction-end-time-display');
                 if (this.value) {
-                    startTimeDisplay.value = formatTimeForDisplay(this.value);
+                    const formattedTime = formatTimeForDisplay(this.value);
+                    startTimeDisplay.value = formattedTime;
+                    // Sync end time display with start time
+                    if (endTimeDisplay) {
+                        endTimeDisplay.value = formattedTime;
+                    }
                 } else {
                     startTimeDisplay.value = '';
+                    if (endTimeDisplay) {
+                        endTimeDisplay.value = '';
+                    }
                 }
                 saveStep3();
             });
@@ -1465,32 +1500,14 @@
                 startTimeInput.showPicker ? startTimeInput.showPicker() : startTimeInput.click();
             });
 
-            // Set initial display value
+            // Set initial display value and sync end time
+            const endTimeDisplay = document.getElementById('auction-end-time-display');
             if (startTimeInput.value) {
-                startTimeDisplay.value = formatTimeForDisplay(startTimeInput.value);
-            }
-        }
-
-        // Initialize end time picker
-        if (endTimeInput && endTimeDisplay) {
-            // Update display when native input changes
-            endTimeInput.addEventListener('change', function () {
-                if (this.value) {
-                    endTimeDisplay.value = formatTimeForDisplay(this.value);
-                } else {
-                    endTimeDisplay.value = '';
+                const formattedTime = formatTimeForDisplay(startTimeInput.value);
+                startTimeDisplay.value = formattedTime;
+                if (endTimeDisplay) {
+                    endTimeDisplay.value = formattedTime;
                 }
-                saveStep3();
-            });
-
-            // Click display input to trigger native time picker
-            endTimeDisplay.addEventListener('click', function () {
-                endTimeInput.showPicker ? endTimeInput.showPicker() : endTimeInput.click();
-            });
-
-            // Set initial display value
-            if (endTimeInput.value) {
-                endTimeDisplay.value = formatTimeForDisplay(endTimeInput.value);
             }
         }
     }
@@ -1500,18 +1517,11 @@
      */
     function initializeDatePickers() {
         const startDateInput = document.getElementById('auction-start-date');
-        const endDateInput = document.getElementById('auction-end-date');
-
-        if (!startDateInput || !endDateInput) return;
 
         // Destroy existing pickers if they exist
         if (startDatePicker) {
             startDatePicker.destroy();
             startDatePicker = null;
-        }
-        if (endDatePicker) {
-            endDatePicker.destroy();
-            endDatePicker = null;
         }
 
         // Initialize start date picker
@@ -1530,22 +1540,10 @@
                     const displayDate = formatDateForDisplay(storageDate);
                     startDateInput.setAttribute('data-date-value', storageDate); // Store YYYY-MM-DD
                     startDateInput.value = displayDate; // Display Arabic format
+
+                    // Recalculate end date if days amount is set
+                    calculateEndDate();
                     saveStep3();
-
-                    // Update end date picker minDate
-                    if (endDatePicker) {
-                        const selectedDate = new Date(date);
-                        selectedDate.setDate(selectedDate.getDate() + 1); // Set minDate to day after start date
-                        endDatePicker.setMinDate(selectedDate);
-
-                        // If end date is before new minDate, clear it
-                        const currentEndDate = endDatePicker.getDate();
-                        if (currentEndDate && currentEndDate <= date) {
-                            endDateInput.value = '';
-                            endDateInput.removeAttribute('data-date-value');
-                            endDatePicker.setDate(null);
-                        }
-                    }
                 }
             }
         });
@@ -1566,56 +1564,8 @@
             }
         }
 
-        // Initialize end date picker
-        endDatePicker = new Pikaday({
-            field: endDateInput,
-            i18n: {
-                previousMonth: 'الشهر السابق',
-                nextMonth: 'الشهر التالي',
-                months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-                weekdays: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-                weekdaysShort: ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
-            },
-            onSelect: function (date) {
-                if (date) {
-                    const storageDate = formatDateForStorage(date);
-                    const displayDate = formatDateForDisplay(storageDate);
-                    endDateInput.setAttribute('data-date-value', storageDate); // Store YYYY-MM-DD
-                    endDateInput.value = displayDate; // Display Arabic format
-                    saveStep3();
-                }
-            }
-        });
-
-        // Set minDate based on start date
-        const startDateValueForMin = formData.step3.auctionStartDate || startDateInput.getAttribute('data-date-value');
-        if (startDateValueForMin) {
-            try {
-                const startDate = new Date(startDateValueForMin);
-                if (!isNaN(startDate.getTime())) {
-                    startDate.setDate(startDate.getDate() + 1); // Set minDate to day after start date
-                    endDatePicker.setMinDate(startDate);
-                }
-            } catch (e) {
-                console.warn('Invalid start date for minDate:', startDateValueForMin);
-            }
-        }
-
-        // Set initial date if exists
-        const endDateValue = formData.step3.auctionEndDate || endDateInput.getAttribute('data-date-value');
-        if (endDateValue) {
-            try {
-                const date = new Date(endDateValue);
-                if (!isNaN(date.getTime())) {
-                    endDatePicker.setDate(date);
-                    const displayDate = formatDateForDisplay(endDateValue);
-                    endDateInput.value = displayDate;
-                    endDateInput.setAttribute('data-date-value', endDateValue);
-                }
-            } catch (e) {
-                console.warn('Invalid end date:', endDateValue);
-            }
-        }
+        // Calculate initial end date if start date and days amount exist
+        calculateEndDate();
     }
 
     /**
@@ -1627,6 +1577,31 @@
 
         // Initialize time pickers
         initializeTimePickers();
+
+        // Listen to days amount input to calculate end date
+        const daysAmountInput = document.getElementById('auction-days-amount');
+        if (daysAmountInput) {
+            daysAmountInput.addEventListener('input', calculateEndDate);
+            daysAmountInput.addEventListener('change', () => {
+                calculateEndDate();
+                saveStep3();
+            });
+        }
+
+        // Listen to start time display changes to sync end time
+        const startTimeDisplay = document.getElementById('auction-start-time-display');
+        const endTimeDisplay = document.getElementById('auction-end-time-display');
+        if (startTimeDisplay && endTimeDisplay) {
+            // Sync end time when start time display changes
+            startTimeDisplay.addEventListener('input', () => {
+                endTimeDisplay.value = startTimeDisplay.value;
+                calculateEndDate();
+            });
+            startTimeDisplay.addEventListener('change', () => {
+                endTimeDisplay.value = startTimeDisplay.value;
+                calculateEndDate();
+            });
+        }
 
         // Auto-suggest bid increment based on start price
         const startPriceInput = document.getElementById('start-price');
@@ -1647,7 +1622,7 @@
         }
 
         // Save step 3 inputs (excluding date inputs as they're handled by Pikaday)
-        ['start-price', 'reserve-price', 'bid-increment', 'auction-start-time', 'auction-end-time'].forEach(id => {
+        ['start-price', 'reserve-price', 'bid-increment', 'auction-start-time'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', saveStep3);
@@ -1677,7 +1652,6 @@
         const nextBtn3 = document.getElementById('step3-next-btn');
         if (nextBtn3) {
             nextBtn3.addEventListener('click', () => {
-                if (!validateStep3Dates()) return;
                 saveStep3();
                 currentStep = 4;
                 autoSaveData();
@@ -1768,13 +1742,6 @@
             });
         });
 
-        // Skip later buttons (just mark as optional, don't clear data)
-        document.querySelectorAll('.skip-later-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                // Just show a message, allow user to proceed
-                alert('يمكنك إكمال هذا المستند لاحقاً');
-            });
-        });
 
         // Save step 4 inputs
         ['auction-approval-number', 'auction-terms'].forEach(id => {
