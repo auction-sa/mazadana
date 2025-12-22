@@ -38,7 +38,7 @@
     color: var(--primary-color);
     white-space: nowrap;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 5px;
     transition: opacity 0.3s ease;
     pointer-events: none;
     z-index: 2;
@@ -151,7 +151,7 @@
 
 .wizard-step {
     background: var(--bg-white);
-    border-radius: 12px;
+    border-radius: 5px;
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
 }
@@ -464,7 +464,7 @@
 .change-file-btn {
     padding: 0.5rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 5px;
     background: var(--bg-white);
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
