@@ -57,10 +57,10 @@
 
     /**
      * Format rental price
-     * Adds "ريال / شهرياً" (Riyal / Monthly) to the number
+     * Adds currency icon right after price, then " / شهرياً" (Monthly)
      */
     function formatRentalPrice(price) {
-        return price + ' ريال / شهرياً';
+        return `${price}<img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;"> / شهرياً`;
     }
 
     /**
@@ -465,7 +465,7 @@
                         <i data-lucide="heart" class="property-card-heart-icon"></i>
                     </div>
                     ${renderFeatures(property)}
-                    <p class="property-price-home-page">${property.buyProperty_price ? `${property.buyProperty_price} ريال` : 'غير محدد'}</p>
+                    <p class="property-price-home-page">${property.buyProperty_price ? `${property.buyProperty_price} <img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;">` : 'غير محدد'}</p>
                     <div class="property-cta-container-home-page">
                         <div class="property-view-count-home-page">
                             <i data-lucide="eye" class="property-view-icon-home-page"></i>
@@ -497,6 +497,14 @@
         let priceText = property.rentProperty_price || '';
         if (priceText && !priceText.includes('/')) {
             priceText = formatRentalPrice(priceText);
+        } else if (priceText && priceText.includes('/')) {
+            // If priceText already has "/", replace any "ريال" text with icon
+            // Ensure order: price → icon → " / شهرياً"
+            priceText = priceText.replace(/\s*ريال\s*/, `<img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;">`);
+            // If no "ريال" found, add icon before "/"
+            if (!priceText.includes('rial-icon.png')) {
+                priceText = priceText.replace(/\s*\/\s*/, `<img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;"> /`);
+            }
         }
 
         return `

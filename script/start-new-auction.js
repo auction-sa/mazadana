@@ -25,7 +25,7 @@
             propertyTitle: '',
             propertyAddress: '',
             propertySize: '',
-            propertySizeUnit: 'm²',
+            propertySizeUnit: 'متر²',
             propertyDescription: '',
             propertyImages: []
         },
@@ -120,7 +120,7 @@
                             </div>
                             <div class="progress-step ${currentStep > 3 ? 'passed' : currentStep === 3 ? 'current' : 'future'}" data-step="3">
                                 <span class="step-number">3</span>
-                                <span class="step-label" data-step="3" data-mobile-label="إعدادات">إعداد المزاد</span>
+                                <span class="step-label" data-step="3" data-mobile-label="إعداد">إعداد المزاد</span>
                             </div>
                             <div class="progress-step ${currentStep > 4 ? 'passed' : currentStep === 4 ? 'current' : 'future'}" data-step="4">
                                 <span class="step-number">4</span>
@@ -344,7 +344,9 @@
                         <div class="input-with-currency">
                             <input type="number" class="add-new-auction-form-input" id="start-price" value="${data.startPrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
-                            <span class="input-currency">⃁</span>
+                            <span class="input-currency">
+                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                            </span>
                         </div>
                         <small class="form-helper">السعر الذي يبدأ به المزاد</small>
                     </div>
@@ -355,7 +357,9 @@
                         <div class="input-with-currency">
                             <input type="number" class="add-new-auction-form-input" id="reserve-price" value="${data.reservePrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
-                            <span class="input-currency">⃁</span>
+                            <span class="input-currency">
+                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                            </span>
                         </div>
                         <small class="form-helper">السعر الأدنى الذي تقبله (اختياري)</small>
                     </div>
@@ -366,7 +370,9 @@
                         <div class="input-with-currency">
                             <input type="number" class="add-new-auction-form-input" id="bid-increment" value="${data.bidIncrement}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
-                            <span class="input-currency">⃁</span>
+                            <span class="input-currency">
+                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                            </span>
                         </div>
                         <small class="form-helper">القيمة الدنيا للزيادة في كل مزايدة</small>
                     </div>
@@ -570,7 +576,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">رقم الهاتف:</span>
-                            <span class="review-value">${data.step1.contactPhone || 'غير محدد'}</span>
+                            <span class="review-value">${data.step1.contactPhone ? convertArabicToEnglish(data.step1.contactPhone) : 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">مدينة العقار:</span>
@@ -594,7 +600,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">المساحة:</span>
-                            <span class="review-value">${data.step2.propertySize ? data.step2.propertySize + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
+                            <span class="review-value">${data.step2.propertySize ? convertArabicToEnglish(data.step2.propertySize) + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">الوصف:</span>
@@ -602,7 +608,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">عدد الصور:</span>
-                            <span class="review-value">${data.step2.propertyImages.length} صورة</span>
+                            <span class="review-value">${convertArabicToEnglish(data.step2.propertyImages.length)} صورة</span>
                         </div>
                     </div>
 
@@ -628,6 +634,10 @@
                             <span class="review-label">تاريخ ووقت النهاية:</span>
                             <span class="review-value">${formatDateTime(data.step3.auctionEndDate, data.step3.auctionEndTime)}</span>
                         </div>
+                        <div class="review-item">
+                            <span class="review-label">عدد أيام تشغيل المزاد:</span>
+                            <span class="review-value">${data.step3.auctionDaysAmount ? convertArabicToEnglish(data.step3.auctionDaysAmount) + ' أيام' : 'غير محدد'}</span>
+                        </div>
                     </div>
 
                     <div class="review-section">
@@ -638,7 +648,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">رقم موافقة المزاد:</span>
-                            <span class="review-value">${data.step4.auctionApprovalNumber || 'غير محدد'}</span>
+                            <span class="review-value">${data.step4.auctionApprovalNumber ? convertArabicToEnglish(data.step4.auctionApprovalNumber) : 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">ملف موافقة المزاد:</span>
@@ -670,11 +680,16 @@
     }
 
     /**
-     * Helper: Format currency
+     * Helper: Format currency (with English numbers)
      */
     function formatCurrency(amount) {
         if (!amount) return 'غير محدد';
-        return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(amount);
+        // Format with English locale to get English numbers, then add currency icon
+        const formatted = new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount);
+        return `${formatted} <img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;">`;
     }
 
     /**
@@ -755,13 +770,26 @@
     }
 
     /**
-     * Helper: Format date and time
+     * Convert Arabic numbers to English numbers
+     */
+    function convertArabicToEnglish(text) {
+        if (!text) return text;
+        const arabicToEnglish = {
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+        return String(text).replace(/[٠-٩]/g, (match) => arabicToEnglish[match] || match);
+    }
+
+    /**
+     * Helper: Format date and time with dash separator
      */
     function formatDateTime(date, time) {
         if (!date) return 'غير محدد';
         const dateStr = formatDateForDisplay(date);
-        if (!time) return dateStr;
-        return `${dateStr} ${formatTimeForDisplay(time)}`;
+        if (!time) return convertArabicToEnglish(dateStr);
+        const timeStr = formatTimeForDisplay(time);
+        return convertArabicToEnglish(`${dateStr} - ${timeStr}`);
     }
 
     /**
@@ -893,7 +921,7 @@
             propertyTitle: document.getElementById('property-title')?.value || '',
             propertyAddress: document.getElementById('property-address')?.value || '',
             propertySize: document.getElementById('property-size')?.value || '',
-            propertySizeUnit: 'm²',
+            propertySizeUnit: 'متر²',
             propertyDescription: document.getElementById('property-description')?.value || '',
             propertyImages: formData.step2.propertyImages || []
         };
@@ -1175,7 +1203,7 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">رقم الهاتف:</span>
-                    <span class="review-value">${data.step1.contactPhone || 'غير محدد'}</span>
+                    <span class="review-value">${data.step1.contactPhone ? convertArabicToEnglish(data.step1.contactPhone) : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">مدينة العقار:</span>
@@ -1199,7 +1227,7 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">المساحة:</span>
-                    <span class="review-value">${data.step2.propertySize ? data.step2.propertySize + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
+                    <span class="review-value">${data.step2.propertySize ? convertArabicToEnglish(data.step2.propertySize) + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">الوصف:</span>
@@ -1207,13 +1235,13 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">عدد الصور:</span>
-                    <span class="review-value">${data.step2.propertyImages.length} صورة</span>
+                    <span class="review-value">${convertArabicToEnglish(data.step2.propertyImages.length)} صورة</span>
                 </div>
             </div>
 
             <div class="review-section">
                 <h4 class="review-section-title">المرحلة 3: إعداد المزاد</h4>
-                <div class="review-item">
+                <div class="review-item"></div>
                     <span class="review-label">سعر البداية:</span>
                     <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
                 </div>
@@ -1233,6 +1261,10 @@
                     <span class="review-label">تاريخ ووقت النهاية:</span>
                     <span class="review-value">${formatDateTime(data.step3.auctionEndDate, data.step3.auctionEndTime)}</span>
                 </div>
+                <div class="review-item">
+                    <span class="review-label">عدد أيام تشغيل المزاد:</span>
+                    <span class="review-value">${data.step3.auctionDaysAmount ? convertArabicToEnglish(data.step3.auctionDaysAmount) + ' أيام' : 'غير محدد'}</span>
+                </div>
             </div>
 
             <div class="review-section">
@@ -1243,7 +1275,7 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">رقم موافقة المزاد:</span>
-                    <span class="review-value">${data.step4.auctionApprovalNumber || 'غير محدد'}</span>
+                    <span class="review-value">${data.step4.auctionApprovalNumber ? convertArabicToEnglish(data.step4.auctionApprovalNumber) : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">ملف موافقة المزاد:</span>

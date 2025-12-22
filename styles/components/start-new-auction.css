@@ -84,11 +84,27 @@
     transition: all var(--transition-base);
 }
 
-/* Current step - Primary color */
+/* Current step - Primary color with pulsating animation */
 .progress-step.current .step-number {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--bg-white);
+    animation: pulse-step 2s ease-in-out infinite;
+}
+
+/* Pulsating animation for current step number */
+@keyframes pulse-step {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(44, 90, 160, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(44, 90, 160, 0);
+    }
 }
 
 /* Passed steps - Green */
@@ -259,6 +275,16 @@
     font-size: 1.2rem;
     padding: 0 0.5rem;
     color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-currency .rial-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    object-fit: contain;
+    display: block;
 }
 
 /* Date Time Group */

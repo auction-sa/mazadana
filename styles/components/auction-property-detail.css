@@ -316,6 +316,16 @@
     margin-inline-start: 2px;
     line-height: 1;
     vertical-align: baseline;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.currency-symbol .rial-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    object-fit: contain;
+    display: block;
 }
 
 /* Countdown Section */
