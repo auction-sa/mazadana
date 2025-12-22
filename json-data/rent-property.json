@@ -10,9 +10,9 @@
     "rentProperty_image": "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
     "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "rentProperty_compName": "ابو عبد الله للإيجار",
-    "specialWord": "Hot",
-    "rentProperty_viewCount": "12"
-
+    "rentProperty_specialWord": "Hot",
+    "rentProperty_viewCount": "12",
+    "rentProperty_specialStatus": true
   },
   {
     "id": 2,
@@ -25,7 +25,9 @@
     "rentProperty_image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
     "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "rentProperty_compName": "ابو عبد الله للإيجار",
-    "rentProperty_specialWord": "Hot"
+    "rentProperty_specialWord": "Hot",
+    "rentProperty_viewCount": "6",
+    "rentProperty_specialStatus": false
   },
   {
     "id": 3,
@@ -38,6 +40,8 @@
     "rentProperty_image": "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=600",
     "rentProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "rentProperty_compName": "ابو عبد الله للإيجار",
-    "specialWord": "Hot"
+    "rentProperty_specialWord": "Hot",
+    "rentProperty_viewCount": "41",
+    "rentProperty_specialStatus": true
   }
 ]

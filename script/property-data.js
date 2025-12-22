@@ -17,22 +17,28 @@
      */
     const dataConfig = {
         'home-section': {
-            // Home section loads all data and organizes into 3 grids
+            // Home section loads all data and organizes into 3 grids (regular + special)
             grids: {
                 auctions: {
                     gridId: 'home-auctions-grid',
+                    specialGridId: 'home-special-auctions-grid',
                     renderFunction: 'renderAuctionCard',
-                    url: 'json-data/auction-property.json'
+                    url: 'json-data/auction-property.json',
+                    specialField: 'auction_specialStatus'
                 },
                 buy: {
                     gridId: 'home-buy-grid',
+                    specialGridId: 'home-special-buy-grid',
                     renderFunction: 'renderPropertyCard',
-                    url: 'json-data/buy-property.json'
+                    url: 'json-data/buy-property.json',
+                    specialField: 'buyProperty_specialStatus'
                 },
                 rent: {
                     gridId: 'home-rent-grid',
+                    specialGridId: 'home-special-rent-grid',
                     renderFunction: 'renderRentalCard',
-                    url: 'json-data/rent-property.json'
+                    url: 'json-data/rent-property.json',
+                    specialField: 'rentProperty_specialStatus'
                 }
             }
         },
@@ -930,7 +936,7 @@
 
         // Handle home-section differently (has multiple grids)
         if (sectionId === 'home-section' && config.grids) {
-            // Load all three grids for home section
+            // Load all three grids for home section (regular + special)
             const loadPromises = Object.entries(config.grids).map(async ([key, gridConfig]) => {
                 const gridElement = document.getElementById(gridConfig.gridId);
                 if (!gridElement) {
@@ -938,26 +944,61 @@
                     return;
                 }
 
+                // Get special grid element (the container inside the will-be-hidden wrapper)
+                // The ID is on scroll-indicators, but we need the horizontal-scroll-container
+                const specialGridMarker = document.getElementById(gridConfig.specialGridId);
+                let specialGridElement = null;
+                if (specialGridMarker) {
+                    // Find the horizontal-scroll-container sibling inside the parent wrapper
+                    const wrapper = specialGridMarker.closest('.horizontal-scroll-wrapper');
+                    if (wrapper) {
+                        specialGridElement = wrapper.querySelector('.horizontal-scroll-container');
+                    }
+                }
+
                 // Show loading state
                 gridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">جاري التحميل...</p>';
+                if (specialGridElement) {
+                    specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">جاري التحميل...</p>';
+                }
 
                 try {
                     const data = await fetchPropertyData(gridConfig.url);
                     if (data === null) {
                         gridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #dc3545;">حدث خطأ في تحميل البيانات.</p>';
+                        if (specialGridElement) {
+                            specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #dc3545;">حدث خطأ في تحميل البيانات.</p>';
+                        }
                         return;
                     }
 
                     const properties = Array.isArray(data) ? data : (data.properties || data.items || []);
                     if (!properties || properties.length === 0) {
                         gridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا توجد عقارات متاحة حالياً</p>';
+                        if (specialGridElement) {
+                            specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا توجد عقارات متاحة حالياً</p>';
+                        }
                         return;
                     }
 
+                    // Filter special properties based on special status field
+                    const specialProperties = properties.filter(p => p[gridConfig.specialField] === true);
+
+                    // Render all properties to regular grid
                     await renderProperties(properties, gridElement, gridConfig.renderFunction);
+
+                    // Render special properties to special grid if it exists
+                    if (specialGridElement && specialProperties && specialProperties.length > 0) {
+                        await renderProperties(specialProperties, specialGridElement, gridConfig.renderFunction);
+                    } else if (specialGridElement) {
+                        specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا توجد عقارات مميزة حالياً</p>';
+                    }
                 } catch (error) {
                     console.error(`Error loading ${key} for home section:`, error);
                     gridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #dc3545;">حدث خطأ في تحميل البيانات.</p>';
+                    if (specialGridElement) {
+                        specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #dc3545;">حدث خطأ في تحميل البيانات.</p>';
+                    }
                 }
             });
 

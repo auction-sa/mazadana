@@ -11,7 +11,8 @@
     "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "buyProperty_compName": "ابو عبد الله للبيع",
     "buyProperty_specialWord": "Hot",
-    "buyProperty_viewCount": 3
+    "buyProperty_viewCount": 3,
+    "buyProperty_specialStatus": true
   },
   {
     "id": 2,
@@ -25,7 +26,8 @@
     "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "buyProperty_compName": "ابو عبد الله للبيع",
     "buyProperty_specialWord": "Hot",
-    "buyProperty_viewCount": 3
+    "buyProperty_viewCount": 3,
+    "buyProperty_specialStatus": false
   },
   {
     "id": 3,
@@ -39,6 +41,7 @@
     "buyProperty_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
     "buyProperty_compName": "ابو عبد الله للبيع",
     "buyProperty_specialWord": "Hot",
-    "buyProperty_viewCount": 3
+    "buyProperty_viewCount": 3,
+    "buyProperty_specialStatus": false
   }
 ]

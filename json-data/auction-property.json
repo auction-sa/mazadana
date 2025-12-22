@@ -12,6 +12,7 @@
     "auction_specialWord": "جديد",
     "auction_numberOfAssets": 3,
     "auction_viewCount": 3,
+    "auction_specialStatus": true,
   
     
     "assets": [
@@ -90,6 +91,7 @@
     "auction_specialWord": "مميز",
     "auction_numberOfAssets": 3,
     "auction_viewCount": 2,
+    "auction_specialStatus": false,
 
 
     "assets": [
@@ -166,6 +168,7 @@
     "auction_compName": "ابو عبد الله للمزاد",
     "auction_numberOfAssets": 3,
     "auction_viewCount": 4,
+    "auction_specialStatus": true,
 
     
     "assets": [

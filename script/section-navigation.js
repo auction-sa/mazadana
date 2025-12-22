@@ -1403,6 +1403,70 @@
 
         const sectionId = this.getAttribute('data-section');
         if (sectionId) {
+            // Restore "will-be-hidden" class when navigating to home-section
+            if (sectionId === 'home-section') {
+                const auctionsSubsection = document.getElementById('auctions-section');
+                const buySubsection = document.getElementById('buy-section');
+                const rentSubsection = document.getElementById('rent-section');
+                
+                // Restore will-be-hidden class to originally hidden elements
+                if (auctionsSubsection) {
+                    const specialTitle = auctionsSubsection.querySelector('.home-page-property-section-title:first-of-type');
+                    const specialWrapper = auctionsSubsection.querySelector('.horizontal-scroll-wrapper:first-of-type');
+                    if (specialTitle && !specialTitle.classList.contains('will-be-hidden')) {
+                        specialTitle.classList.add('will-be-hidden');
+                    }
+                    if (specialWrapper && !specialWrapper.classList.contains('will-be-hidden')) {
+                        specialWrapper.classList.add('will-be-hidden');
+                    }
+                }
+                
+                if (buySubsection) {
+                    const specialTitle = buySubsection.querySelector('.home-page-property-section-title:first-of-type');
+                    const specialWrapper = buySubsection.querySelector('.horizontal-scroll-wrapper:first-of-type');
+                    if (specialTitle && !specialTitle.classList.contains('will-be-hidden')) {
+                        specialTitle.classList.add('will-be-hidden');
+                    }
+                    if (specialWrapper && !specialWrapper.classList.contains('will-be-hidden')) {
+                        specialWrapper.classList.add('will-be-hidden');
+                    }
+                }
+                
+                if (rentSubsection) {
+                    const specialTitle = rentSubsection.querySelector('.home-page-property-section-title:first-of-type');
+                    const specialWrapper = rentSubsection.querySelector('.horizontal-scroll-wrapper:first-of-type');
+                    if (specialTitle && !specialTitle.classList.contains('will-be-hidden')) {
+                        specialTitle.classList.add('will-be-hidden');
+                    }
+                    if (specialWrapper && !specialWrapper.classList.contains('will-be-hidden')) {
+                        specialWrapper.classList.add('will-be-hidden');
+                    }
+                }
+            }
+            // Remove "will-be-hidden" class from elements in the target home-subsection
+            else if (sectionId === 'auction-section') {
+                const auctionsSubsection = document.getElementById('auctions-section');
+                if (auctionsSubsection) {
+                    auctionsSubsection.querySelectorAll('.will-be-hidden').forEach(el => {
+                        el.classList.remove('will-be-hidden');
+                    });
+                }
+            } else if (sectionId === 'buy-section') {
+                const buySubsection = document.getElementById('buy-section');
+                if (buySubsection) {
+                    buySubsection.querySelectorAll('.will-be-hidden').forEach(el => {
+                        el.classList.remove('will-be-hidden');
+                    });
+                }
+            } else if (sectionId === 'rent-section') {
+                const rentSubsection = document.getElementById('rent-section');
+                if (rentSubsection) {
+                    rentSubsection.querySelectorAll('.will-be-hidden').forEach(el => {
+                        el.classList.remove('will-be-hidden');
+                    });
+                }
+            }
+
             switchToSection(sectionId);
 
             // Scroll scrollable containers to top based on section

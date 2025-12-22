@@ -129,14 +129,16 @@
 .home-page-property-section-title {
     position: relative;
     display: inline-block;
-    /* important */
     width: fit-content;
-    /* text width */
     max-width: 100%;
     color: #2c5aa0;
     font-size: var(--spacing-md);
     font-weight: 700;
     margin: 0 0.8rem 0.75rem 0;
+}
+
+.will-be-hidden {
+    display: none;
 }
 
 .home-page-property-section-title::after {
