@@ -252,6 +252,10 @@
     transition: background var(--transition-base);
 }
 
+.checkbox-label span {
+    font-size: 0.9rem;
+}
+
 .checkbox-label input[type="checkbox"] {
     margin-top: 0.25rem;
     cursor: pointer;
@@ -471,7 +475,7 @@
 
 /* Documents Checklist */
 .documents-checklist {
-    padding: 1rem;
+    padding: 1rem 1rem 0;
     background: var(--bg-light);
     border-radius: 5px;
     margin-top: 1rem;
@@ -508,7 +512,10 @@
 .wizard-buttons {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    border-top: 1px solid var(--border-color);
+    padding: 15px 0;
 }
 
 .wizard-btn {
@@ -535,7 +542,6 @@
 .wizard-btn-secondary {
     background: var(--bg-white);
     color: black;
-    border: 2px solid var(--border-color);
 }
 
 /* Review Step */

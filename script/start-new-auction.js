@@ -829,10 +829,37 @@
             const progress = ((currentStep - 1) / 4) * 100;
             const percentage = Math.round(progress);
 
-            // Set minimum width to 10% for step 1, but keep percentage text at 0%
+            // For steps 2, 3, and 4, align progress bar with current step position
             let barWidth = progress;
+
             if (currentStep === 1) {
-                barWidth = 10; // Visual width 10%
+                barWidth = 12; // Visual width 10%
+            } else if (currentStep >= 2 && currentStep <= 4) {
+                // Get the current step element to calculate its position
+                const currentStepElement = document.querySelector(`.progress-step[data-step="${currentStep}"]`);
+                const wizardProgress = document.querySelector('.wizard-progress');
+
+                if (currentStepElement && wizardProgress) {
+                    const containerRect = wizardProgress.getBoundingClientRect();
+                    const stepRect = currentStepElement.getBoundingClientRect();
+
+                    // Calculate step's center position from the right edge (RTL)
+                    // In RTL: right edge is 0%, left edge is 100%
+                    const stepCenterX = stepRect.left + (stepRect.width / 2);
+                    const distanceFromRight = containerRect.right - stepCenterX;
+                    const containerWidth = containerRect.width;
+
+                    // Calculate percentage from right edge
+                    const stepCenterPercent = (distanceFromRight / containerWidth) * 100;
+
+                    // Progress bar should extend to the step's center position
+                    barWidth = stepCenterPercent;
+                } else {
+                    // Fallback: use calculated progress
+                    barWidth = progress;
+                }
+            } else if (currentStep === 5) {
+                barWidth = 100;
             }
 
             // Ensure progress bar width doesn't exceed 100%
