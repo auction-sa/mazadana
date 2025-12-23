@@ -15,6 +15,10 @@
     scroll-snap-stop: always;
 }
 
+#seller-company-auctions-list .property-card-home-page {
+    margin-left: 0;
+}
+
 .property-card-home-page:last-child {
     margin-left: 0;
 }

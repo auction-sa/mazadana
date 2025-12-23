@@ -297,15 +297,20 @@
         }
 
         auctionsList.innerHTML = auctions.map(auction => {
-            // Use auction_image for auction cards, not userCompanyBanner
-            const auctionImage = auction.auction_image || 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee';
-            const auctionTitle = auction.auction_title || 'عقار في المزاد';
+            const imageUrl = auction.auction_image || '';
+            const imageStyle = imageUrl ? `style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;"` : '';
+            const companyLogo = auction.auction_compLogo ? `<img src="${auction.auction_compLogo}" alt="${auction.auction_compName || 'شركة'}" class="company-logo">` : '';
+            const specialWordBadge = auction.auction_specialWord ?
+                `<div class="home-page-special-word-badge">${auction.auction_specialWord}</div>` : '';
+
+            const timeRemaining = auction.auction_bidStartDate || 'غير محدد';
             const auctionLocation = auction.auction_location || 'غير محدد';
             const assetCount = auction.auction_numberOfAssets || (auction.assets ? auction.assets.length : 0);
             const viewCount = auction.auction_viewCount || 0;
+            const auctionTitle = auction.auction_title || auction.userCompanyName || 'عقار في المزاد';
 
-            // Determine status
-            let statusBadge = '';
+            // Determine status badge (reuse existing statusClass/text)
+            let statusBadgeText = '';
             let statusClass = '';
             if (auction.auction_bidStartDate && auction.auction_bidEndDate) {
                 const startDate = new Date(auction.auction_bidStartDate.replace(/[—–−]/g, '-'));
@@ -313,38 +318,74 @@
                 const now = new Date();
 
                 if (now < startDate) {
-                    statusBadge = 'قادم قريباً';
-                    statusClass = 'status-upcoming';
+                    statusBadgeText = 'قادم قريباً';
+                    statusClass = 'upcoming-badge-home-page';
                 } else if (now > endDate) {
-                    statusBadge = 'إنتهى';
-                    statusClass = 'status-ended';
+                    statusBadgeText = 'إنتهى';
+                    statusClass = 'ended-badge-home-page';
                 } else {
-                    statusBadge = 'جاري الآن';
-                    statusClass = 'status-live';
+                    statusBadgeText = 'جاري الآن';
+                    statusClass = 'live-badge-home-page';
                 }
             }
 
             return `
-                <div class="seller-company-auction-card" data-auction-id="${auction.id}">
-                    <div class="seller-company-auction-image-wrapper">
-                        <img src="${auctionImage}" alt="${auctionTitle}" class="seller-company-auction-image">
-                        ${statusBadge ? `<span class="seller-company-auction-badge ${statusClass}">${statusBadge}</span>` : ''}
+                <div class="property-card-home-page auction-card-home-page seller-company-auction-card" data-auction-id="${auction.id}">
+                    <div class="card-header">
+                        <div class="company-details">
+                            ${companyLogo}
+                            <span class="company-name">${auction.auction_compName || ''}</span>
+                        </div>
+                        ${specialWordBadge}
                     </div>
-                    <div class="seller-company-auction-content">
-                        <h3 class="seller-company-auction-title">${auctionTitle}</h3>
-                        <div class="seller-company-auction-meta">
-                            <div class="seller-company-auction-meta-item">
-                                <i data-lucide="map-pin" class="seller-company-auction-meta-icon"></i>
-                                <span class="seller-company-auction-location">${auctionLocation}</span>
+                    <div class="property-image-home-page" ${imageStyle}>
+                        <div class="auction-badge-home-page">
+                            ${statusBadgeText ? `
+                            <span class="auction-status-badge-home-page ${statusClass}">
+                                <i data-lucide="circle" class="badge-dot-home-page"></i>
+                                ${statusBadgeText}
+                            </span>` : ''}
+                            <span class="auction-status-badge-home-page electronic-badge-home-page">
+                                <i data-lucide="globe" class="badge-icon-home-page"></i>
+                                إلكتروني
+                            </span>
+                        </div>
+                    </div>
+                    <div class="property-content-home-page">
+                        <h3 class="property-title-home-page">${auctionTitle}</h3>
+                        <div class="auction-meta-home-page">
+                            <div class="auction-timer-home-page">
+                                <i data-lucide="clock" class="meta-icon"></i>
+                                <span class="bid-start-date-text">بدأ المزاد: <strong>${timeRemaining}</strong></span>
                             </div>
-                            <div class="seller-company-auction-meta-item">
-                                <i data-lucide="package" class="seller-company-auction-meta-icon"></i>
-                                <span>${assetCount} منتج</span>
+                        </div>
+                        <div class="auction-bid-section">
+                            <div class="bid-section-top">
+                                <div class="location-wrapper">
+                                    <i data-lucide="map-pin" class="property-card-location-icon"></i>
+                                    <span>${auctionLocation}</span>
+                                </div>
+                                <i data-lucide="heart" class="property-card-heart-icon"></i>
                             </div>
-                            <div class="seller-company-auction-meta-item">
-                                <i data-lucide="eye" class="seller-company-auction-meta-icon"></i>
-                                <span>${viewCount} مشاهدة</span>
+                            <div class="bid-section-bottom">
+                                <div class="remaining-time-label">ينتهي في</div>
+                                <div class="remaining-time-counter"
+                                    ${auction.auction_bidStartDate ? `data-bid-start-date="${auction.auction_bidStartDate}"` : ''}
+                                    ${auction.auction_bidEndDate ? `data-bid-end-date="${auction.auction_bidEndDate}"` : ''}></div>
                             </div>
+                        </div>
+                        <div class="property-cta-container-home-page">
+                            <div class="property-view-count-home-page">
+                                <i data-lucide="eye" class="property-view-icon-home-page"></i>
+                                <span class="property-view-number-home-page">${viewCount}</span>
+                            </div>
+                            <div class="auction-property-count-home-page">
+                                <span class="property-view-number-home-page">عدد الأصول</span>
+                                <span class="property-view-number-home-page">${assetCount}</span>
+                            </div>
+                            <button class="property-cta-btn-home-page">
+                                شارك الآن
+                            </button>
                         </div>
                     </div>
                 </div>
