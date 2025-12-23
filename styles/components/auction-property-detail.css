@@ -141,6 +141,14 @@
     text-align: right;
 }
 
+.seller-company-info-row .info-label {
+    gap: 0;
+}
+
+.seller-company-info-row .info-icon {
+    margin: 0;
+}
+
 
 /* Buttons */
 .auction-property-main-page-detail-buttons {

@@ -214,6 +214,7 @@
 }
 
 .form-textarea {
+    width: 100%;
     resize: vertical;
     min-height: 100px;
     font-family: inherit;

@@ -92,19 +92,19 @@
         `;
     }
     let currentCompanyData = null;
-    let currentAuctionId = null;
+    let currentUserPlatformIdNumber = null;
 
     /**
      * Render the seller company info page
      */
-    function renderSellerCompanyInfo(companyData, auctionId) {
+    function renderSellerCompanyInfo(companyData, userPlatformIdNumber) {
         if (!companyData) {
             console.error('No company data provided');
             return;
         }
 
         currentCompanyData = companyData;
-        currentAuctionId = auctionId;
+        currentUserPlatformIdNumber = userPlatformIdNumber;
 
         const container = document.querySelector('.seller-company-info-container');
         if (!container) {
@@ -255,8 +255,8 @@
         // Initialize clickable detail items (address and social media)
         initClickableDetailItems();
 
-        // Load company auctions by ID (multiple auctions can have the same ID)
-        loadCompanyAuctions(currentAuctionId);
+        // Load company auctions by userPlatformIdNumber (multiple auctions can have the same userPlatformIdNumber)
+        loadCompanyAuctions(currentUserPlatformIdNumber);
     }
 
     /**
@@ -478,10 +478,10 @@
     }
 
     /**
-     * Load company auctions by ID
-     * Multiple auctions can have the same ID to indicate they're from the same company
+     * Load company auctions by userPlatformIdNumber
+     * Multiple auctions can have the same userPlatformIdNumber to indicate they're from the same company
      */
-    async function loadCompanyAuctions(auctionId) {
+    async function loadCompanyAuctions(userPlatformIdNumber) {
         try {
             const response = await fetch('json-data/auction-property.json');
             if (!response.ok) {
@@ -489,8 +489,8 @@
             }
 
             const auctions = await response.json();
-            // Filter auctions by matching ID (same ID = same company)
-            const companyAuctions = auctions.filter(auction => auction.id === parseInt(auctionId));
+            // Filter auctions by matching userPlatformIdNumber (same userPlatformIdNumber = same company)
+            const companyAuctions = auctions.filter(auction => auction.userPlatformIdNumber === parseInt(userPlatformIdNumber));
 
             renderCompanyAuctions(companyAuctions);
         } catch (error) {
@@ -650,7 +650,7 @@
     /**
      * Open seller company info page
      */
-    window.openSellerCompanyInfo = async function (auctionId) {
+    window.openSellerCompanyInfo = async function (userPlatformIdNumber) {
         try {
             // Store the current section before navigating
             if (typeof window.getCurrentSection === 'function') {
@@ -658,41 +658,55 @@
                 window._previousSectionBeforeSellerInfo = window.getCurrentSection();
             }
 
-            // Fetch auction data from JSON
-            const response = await fetch('json-data/auction-property.json');
-            if (!response.ok) {
-                throw new Error('Failed to fetch auction data');
+            // Fetch user data from JSON (contains userCompanyDetails)
+            const userResponse = await fetch('json-data/user-data.json');
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch user data');
             }
 
-            const auctions = await response.json();
-            const auction = auctions.find(a => a.id === parseInt(auctionId));
+            const userData = await userResponse.json();
 
-            if (!auction) {
-                console.error('Auction not found:', auctionId);
-                alert('المزاد غير متوفرة حالياً');
+            // Check localStorage for saved company data and merge it
+            const savedCompanyData = localStorage.getItem('userCompanyDetails');
+            if (savedCompanyData) {
+                try {
+                    const savedData = JSON.parse(savedCompanyData);
+                    if (userData.userCompanyDetails && userData.userCompanyDetails.length > 0) {
+                        userData.userCompanyDetails[0] = { ...userData.userCompanyDetails[0], ...savedData };
+                    } else {
+                        userData.userCompanyDetails = [savedData];
+                    }
+                } catch (e) {
+                    console.warn('Error parsing saved company data:', e);
+                }
+            }
+
+            // Check if userPlatformIdNumber matches
+            if (userData.userPlatformIdNumber !== parseInt(userPlatformIdNumber)) {
+                console.error('User platform ID mismatch:', userPlatformIdNumber);
+                alert('معلومات البائع غير متوفرة حالياً');
                 return;
             }
 
-            // Get company data
-            // userCompanyName exists outside userCompanyDetails at the auction level
-            // userCompanyBanner should come from userCompanyDetails[0]
-            const companyData = auction.userCompanyDetails && auction.userCompanyDetails.length > 0
-                ? {
-                    ...auction.userCompanyDetails[0],
-                    userCompanyName: auction.userCompanyName || auction.userCompanyDetails[0].userCompanyName || auction.auction_compName,
-                    auction_compName: auction.auction_compName,
-                    auction_compLogo: auction.auction_compLogo,
-                    // userCompanyBanner should be from userCompanyDetails, not auction level
-                    userCompanyBanner: auction.userCompanyDetails[0].userCompanyBanner
-                }
-                : {
-                    userCompanyName: auction.userCompanyName || auction.auction_compName,
-                    auction_compName: auction.auction_compName,
-                    auction_compLogo: auction.auction_compLogo
-                };
+            // Get company data from userCompanyDetails
+            const companyDetails = userData.userCompanyDetails && userData.userCompanyDetails.length > 0
+                ? userData.userCompanyDetails[0]
+                : null;
+
+            if (!companyDetails) {
+                console.error('Company details not found');
+                alert('معلومات الشركة غير متوفرة حالياً');
+                return;
+            }
+
+            // Build company data object
+            const companyData = {
+                ...companyDetails,
+                userCompanyName: userData.userName || companyDetails.userCompanyName || 'شركة غير معروفة'
+            };
 
             // Render the company info page
-            renderSellerCompanyInfo(companyData, auctionId);
+            renderSellerCompanyInfo(companyData, userPlatformIdNumber);
 
             // Show header
             const header = document.getElementById('seller-company-info-page-header');

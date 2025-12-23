@@ -29,6 +29,11 @@
     position: relative;
 }
 
+.seller-company-banner-image {
+    width: 150px;
+    border-radius: 0% !important;
+}
+
 .profile-image img {
     width: 100%;
     height: 100%;
@@ -56,19 +61,6 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.profile-image-upload:hover {
-    background: #1e3d6f;
-    transform: translateX(-50%) scale(1.1);
-}
-
-.upload-icon {
-    font-size: 1.2rem;
-    color: #ffffff !important;
-    background-color: #000000;
-    padding: 0.3rem;
-    border-radius: 50%;
 }
 
 /* Profile Info Card */

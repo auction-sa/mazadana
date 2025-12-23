@@ -2,24 +2,7 @@
   {
     "id": 1,
     "userCompanyName": "مزاد النخبة",
-
-
-    "userCompanyDetails": [
-      {
-        "userCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
-        "userCompanyBanner": "https://cdn05.zipify.com/5mDK9lBkS1oEG4YP6C7sP_LpTII=/fit-in/1940x0/4918d15ad95747f1a240a725d04df79c/gambar-depan-banyak-yang-belum-tahu-ini-dia-perbedaan-banner-dan-spanduk.jpeg",
-        "userCompanyDescription": "شركة متخصصة في إدارة وتنظيم المزادات العقارية الإلكترونية. نقدم خدماتنا باحترافية عالية ونضمن الشفافية والعدالة في جميع عملياتنا.",
-        "userCompanyAddress": "الرياض - النرجس",
-        "userCompanyAddressUrl": "https://maps.app.goo.gl/JZretK3mZqKDXTC5A",
-        "userCompanyPhone": "0557894321",
-        "userCompanyEmail": "info@mazadana.sa",
-        "userCompanyInstagram": "https://www.instagram.com/fl_0ky/",
-        "userCompanyTikTok": "https://www.tiktok.com/@fl_0ky",
-        "userCompanyTwitter": "https://x.com/fl__0ky",
-        "userCompanyFacebook": "https://www.facebook.com/profile.php?id=61582085849224",
-        "userCompanyYouTube": "https://www.youtube.com/@NewMedia_Life"
-      }
-    ],
+    "userPlatformIdNumber": 1,
     
 
     "auction_bidStartDate": "2025/12/11 — 08:00 صباحً",
@@ -95,7 +78,8 @@
 
 
   {
-    "id": 1,
+    "id": 2,
+    "userPlatformIdNumber": 1,
     
 
     "auction_bidStartDate": "2026/01/11 — 08:00 مساءً",

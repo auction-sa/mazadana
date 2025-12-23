@@ -270,7 +270,7 @@
                         <label class="add-new-auction-form-label">عنوان العقار</label>
                         <input type="text" class="add-new-auction-form-input" id="property-title" value="${data.propertyTitle}" 
                                placeholder="مثل: شقة فاخرة في حي العليا">
-                        <small class="form-helper">عنوان واضح يصف العقار</small>
+                        <small class="form-helper">عنوان قصير يصف العقار (مثلاً "شقة فاخرة في حي العليا" او "فيلا حديثة في شمال الرياض")</small>
                     </div>
 
                     <!-- Property Address -->
@@ -278,7 +278,7 @@
                         <label class="add-new-auction-form-label">العنوان الكامل</label>
                         <textarea class="add-new-auction-form-input form-textarea" id="property-address" rows="3" 
                                   placeholder="أدخل العنوان الكامل للعقار">${data.propertyAddress}</textarea>
-                        <small class="form-helper">العنوان الكامل للعقار</small>
+                        <small class="form-helper">العنوان الكامل مع الشارع والحي والمدينة (مثلاً "شارع الملك فهد، حي العليا، الرياض، المملكة العربية السعودية")</small>
                     </div>
 
                     <!-- Property Size -->

@@ -674,12 +674,13 @@
                     e.preventDefault();
                     e.stopPropagation();
                     if (currentAuctionData && typeof window.openSellerCompanyInfo === 'function') {
-                        window.openSellerCompanyInfo(currentAuctionData.id);
+                        const userPlatformIdNumber = currentAuctionData.userPlatformIdNumber || currentAuctionData.id;
+                        window.openSellerCompanyInfo(userPlatformIdNumber);
                     } else {
                         console.error('Cannot open seller company info:', {
                             hasData: !!currentAuctionData,
                             hasFunction: typeof window.openSellerCompanyInfo === 'function',
-                            auctionId: currentAuctionData?.id
+                            userPlatformIdNumber: currentAuctionData?.userPlatformIdNumber
                         });
                     }
                 }
@@ -698,7 +699,8 @@
                     e.preventDefault();
                     e.stopPropagation();
                     if (currentAuctionData && typeof window.openSellerCompanyInfo === 'function') {
-                        window.openSellerCompanyInfo(currentAuctionData.id);
+                        const userPlatformIdNumber = currentAuctionData.userPlatformIdNumber || currentAuctionData.id;
+                        window.openSellerCompanyInfo(userPlatformIdNumber);
                     }
                 });
 

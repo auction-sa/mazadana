@@ -9,12 +9,97 @@
 .info-row {
     background: var(--bg-white);
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-md);
     border-bottom: 1px solid var(--border-light);
-    gap: var(--spacing-md);
+}
+
+.seller-company-info-row {
+    flex-direction: column;
+    align-items: self-start !important;
+    gap: 0 !important;
+}
+
+.seller-company-info-row .info-value {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+}
+
+.seller-company-info-row .form-input,
+.seller-company-info-row .form-textarea {
+    width: 100%;
+    text-align: right;
+    direction: rtl;
+    padding: 0.5rem;
+    min-height: 2.5rem;
+    resize: vertical;
+    overflow-y: auto;
+}
+
+.seller-company-info-row .form-textarea {
+    min-height: 4rem;
+    resize: vertical;
+}
+
+/* Auto-resize for inputs and textareas */
+.seller-company-info-row .form-input[data-auto-resize],
+.seller-company-info-row .form-textarea[data-auto-resize] {
+    resize: none;
+    overflow: hidden;
+}
+
+/* Image upload styles */
+.company-image-upload-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.company-image-preview {
+    width: 4rem;
+    border-radius: var(--radius-sm);
+    border: 2px dashed var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg-light);
+    position: relative;
+}
+
+#company-banner-preview{
+    width: 8rem;
+}
+
+.company-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.company-image-preview.empty {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.company-image-preview.empty::before {
+    content: '';
+    width: 60px;
+    height: 60px;
+    background: var(--border-light);
+    border-radius: var(--radius-sm);
+    display: block;
+}
+
+.company-image-preview.empty::after {
+    content: 'لا توجد صورة';
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+    display: block;
 }
 
 .info-item {
@@ -47,6 +132,7 @@
 /* Profile Image in Card Body */
 .profile-image-row {
     padding-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
 }
 
 .profile-image-value {
