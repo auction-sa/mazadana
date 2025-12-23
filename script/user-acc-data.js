@@ -3,10 +3,12 @@
 (function () {
     'use strict';
 
+
     // Tab state
     let currentTab = 'basic-data';
     let isInDetailView = false;
 
+    
     // Track if event listeners are already attached to prevent duplicates
     let eventListenersAttached = false;
 
@@ -50,14 +52,14 @@
         }
 
         // Use data from JSON or fallback to defaults
-        const userName = data?.name || 'غير محدد';
-        const userNationalId = data?.nationalId || 'غير محدد';
-        const userBirthDate = data?.birthDate || 'غير محدد';
-        const userSex = data?.sex || 'غير محدد';
-        const userNationality = data?.nationality || 'غير محدد';
-        const userAvatar = data?.avatar || '';
-        const userEmail = data?.email || 'غير محدد';
-        const userPhone = data?.phone || 'غير محدد';
+        const userName = data?.userName || 'غير محدد';
+        const userNationalId = data?.userNationalId || 'غير محدد';
+        const userBirthDate = data?.userBirthDate || 'غير محدد';
+        const userSex = data?.useSexType || 'غير محدد';
+        const userNationality = data?.userNationalityCountry || 'غير محدد';
+        const userAvatar = data?.userPersonalProfileImage || '';
+        const userEmail = data?.userEmailAddress || 'غير محدد';
+        const userPhone = data?.userPhoneNumber || 'غير محدد';
 
         accountInfoView.innerHTML = `
             <div class="account-info-container">
@@ -69,13 +71,18 @@
                             <i data-lucide="chevron-left" class="account-tab-arrow"></i>
                         </button>
                         <button class="account-tab" data-tab="contact-info">
-                            <i data-lucide="phone" class="account-tab-icon"></i>
-                            <span class="tab-text">معلومات التواصل</span>
-                            <i data-lucide="chevron-left" class="account-tab-arrow"></i>
+                        <i data-lucide="phone" class="account-tab-icon"></i>
+                        <span class="tab-text">معلومات التواصل</span>
+                        <i data-lucide="chevron-left" class="account-tab-arrow"></i>
                         </button>
                         <button class="account-tab" data-tab="addresses">
-                            <i data-lucide="map-pin" class="account-tab-icon"></i>
-                            <span class="tab-text">عناويني</span>
+                        <i data-lucide="map-pin" class="account-tab-icon"></i>
+                        <span class="tab-text">عناويني</span>
+                        <i data-lucide="chevron-left" class="account-tab-arrow"></i>
+                        </button>
+                        <button class="account-tab" data-tab="seller-company-data">
+                            <i data-lucide="handshake" class="account-tab-icon"></i>
+                            <span class="tab-text">بيانات البائع</span>
                             <i data-lucide="chevron-left" class="account-tab-arrow"></i>
                         </button>
                     </div>
@@ -179,6 +186,68 @@
                                             <span>إضافة عنوان جديد</span>
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="seller-company-data-view" class="tab-view">
+                            <div class="account-card">
+                                <div class="card-body scrollable-container">
+                                    <div class="info-row profile-image-row">
+                                        <div class="info-label">
+                                            <i data-lucide="image" class="info-icon"></i>
+                                            <span>صورة الملف الشخصي</span>
+                                        </div>
+                                        <div class="info-value profile-image-value">
+                                            <div class="profile-image-edit">
+                                                <div class="profile-image" id="basic-data-profile-image" ${userAvatar ? `style="background-image: url('${userAvatar}'); background-size: cover; background-position: center;"` : ''}>
+                                                    ${!userAvatar ? '<i class="fas fa-user profile-image-placeholder"></i>' : ''}
+                                                </div>
+                                                <button class="edit-image-btn" type="button">
+                                                    <i data-lucide="camera" class="edit-image-icon"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">
+                                            <i data-lucide="user" class="info-icon"></i>
+                                            <span>الاسم الكامل</span>
+                                        </div>
+                                        <div class="info-value">${userName}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">
+                                            <i data-lucide="id-card" class="info-icon"></i>
+                                            <span>الهوية الوطنية</span>
+                                        </div>
+                                        <div class="info-value">${userNationalId}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">
+                                            <i data-lucide="calendar" class="info-icon"></i>
+                                            <span>تاريخ الميلاد</span>
+                                        </div>
+                                        <div class="info-value">${userBirthDate}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">
+                                            <i data-lucide="fingerprint-pattern" class="info-icon"></i>
+                                            <span>الجنس</span>
+                                        </div>
+                                        <div class="info-value">${userSex}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">
+                                            <i data-lucide="flag" class="info-icon"></i>
+                                            <span>الجنسية</span>
+                                        </div>
+                                        <div class="info-value">${userNationality}</div>
+                                    </div>
+                                    <button class="edit-btn">
+                                        <i data-lucide="edit" class="edit-icon"></i>
+                                        <span>تعديل البيانات</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -306,6 +375,7 @@
                 tab.classList.remove('active');
             }
         });
+
 
         currentTab = tabId;
         isInDetailView = true;
@@ -450,7 +520,16 @@
                 <h2 class="account-tabs-title">عناويني</h2>
             </div>`;
 
-        headersContainer.innerHTML = profilePageTitle + accountTabsHeader + basicDataHeader + contactInfoHeader + addressesHeader;
+        const sellerCompanyHeader = typeof window.createCardHeader === 'function'
+            ? window.createCardHeader('بيانات البائع', 'seller-company-data')
+            : `<div class="account-tabs-header" id="card-header-addresses" style="display: none;">
+                <button class="back-btn" data-back="tabs">
+                    <i data-lucide="arrow-right" class="back-icon"></i>
+                </button>
+                <h2 class="account-tabs-title">بيانات البائع</h2>
+            </div>`;
+
+        headersContainer.innerHTML = profilePageTitle + accountTabsHeader + basicDataHeader + contactInfoHeader + addressesHeader + sellerCompanyHeader;
 
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {

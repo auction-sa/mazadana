@@ -345,7 +345,7 @@
                             <input type="number" class="add-new-auction-form-input" id="start-price" value="${data.startPrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
                             <span class="input-currency">
-                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </div>
                         <small class="form-helper">السعر الذي يبدأ به المزاد</small>
@@ -358,7 +358,7 @@
                             <input type="number" class="add-new-auction-form-input" id="reserve-price" value="${data.reservePrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
                             <span class="input-currency">
-                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </div>
                         <small class="form-helper">السعر الأدنى الذي تقبله (اختياري)</small>
@@ -371,7 +371,7 @@
                             <input type="number" class="add-new-auction-form-input" id="bid-increment" value="${data.bidIncrement}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
                             <span class="input-currency">
-                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </div>
                         <small class="form-helper">القيمة الدنيا للزيادة في كل مزايدة</small>
@@ -689,7 +689,7 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }).format(amount);
-        return `${formatted} <img src="rial-icon.png" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;">`;
+        return `${formatted} <img src="rial-icon.webp" alt="ريال" class="rial-icon" style="width: 0.9rem; height: 0.9rem; object-fit: contain; display: inline-block; vertical-align: middle; margin-inline-start: 2px;">`;
     }
 
     /**

@@ -2,6 +2,23 @@
   {
     "id": 1,
     "auction_title": "مزاد النخبة",
+
+
+    "userCompanyDetails": [
+      {
+        "userCompanyName": "بندر مزاد المملكة",
+        "userCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+        "userCompanyAddress": "الرياض - النرجس",
+        "userCompanyPhone": "0557894321",
+        "userCompanyEmail": "info@mazadana.sa",
+        "userCompanyInstagram": "1029384756",
+        "userCompanyTikTok": "1029384756",
+        "userCompanyTwitter": "1029384756",
+        "userCompanyFacebook": "1029384756"
+      }
+    ],
+    
+
     "auction_bidStartDate": "2025/12/11 — 08:00 مساءً",
     "auction_bidEndDate": "2025/12/28 — 12:00 صباحً",
     "auction_location": "مكة المكرمة",

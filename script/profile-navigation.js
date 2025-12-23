@@ -304,10 +304,10 @@
      */
     function createProfileHeader(userData) {
         // Get the user's name, or use default if not found
-        const name = userData?.fullName || userData?.name || 'المستخدم';
+        const name = userData?.userName || 'أنت';
 
         // Get the profile image URL, or null if not found
-        const imageUrl = userData?.imageUrl || userData?.image || userData?.avatar || null;
+        const imageUrl = userData?.userPersonalProfileImage || 'default-profile-image.webp';
 
         // Build the HTML string
         const headerHTML = `

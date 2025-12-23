@@ -448,7 +448,7 @@
                         <span class="pricing-value">
                             ${asset.auctionAsset_bidAmount || '0'}
                             <span class="currency-symbol">
-                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </span>
 
@@ -458,7 +458,7 @@
                         <span class="pricing-value">
                             ${asset.auctionAsset_startingPrice || '0'}
                             <span class="currency-symbol">
-                                <img src="rial-icon.png" alt="ريال" class="rial-icon">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </span>
                     </div>
