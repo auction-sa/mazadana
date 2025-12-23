@@ -763,8 +763,8 @@
             return;
         }
 
-        // Special handling for seller-company-info-page-section with optimized slide animation
-        if (sectionId === 'seller-company-info-page-section') {
+        // Special handling for seller-company-info-section with optimized slide animation
+        if (sectionId === 'seller-company-info-section') {
             const isFromPropertyDetail = currentActiveSection && currentActiveSection.id === 'auction-property-detail-section';
 
             // Batch DOM reads first (before any writes)
@@ -820,7 +820,7 @@
                 }
             }
 
-            // Prepare seller-company-info-page-section with GPU-accelerated properties
+            // Prepare seller-company-info-section with GPU-accelerated properties
             targetSection.style.display = 'block';
             targetSection.style.transform = 'translate3d(0, 20px, 0)';
             targetSection.style.opacity = '0';
@@ -957,15 +957,18 @@
             return;
         }
 
-        // Special handling for transitions from auction-property-detail-section to profile-section with right slide
+        // Special handling for transitions from auction-property-detail-section or seller-company-info-section to profile-section with right slide
         const isFromPropertyDetailToProfile = currentSection === 'auction-property-detail-section' && sectionId === 'profile-section';
+        const isFromSellerInfoToProfile = currentSection === 'seller-company-info-section' && sectionId === 'profile-section';
 
-        if (isFromPropertyDetailToProfile) {
-            const propertyDetailSection = document.getElementById('auction-property-detail-section');
+        if (isFromPropertyDetailToProfile || isFromSellerInfoToProfile) {
+            const sourceSection = isFromPropertyDetailToProfile
+                ? document.getElementById('auction-property-detail-section')
+                : document.getElementById('seller-company-info-section');
             const profileSection = document.getElementById('profile-section');
             const currentActiveSection = document.querySelector('.tab-section.active');
 
-            if (!propertyDetailSection || !profileSection || !currentActiveSection) {
+            if (!sourceSection || !profileSection || !currentActiveSection) {
                 isNavigating = false;
                 return;
             }
@@ -991,10 +994,10 @@
             profileSection.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
             profileSection.classList.remove('active');
 
-            // Clean up auction-property-detail-section with slide-out animation to the left
+            // Clean up source section with slide-out animation to the left
             currentActiveSection.classList.remove('active');
             currentActiveSection.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
-            // Property-detail slides out to the left (profile comes from right)
+            // Source slides out to the left (profile comes from right)
             currentActiveSection.style.transform = 'translateX(100%)';
             currentActiveSection.style.opacity = '0';
 
@@ -1011,7 +1014,7 @@
                     profileSection.style.pointerEvents = 'auto';
                     profileSection.classList.add('active');
 
-                    // Hide auction-property-detail-section after slide-out completes
+                    // Hide source section after slide-out completes
                     trackedSetTimeout(() => {
                         currentActiveSection.style.display = 'none';
                         currentActiveSection.style.visibility = 'hidden';
@@ -1044,16 +1047,19 @@
             return;
         }
 
-        // Special handling for transitions between auction-property-detail-section and my-actions-section with right slide
+        // Special handling for transitions between auction-property-detail-section or seller-company-info-section and my-actions-section with right slide
         const isFromPropertyDetailToMyActions = currentSection === 'auction-property-detail-section' && sectionId === 'my-actions-section';
+        const isFromSellerInfoToMyActions = currentSection === 'seller-company-info-section' && sectionId === 'my-actions-section';
         const isFromMyActionsToPropertyDetail = currentSection === 'my-actions-section' && sectionId === 'auction-property-detail-section';
+        const isFromMyActionsToSellerInfo = currentSection === 'my-actions-section' && sectionId === 'seller-company-info-section';
 
-        if (isFromPropertyDetailToMyActions || isFromMyActionsToPropertyDetail) {
+        if (isFromPropertyDetailToMyActions || isFromSellerInfoToMyActions || isFromMyActionsToPropertyDetail || isFromMyActionsToSellerInfo) {
             const propertyDetailSection = document.getElementById('auction-property-detail-section');
+            const sellerInfoSection = document.getElementById('seller-company-info-section');
             const myActionsSection = document.getElementById('my-actions-section');
             const currentActiveSection = document.querySelector('.tab-section.active');
 
-            if (!propertyDetailSection || !myActionsSection || !currentActiveSection) {
+            if (!myActionsSection || !currentActiveSection) {
                 isNavigating = false;
                 return;
             }
@@ -1070,10 +1076,12 @@
 
             // Determine target section
             let targetSection;
-            if (isFromPropertyDetailToMyActions) {
+            if (isFromPropertyDetailToMyActions || isFromSellerInfoToMyActions) {
                 targetSection = myActionsSection;
-            } else {
+            } else if (isFromMyActionsToPropertyDetail) {
                 targetSection = propertyDetailSection;
+            } else {
+                targetSection = sellerInfoSection;
             }
 
             // Prepare target section - position it off-screen from the right (for RTL, this is translateX(-100%))
@@ -1202,10 +1210,10 @@
             return;
         }
 
-        // Check if we're coming from seller-company-info-page-section - handle slide out
-        const isComingFromSellerInfo = currentSection === 'seller-company-info-page-section';
+        // Check if we're coming from seller-company-info-section - handle slide out
+        const isComingFromSellerInfo = currentSection === 'seller-company-info-section';
         if (isComingFromSellerInfo) {
-            const sellerInfoSection = document.getElementById('seller-company-info-page-section');
+            const sellerInfoSection = document.getElementById('seller-company-info-section');
             const homeSection = document.getElementById('home-section');
 
             if (sellerInfoSection && sellerInfoSection.classList.contains('active')) {

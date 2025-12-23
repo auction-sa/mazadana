@@ -482,7 +482,7 @@
                 }
 
                 // Switch to seller company info section
-                window.switchToSection('seller-company-info-page-section');
+                window.switchToSection('seller-company-info-section');
             } else {
                 console.error('switchToSection function not available');
             }
