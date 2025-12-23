@@ -236,7 +236,8 @@
                                             </div>
                                             <div class="info-value">
                                                 <div class="company-image-upload-wrapper">
-                                                    <div class="company-image-preview" id="company-logo-preview">
+                                                    <input type="file" id="company-logo-input" accept="image/*" style="display: none;">
+                                                    <div class="company-image-preview" id="company-logo-preview" style="cursor: pointer;">
                                                         ${companyLogo ? `<img src="${companyLogo}" alt="Company Logo">` : ''}
                                                     </div>
                                                 </div>
@@ -249,7 +250,8 @@
                                             </div>
                                             <div class="info-value">
                                                 <div class="company-image-upload-wrapper">
-                                                    <div class="company-image-preview" id="company-banner-preview">
+                                                    <input type="file" id="company-banner-input" accept="image/*" style="display: none;">
+                                                    <div class="company-image-preview" id="company-banner-preview" style="cursor: pointer;">
                                                         ${companyBanner ? `<img src="${companyBanner}" alt="Company Banner">` : ''}
                                                     </div>
                                                 </div>
@@ -714,63 +716,97 @@
     }
 
 
-    
-   /**
+
+    /**
      * Initialize image upload handlers
      */
-   function initImageUploads() {
-       // Logo upload
-       const logoInput = document.getElementById('company-logo-input');
-       const logoPreview = document.getElementById('company-logo-preview');
+    function initImageUploads() {
+        // Logo upload
+        const logoInput = document.getElementById('company-logo-input');
+        const logoPreview = document.getElementById('company-logo-preview');
 
-       if (logoInput && logoPreview) {
-           logoInput.addEventListener('change', function (e) {
-               const file = e.target.files[0];
-               if (file) {
-                   const reader = new FileReader();
-                   reader.onload = function (e) {
-                       const img = document.createElement('img');
-                       img.src = e.target.result;
-                       img.alt = 'Company Logo';
-                       logoPreview.innerHTML = '';
-                       logoPreview.classList.remove('empty');
-                       logoPreview.appendChild(img);
+        if (logoInput && logoPreview) {
+            // Check if already initialized
+            if (logoPreview.hasAttribute('data-listener-attached')) {
+                return;
+            }
 
-                       // Store the data URL for saving
-                       logoInput.dataset.dataUrl = e.target.result;
-                   };
-                   reader.readAsDataURL(file);
-               }
-           });
-       }
+            // Make preview clickable to trigger file input
+            logoPreview.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                logoInput.click();
+            });
 
-       // Banner upload
-       const bannerInput = document.getElementById('company-banner-input');
-       const bannerPreview = document.getElementById('company-banner-preview');
+            // Handle file selection
+            logoInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Company Logo';
+                        logoPreview.innerHTML = '';
+                        logoPreview.classList.remove('empty');
+                        logoPreview.appendChild(img);
 
-       if (bannerInput && bannerPreview) {
-           bannerInput.addEventListener('change', function (e) {
-               const file = e.target.files[0];
-               if (file) {
-                   const reader = new FileReader();
-                   reader.onload = function (e) {
-                       const img = document.createElement('img');
-                       img.src = e.target.result;
-                       img.alt = 'Company Banner';
-                       bannerPreview.innerHTML = '';
-                       bannerPreview.classList.remove('empty');
-                       bannerPreview.appendChild(img);
+                        // Store the data URL for saving
+                        logoInput.dataset.dataUrl = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-                       // Store the data URL for saving
-                       bannerInput.dataset.dataUrl = e.target.result;
-                   };
-                   reader.readAsDataURL(file);
-               }
-           });
-       }
-   }
+            // Mark as initialized
+            logoPreview.setAttribute('data-listener-attached', 'true');
+            logoInput.setAttribute('data-listener-attached', 'true');
+        }
 
-   
+        // Banner upload
+        const bannerInput = document.getElementById('company-banner-input');
+        const bannerPreview = document.getElementById('company-banner-preview');
+
+        if (bannerInput && bannerPreview) {
+            // Check if already initialized
+            if (bannerPreview.hasAttribute('data-listener-attached')) {
+                return;
+            }
+
+            // Make preview clickable to trigger file input
+            bannerPreview.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                bannerInput.click();
+            });
+
+            // Handle file selection
+            bannerInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Company Banner';
+                        bannerPreview.innerHTML = '';
+                        bannerPreview.classList.remove('empty');
+                        bannerPreview.appendChild(img);
+
+                        // Store the data URL for saving
+                        bannerInput.dataset.dataUrl = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Mark as initialized
+            bannerPreview.setAttribute('data-listener-attached', 'true');
+            bannerInput.setAttribute('data-listener-attached', 'true');
+        }
+    }
+
+
     /**
      * Initialize save functionality for company data
      */

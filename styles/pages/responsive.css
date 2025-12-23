@@ -230,10 +230,12 @@
 
     .company-image-preview {
         width: 5rem;
+        height: 5rem;
     }
     
     #company-banner-preview{
         width: 15rem;
+        height: 6rem;
     }
 }
 
