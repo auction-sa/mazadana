@@ -197,8 +197,8 @@
             return;
         }
 
-        // If we're in property-detail-section, go back to home-section (especially important for mobile)
-        if (currentState.section === 'property-detail-section') {
+        // If we're in auction-property-detail-section, go back to home-section (especially important for mobile)
+        if (currentState.section === 'auction-property-detail-section') {
             // Hide header if it exists (cleanup is handled by the back button handler in auction-detail.js)
             const header = document.getElementById('auction-property-main-page-detail-header');
             if (header) {

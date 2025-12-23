@@ -631,9 +631,9 @@
             // Check if we need to switch sections (coming from a different section)
             const needsSectionSwitch = currentActiveSection && currentActiveSection.id !== 'home-section';
             const isComingFromProfile = currentActiveSection && currentActiveSection.id === 'profile-section';
-            const isComingFromPropertyDetail = currentActiveSection && currentActiveSection.id === 'property-detail-section';
+            const isComingFromPropertyDetail = currentActiveSection && currentActiveSection.id === 'auction-property-detail-section';
 
-            // Handle property-detail-section slide down and fade out animation
+            // Handle auction-property-detail-section slide down and fade out animation
             if (isComingFromPropertyDetail && currentActiveSection) {
                 const propertyDetailSection = currentActiveSection;
                 propertyDetailSection.style.transition = 'transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
@@ -661,8 +661,8 @@
                 currentActiveSection.style.pointerEvents = 'none';
             }
 
-            // Show home-section without slide animation when coming from property-detail-section
-            // Only property-detail-section should animate, not home-section or its children
+            // Show home-section without slide animation when coming from auction-property-detail-section
+            // Only auction-property-detail-section should animate, not home-section or its children
             if (isComingFromPropertyDetail) {
                 // Show home-section with just fade in (no slide to avoid affecting banner-section and other elements)
                 homeSection.style.display = 'block';
@@ -763,8 +763,8 @@
             return;
         }
 
-        // Special handling for property-detail-section with optimized slide animation
-        if (sectionId === 'property-detail-section') {
+        // Special handling for auction-property-detail-section with optimized slide animation
+        if (sectionId === 'auction-property-detail-section') {
             const isFromHomeSection = currentActiveSection.id === 'home-section';
 
             // Batch DOM reads first (before any writes)
@@ -800,7 +800,7 @@
                 });
             }
 
-            // Prepare property-detail-section with GPU-accelerated properties
+            // Prepare auction-property-detail-section with GPU-accelerated properties
             // Use transform3d for better GPU acceleration on low-end devices
             targetSection.style.display = 'block';
             targetSection.style.transform = 'translate3d(0, 20px, 0)'; // GPU acceleration
@@ -811,7 +811,7 @@
             targetSection.style.transition = 'transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1)';
             targetSection.classList.remove('active');
 
-            // If coming from home-section, position property-detail-section as overlay
+            // If coming from home-section, position auction-property-detail-section as overlay
             if (isFromHomeSection) {
                 targetSection.style.position = 'absolute';
                 targetSection.style.top = '0';
@@ -851,11 +851,11 @@
             return;
         }
 
-        // Special handling for transitions from property-detail-section to profile-section with right slide
-        const isFromPropertyDetailToProfile = currentSection === 'property-detail-section' && sectionId === 'profile-section';
+        // Special handling for transitions from auction-property-detail-section to profile-section with right slide
+        const isFromPropertyDetailToProfile = currentSection === 'auction-property-detail-section' && sectionId === 'profile-section';
 
         if (isFromPropertyDetailToProfile) {
-            const propertyDetailSection = document.getElementById('property-detail-section');
+            const propertyDetailSection = document.getElementById('auction-property-detail-section');
             const profileSection = document.getElementById('profile-section');
             const currentActiveSection = document.querySelector('.tab-section.active');
 
@@ -885,7 +885,7 @@
             profileSection.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
             profileSection.classList.remove('active');
 
-            // Clean up property-detail-section with slide-out animation to the left
+            // Clean up auction-property-detail-section with slide-out animation to the left
             currentActiveSection.classList.remove('active');
             currentActiveSection.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
             // Property-detail slides out to the left (profile comes from right)
@@ -905,7 +905,7 @@
                     profileSection.style.pointerEvents = 'auto';
                     profileSection.classList.add('active');
 
-                    // Hide property-detail-section after slide-out completes
+                    // Hide auction-property-detail-section after slide-out completes
                     trackedSetTimeout(() => {
                         currentActiveSection.style.display = 'none';
                         currentActiveSection.style.visibility = 'hidden';
@@ -938,12 +938,12 @@
             return;
         }
 
-        // Special handling for transitions between property-detail-section and my-actions-section with right slide
-        const isFromPropertyDetailToMyActions = currentSection === 'property-detail-section' && sectionId === 'my-actions-section';
-        const isFromMyActionsToPropertyDetail = currentSection === 'my-actions-section' && sectionId === 'property-detail-section';
+        // Special handling for transitions between auction-property-detail-section and my-actions-section with right slide
+        const isFromPropertyDetailToMyActions = currentSection === 'auction-property-detail-section' && sectionId === 'my-actions-section';
+        const isFromMyActionsToPropertyDetail = currentSection === 'my-actions-section' && sectionId === 'auction-property-detail-section';
 
         if (isFromPropertyDetailToMyActions || isFromMyActionsToPropertyDetail) {
-            const propertyDetailSection = document.getElementById('property-detail-section');
+            const propertyDetailSection = document.getElementById('auction-property-detail-section');
             const myActionsSection = document.getElementById('my-actions-section');
             const currentActiveSection = document.querySelector('.tab-section.active');
 
@@ -1096,10 +1096,10 @@
             return;
         }
 
-        // Check if we're coming from property-detail-section - handle zoom out (faster)
-        const isComingFromPropertyDetail = currentSection === 'property-detail-section';
+        // Check if we're coming from auction-property-detail-section - handle zoom out (faster)
+        const isComingFromPropertyDetail = currentSection === 'auction-property-detail-section';
         if (isComingFromPropertyDetail) {
-            const propertyDetailSection = document.getElementById('property-detail-section');
+            const propertyDetailSection = document.getElementById('auction-property-detail-section');
             const homeSection = document.getElementById('home-section');
 
             if (propertyDetailSection && propertyDetailSection.classList.contains('active')) {
@@ -1408,7 +1408,7 @@
                 const auctionsSubsection = document.getElementById('auctions-section');
                 const buySubsection = document.getElementById('buy-section');
                 const rentSubsection = document.getElementById('rent-section');
-                
+
                 // Restore will-be-hidden class to originally hidden elements
                 if (auctionsSubsection) {
                     const specialTitle = auctionsSubsection.querySelector('.home-page-property-section-title:first-of-type');
@@ -1420,7 +1420,7 @@
                         specialWrapper.classList.add('will-be-hidden');
                     }
                 }
-                
+
                 if (buySubsection) {
                     const specialTitle = buySubsection.querySelector('.home-page-property-section-title:first-of-type');
                     const specialWrapper = buySubsection.querySelector('.horizontal-scroll-wrapper:first-of-type');
@@ -1431,7 +1431,7 @@
                         specialWrapper.classList.add('will-be-hidden');
                     }
                 }
-                
+
                 if (rentSubsection) {
                     const specialTitle = rentSubsection.querySelector('.home-page-property-section-title:first-of-type');
                     const specialWrapper = rentSubsection.querySelector('.horizontal-scroll-wrapper:first-of-type');
@@ -1771,4 +1771,12 @@
      * This allows the history manager to switch sections when user presses back button
      */
     window.switchToSection = switchToSection;
+
+    /**
+     * Export getCurrentSection function so other files can get the current active section
+     * This helps track which section the user was viewing before navigating to detail pages
+     */
+    window.getCurrentSection = function () {
+        return currentSection;
+    };
 })();

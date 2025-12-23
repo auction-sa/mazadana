@@ -42,21 +42,6 @@
     will-change: transform, opacity;
 }
 
-/* Property Detail Section - Slide and Fade Animation */
-#property-detail-section {
-    transform-origin: center center;
-    /* Performance optimizations for smooth animations */
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-    contain: layout style paint;
-}
-
-#property-detail-section.active {
-    transform: translateY(0) translate3d(0, 0, 0) !important;
-    /* GPU acceleration with fallback */
-}
 
 /* Profile Section Content - Scrollable Container */
 .scrollable-container {

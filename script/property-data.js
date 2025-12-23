@@ -801,10 +801,10 @@
                         if (auctionId) {
                             if (typeof window.openPropertyDetail === 'function') {
                                 window.openPropertyDetail(auctionId, badgeStatus);
-                                // Scroll scrollable containers within property-detail-section to top
+                                // Scroll scrollable containers within auction-property-detail-section to top
                                 if (typeof window.scrollScrollableContainersToTop === 'function') {
                                     setTimeout(() => {
-                                        window.scrollScrollableContainersToTop('property-detail-section');
+                                        window.scrollScrollableContainersToTop('auction-property-detail-section');
                                     }, 15); // Wait for section to open
                                 }
                             } else {
@@ -835,10 +835,10 @@
                             if (auctionId) {
                                 if (typeof window.openPropertyDetail === 'function') {
                                     window.openPropertyDetail(auctionId, badgeStatus);
-                                    // Scroll scrollable containers within property-detail-section to top
+                                    // Scroll scrollable containers within auction-property-detail-section to top
                                     if (typeof window.scrollScrollableContainersToTop === 'function') {
                                         setTimeout(() => {
-                                            window.scrollScrollableContainersToTop('property-detail-section');
+                                            window.scrollScrollableContainersToTop('auction-property-detail-section');
                                         }, 15); // Wait for section to open
                                     }
                                 } else {

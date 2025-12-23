@@ -1,16 +1,14 @@
 /* Property Detail Page Styles */
 
 /* Property Detail Section - Initial State */
-#property-detail-section {
+#auction-property-detail-section {
     background: #e8e8e8;
     display: none;
     opacity: 0;
     transform: translate3d(0, 20px, 0);
-    /* GPU acceleration */
     visibility: hidden;
     pointer-events: none;
     transform-origin: center center;
-    /* Performance optimizations */
     will-change: transform, opacity;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;

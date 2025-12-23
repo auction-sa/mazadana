@@ -12,6 +12,7 @@
     'use strict';
 
     let currentAuctionData = null;
+    let previousSectionBeforePropertyDetail = null;
 
     /**
      * Format date string for display
@@ -531,7 +532,7 @@
                     <div class="category-icon-placeholder">${categoryIcon}</div>
                     <h3 class="category-title">${auction.auction_compName}</h3>
                 </div>
-                <i data-lucide="chevron-left" class="info-icon" style="cursor: pointer;" onclick="window.switchToSection('company-details-section')"></i>
+                <i data-lucide="chevron-left" id="seller-company-info-page-arrow-icon" class="info-icon" style="cursor: pointer;" onclick="window.switchToSection('company-details-section')"></i>
             </div>
 
 
@@ -677,10 +678,69 @@
     }
 
     /**
+     * Get the current active section before opening property detail
+     * This determines which section the user was viewing (auction-section, home-section, etc.)
+     */
+    function getCurrentSectionBeforePropertyDetail() {
+        // First, try to get from section-navigation.js if available
+        if (typeof window.getCurrentSection === 'function') {
+            return window.getCurrentSection();
+        }
+
+        // Fallback: determine from DOM
+        const activeSection = document.querySelector('.tab-section.active');
+        if (activeSection) {
+            const sectionId = activeSection.id;
+
+            // If we're in home-section, check which subsection is visible
+            if (sectionId === 'home-section') {
+                const auctionsSubsection = document.getElementById('auctions-section');
+                const buySubsection = document.getElementById('buy-section');
+                const rentSubsection = document.getElementById('rent-section');
+
+                // Check which subsection is visible
+                if (auctionsSubsection) {
+                    const style = window.getComputedStyle(auctionsSubsection);
+                    if (style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity) > 0) {
+                        return 'auction-section';
+                    }
+                }
+                if (buySubsection) {
+                    const style = window.getComputedStyle(buySubsection);
+                    if (style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity) > 0) {
+                        return 'buy-section';
+                    }
+                }
+                if (rentSubsection) {
+                    const style = window.getComputedStyle(rentSubsection);
+                    if (style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity) > 0) {
+                        return 'rent-section';
+                    }
+                }
+            }
+
+            return sectionId;
+        }
+
+        // Default fallback
+        return 'home-section';
+    }
+
+    /**
+     * Get the previous section before property detail was opened
+     */
+    window.getPreviousSectionBeforePropertyDetail = function () {
+        return previousSectionBeforePropertyDetail || 'home-section';
+    };
+
+    /**
      * Open property detail page
      */
     window.openPropertyDetail = async function (auctionId, badgeStatus) {
         try {
+            // Store the current section before navigating to property detail
+            previousSectionBeforePropertyDetail = getCurrentSectionBeforePropertyDetail();
+
             // Fetch auction data from JSON
             const response = await fetch('json-data/auction-property.json');
             if (!response.ok) {
@@ -707,12 +767,12 @@
 
             // Navigate to property detail section
             if (typeof window.switchToSection === 'function') {
-                window.switchToSection('property-detail-section');
+                window.switchToSection('auction-property-detail-section');
             } else {
                 console.error('switchToSection function not available');
             }
 
-            // Scrolling is enabled in section-navigation.js when property-detail-section opens
+            // Scrolling is enabled in section-navigation.js when auction-property-detail-section opens
 
         } catch (error) {
             console.error('Error opening property detail:', error);
@@ -743,11 +803,19 @@
                     const previousSection = (typeof window.getPreviousSectionBeforePropertyDetail === 'function')
                         ? window.getPreviousSectionBeforePropertyDetail()
                         : 'home-section';
+
                     window.switchToSection(previousSection);
-                    // Scroll scrollable containers within home-section to top
+
+                    // Scroll scrollable containers within the target section to top
                     if (typeof window.scrollScrollableContainersToTop === 'function') {
                         setTimeout(() => {
-                            window.scrollScrollableContainersToTop('home-section');
+                            // Use the previous section for scrolling, or home-section if it's a subsection
+                            const scrollTarget = (previousSection === 'auction-section' ||
+                                previousSection === 'buy-section' ||
+                                previousSection === 'rent-section')
+                                ? 'home-section'
+                                : previousSection;
+                            window.scrollScrollableContainersToTop(scrollTarget);
                         }, 50); // Wait for section switch to complete
                     }
                 }
