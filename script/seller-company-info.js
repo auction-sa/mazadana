@@ -11,6 +11,86 @@
 (function () {
     'use strict';
 
+    /**
+     * Local helpers (mirrors logic in property-data.js) to avoid missing globals
+     */
+    function parseArabicDate(dateString) {
+        if (!dateString) return null;
+        try {
+            let normalized = dateString
+                .replace(/صباحً|ص/g, 'AM')
+                .replace(/مساءً|م/g, 'PM')
+                .replace(/[—–−]/g, '-')
+                .trim();
+            const parts = normalized.split(/\s+/);
+            if (parts.length < 2) return null;
+            const [year, month, day] = parts[0].split(/[-\/]/).map(Number);
+            const timeMatch = parts.slice(1).join(' ').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+            if (!year || !month || !day || !timeMatch) return null;
+            let hours = parseInt(timeMatch[1], 10);
+            const minutes = parseInt(timeMatch[2], 10);
+            const ampm = timeMatch[3].toUpperCase();
+            if (ampm === 'PM' && hours !== 12) hours += 12;
+            if (ampm === 'AM' && hours === 12) hours = 0;
+            return new Date(year, month - 1, day, hours, minutes, 0);
+        } catch {
+            return null;
+        }
+    }
+
+    function calculateTimeRemaining(targetDate) {
+        if (!targetDate) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+        const now = new Date();
+        const diff = targetDate.getTime() - now.getTime();
+        if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        return { days, hours, minutes, seconds, expired: false };
+    }
+
+    function getRemainingTimeInfo(bidStartDate, bidEndDate) {
+        const now = new Date();
+        const startDate = parseArabicDate(bidStartDate);
+        const endDate = parseArabicDate(bidEndDate);
+        if (!startDate || !endDate) return { label: 'ينتهي المزاد بعد:', targetDate: bidEndDate || bidStartDate };
+        if (now < startDate) return { label: 'يبدأ المزاد بعد:', targetDate: bidStartDate };
+        if (now > endDate) return { label: 'انتهى المزاد', targetDate: null };
+        return { label: 'ينتهي المزاد بعد:', targetDate: bidEndDate };
+    }
+
+    function padNumber(num) {
+        return num.toString().padStart(2, '0');
+    }
+
+    function updateCountdownTimer(element, bidStartDate, bidEndDate) {
+        const remainingTimeInfo = getRemainingTimeInfo(bidStartDate, bidEndDate);
+        if (!remainingTimeInfo.targetDate) {
+            element.textContent = 'انتهى المزاد';
+            return;
+        }
+        const targetDate = parseArabicDate(remainingTimeInfo.targetDate);
+        const timeRemaining = calculateTimeRemaining(targetDate);
+        const daysStr = padNumber(timeRemaining.days);
+        const hoursStr = padNumber(timeRemaining.hours);
+        const minutesStr = padNumber(timeRemaining.minutes);
+        const secondsStr = padNumber(timeRemaining.seconds);
+        element.innerHTML = `
+            <div class="flip-time-group">
+                <div class="flip-digits-pair"><span>${secondsStr[1]}</span><span>${secondsStr[0]}</span></div>
+            </div>
+            <div class="flip-time-group">
+                <div class="flip-digits-pair"><span>${minutesStr[1]}</span><span>${minutesStr[0]}</span></div>
+            </div>
+            <div class="flip-time-group">
+                <div class="flip-digits-pair"><span>${hoursStr[1]}</span><span>${hoursStr[0]}</span></div>
+            </div>
+            <div class="flip-time-group">
+                <div class="flip-digits-pair"><span>${daysStr[1]}</span><span>${daysStr[0]}</span></div>
+            </div>
+        `;
+    }
     let currentCompanyData = null;
     let currentAuctionId = null;
 
@@ -180,6 +260,141 @@
     }
 
     /**
+     * Get remaining time label similar to home auctions
+     */
+    /**
+     * Flip clock helpers (matching auction cards)
+     */
+    function createFlipDigit(digit, unit) {
+        return `
+            <div class="flip-digit-box" data-unit="${unit}">
+                <div class="flip-digit-inner">
+                    <span class="flip-digit-text">${digit}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function createFlipClockHTML(timeObj) {
+        const daysStr = padNumber(timeObj.days);
+        const hoursStr = padNumber(timeObj.hours);
+        const minutesStr = padNumber(timeObj.minutes);
+        const secondsStr = padNumber(timeObj.seconds);
+
+        return `
+            <div class="flip-clock-container">
+                <div class="flip-time-group">
+                    <div class="flip-digits-pair">
+                        ${createFlipDigit(daysStr[0], 'days')}${createFlipDigit(daysStr[1], 'days')}
+                    </div>
+                    <div class="flip-label">يوم</div>
+                </div>
+                <div class="flip-time-group">
+                    <div class="flip-digits-pair">
+                        ${createFlipDigit(hoursStr[0], 'hours')}${createFlipDigit(hoursStr[1], 'hours')}
+                    </div>
+                    <div class="flip-label">ساعة</div>
+                </div>
+                <div class="flip-time-group">
+                    <div class="flip-digits-pair">
+                        ${createFlipDigit(minutesStr[0], 'minutes')}${createFlipDigit(minutesStr[1], 'minutes')}
+                    </div>
+                    <div class="flip-label">دقيقة</div>
+                </div>
+                <div class="flip-time-group">
+                    <div class="flip-digits-pair">
+                        ${createFlipDigit(secondsStr[0], 'seconds')}${createFlipDigit(secondsStr[1], 'seconds')}
+                    </div>
+                    <div class="flip-label">ثانية</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateFlipDigit(digitBox, newDigit) {
+        const digitText = digitBox.querySelector('.flip-digit-text');
+        if (!digitText) return;
+        const currentDigit = digitText.textContent;
+        if (currentDigit === newDigit) return;
+        digitBox.classList.add('flip-animate');
+        setTimeout(() => {
+            digitText.textContent = newDigit;
+        }, 150);
+        setTimeout(() => {
+            digitBox.classList.remove('flip-animate');
+        }, 300);
+    }
+
+    function getRemainingTimeInfo(bidStartDate, bidEndDate) {
+        const now = new Date();
+        const start = parseArabicDate(bidStartDate);
+        const end = parseArabicDate(bidEndDate);
+        if (!start || !end) {
+            return { label: 'ينتهي المزاد بعد:', targetDate: bidEndDate || bidStartDate };
+        }
+        if (now < start) {
+            return { label: 'يبدأ المزاد بعد:', targetDate: bidStartDate };
+        }
+        if (now > end) {
+            return { label: 'انتهى المزاد', targetDate: null };
+        }
+        return { label: 'ينتهي المزاد بعد:', targetDate: bidEndDate };
+    }
+
+    function updateCountdownTimer(element, bidStartDate, bidEndDate) {
+        const remainingTimeInfo = getRemainingTimeInfo(bidStartDate, bidEndDate);
+
+        // Update label sibling
+        const parentSection = element.parentElement;
+        if (parentSection) {
+            const labelElement = parentSection.querySelector('.remaining-time-label');
+            if (labelElement) {
+                labelElement.textContent = remainingTimeInfo.label;
+            }
+        }
+
+        // Ended
+        if (!remainingTimeInfo.targetDate) {
+            element.innerHTML = '<div style="color: #1e3d6f; font-weight: 600; text-align: center; padding: 0.5rem;">انتهى المزاد</div>';
+            return;
+        }
+
+        const targetDate = parseArabicDate(remainingTimeInfo.targetDate);
+        if (!targetDate) {
+            element.innerHTML = '<div style="color: red;">Invalid date</div>';
+            return;
+        }
+
+        const timeRemaining = calculateTimeRemaining(targetDate);
+
+        // Ensure structure
+        let container = element.querySelector('.flip-clock-container');
+        if (!container) {
+            element.innerHTML = createFlipClockHTML(timeRemaining);
+            container = element.querySelector('.flip-clock-container');
+            return;
+        }
+
+        // Update digits
+        const daysStr = padNumber(timeRemaining.days);
+        const hoursStr = padNumber(timeRemaining.hours);
+        const minutesStr = padNumber(timeRemaining.minutes);
+        const secondsStr = padNumber(timeRemaining.seconds);
+
+        const timeGroups = container.querySelectorAll('.flip-time-group');
+        const digitValues = [daysStr, hoursStr, minutesStr, secondsStr];
+
+        timeGroups.forEach((group, groupIndex) => {
+            const digitBoxes = group.querySelectorAll('.flip-digit-box');
+            const value = digitValues[groupIndex];
+            if (digitBoxes.length >= 2) {
+                updateFlipDigit(digitBoxes[0], value[0]);
+                updateFlipDigit(digitBoxes[1], value[1]);
+            }
+        });
+    }
+
+    /**
      * Initialize tab switching
      */
     function initTabs() {
@@ -308,6 +523,7 @@
             const assetCount = auction.auction_numberOfAssets || (auction.assets ? auction.assets.length : 0);
             const viewCount = auction.auction_viewCount || 0;
             const auctionTitle = auction.auction_title || auction.userCompanyName || 'عقار في المزاد';
+            const remainingInfo = getRemainingTimeInfo(auction.auction_bidStartDate, auction.auction_bidEndDate);
 
             // Determine status badge (reuse existing statusClass/text)
             let statusBadgeText = '';
@@ -368,7 +584,7 @@
                                 <i data-lucide="heart" class="property-card-heart-icon"></i>
                             </div>
                             <div class="bid-section-bottom">
-                                <div class="remaining-time-label">ينتهي في</div>
+                                <div class="remaining-time-label">${remainingInfo.label}</div>
                                 <div class="remaining-time-counter"
                                     ${auction.auction_bidStartDate ? `data-bid-start-date="${auction.auction_bidStartDate}"` : ''}
                                     ${auction.auction_bidEndDate ? `data-bid-end-date="${auction.auction_bidEndDate}"` : ''}></div>
@@ -397,10 +613,26 @@
             lucide.createIcons();
         }
 
+        // Initialize countdown timers for these cards (local)
+        const countdownElements = auctionsList.querySelectorAll('.remaining-time-counter[data-bid-start-date], .remaining-time-counter[data-bid-end-date]');
+        countdownElements.forEach(el => {
+            const start = el.getAttribute('data-bid-start-date');
+            const end = el.getAttribute('data-bid-end-date');
+            updateCountdownTimer(el, start, end);
+            const interval = setInterval(() => updateCountdownTimer(el, start, end), 1000);
+            // store on element for potential cleanup if needed later
+            el._sellerCountdownInterval = interval;
+        });
+
         // Add click handlers to auction cards
         const auctionCards = auctionsList.querySelectorAll('.seller-company-auction-card');
         auctionCards.forEach(card => {
             card.addEventListener('click', function () {
+                if (typeof window.scrollScrollableContainersToTop === 'function') {
+                    setTimeout(() => {
+                        window.scrollScrollableContainersToTop('auction-property-detail-section');
+                    }, 15); // Wait for section to open
+                }
                 const auctionId = this.getAttribute('data-auction-id');
                 if (auctionId && typeof window.openPropertyDetail === 'function') {
                     // Get badge status
