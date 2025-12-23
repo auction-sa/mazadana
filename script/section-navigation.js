@@ -763,6 +763,112 @@
             return;
         }
 
+        // Special handling for seller-company-info-page-section with optimized slide animation
+        if (sectionId === 'seller-company-info-page-section') {
+            const isFromPropertyDetail = currentActiveSection && currentActiveSection.id === 'auction-property-detail-section';
+
+            // Batch DOM reads first (before any writes)
+            const targetSectionComputed = window.getComputedStyle(targetSection);
+
+            // Always hide the auction-property-detail-section if it exists
+            const propertyDetailSection = document.getElementById('auction-property-detail-section');
+            if (propertyDetailSection) {
+                // Hide property detail header
+                const propertyDetailHeader = document.getElementById('auction-property-main-page-detail-header');
+                if (propertyDetailHeader) {
+                    propertyDetailHeader.style.display = 'none';
+                }
+
+                // Hide the section
+                propertyDetailSection.style.pointerEvents = 'none';
+                propertyDetailSection.style.willChange = 'opacity';
+                propertyDetailSection.style.transition = 'opacity 0.25s ease-out';
+
+                requestAnimationFrame(() => {
+                    propertyDetailSection.style.opacity = '0';
+
+                    setTimeout(() => {
+                        propertyDetailSection.classList.remove('active');
+                        propertyDetailSection.style.display = 'none';
+                        propertyDetailSection.style.visibility = 'hidden';
+                        propertyDetailSection.style.pointerEvents = 'none';
+                        propertyDetailSection.style.willChange = 'auto';
+                        propertyDetailSection.style.removeProperty('transition');
+                        // Remove overlay positioning if it was set
+                        propertyDetailSection.style.removeProperty('position');
+                        propertyDetailSection.style.removeProperty('top');
+                        propertyDetailSection.style.removeProperty('right');
+                        propertyDetailSection.style.removeProperty('left');
+                        propertyDetailSection.style.removeProperty('width');
+                        propertyDetailSection.style.removeProperty('z-index');
+                    }, 250);
+                });
+            }
+
+            // If coming from auction-property-detail-section, keep it visible during transition; otherwise hide current section
+            if (!isFromPropertyDetail && currentActiveSection) {
+                // Hide current section immediately (no animation needed)
+                currentActiveSection.classList.remove('active');
+                currentActiveSection.style.display = 'none';
+                currentActiveSection.style.opacity = '0';
+                currentActiveSection.style.visibility = 'hidden';
+                currentActiveSection.style.pointerEvents = 'none';
+            } else if (isFromPropertyDetail) {
+                // Already handled above, just ensure pointer events are disabled
+                if (currentActiveSection) {
+                    currentActiveSection.style.pointerEvents = 'none';
+                }
+            }
+
+            // Prepare seller-company-info-page-section with GPU-accelerated properties
+            targetSection.style.display = 'block';
+            targetSection.style.transform = 'translate3d(0, 20px, 0)';
+            targetSection.style.opacity = '0';
+            targetSection.style.visibility = 'visible';
+            targetSection.style.pointerEvents = 'none';
+            targetSection.style.willChange = 'transform, opacity';
+            targetSection.style.transition = 'transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            targetSection.classList.remove('active');
+
+            // If coming from auction-property-detail-section, position as overlay
+            if (isFromPropertyDetail) {
+                targetSection.style.position = 'absolute';
+                targetSection.style.top = '0';
+                targetSection.style.right = '0';
+                targetSection.style.left = '0';
+                targetSection.style.width = '100%';
+                targetSection.style.zIndex = '11';
+            }
+
+            // Single reflow before animation
+            targetSection.offsetHeight;
+
+            // Optimized animation: use single RAF with transform3d
+            requestAnimationFrame(() => {
+                targetSection.style.transform = 'translate3d(0, 0, 0)';
+                targetSection.style.opacity = '1';
+                targetSection.style.pointerEvents = 'auto';
+                targetSection.classList.add('active');
+
+                // Clean up will-change after animation completes
+                setTimeout(() => {
+                    targetSection.style.willChange = 'auto';
+                }, 350);
+            });
+
+            // Update current section
+            currentSection = sectionId;
+
+            // Push navigation state to history
+            setTimeout(() => {
+                if (typeof window.pushNavigationState === 'function') {
+                    window.pushNavigationState(false);
+                }
+            }, 100);
+
+            return;
+        }
+
         // Special handling for auction-property-detail-section with optimized slide animation
         if (sectionId === 'auction-property-detail-section') {
             const isFromHomeSection = currentActiveSection.id === 'home-section';
@@ -1094,6 +1200,42 @@
             }, 100);
 
             return;
+        }
+
+        // Check if we're coming from seller-company-info-page-section - handle slide out
+        const isComingFromSellerInfo = currentSection === 'seller-company-info-page-section';
+        if (isComingFromSellerInfo) {
+            const sellerInfoSection = document.getElementById('seller-company-info-page-section');
+            const homeSection = document.getElementById('home-section');
+
+            if (sellerInfoSection && sellerInfoSection.classList.contains('active')) {
+                // Slide down and fade out animation
+                sellerInfoSection.style.transition = 'transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                sellerInfoSection.style.transform = 'translateY(20px)';
+                sellerInfoSection.style.opacity = '0';
+
+                setTimeout(() => {
+                    sellerInfoSection.classList.remove('active');
+                    sellerInfoSection.style.display = 'none';
+                    sellerInfoSection.style.visibility = 'hidden';
+                    sellerInfoSection.style.pointerEvents = 'none';
+                    // Remove overlay positioning if it was set
+                    sellerInfoSection.style.removeProperty('position');
+                    sellerInfoSection.style.removeProperty('top');
+                    sellerInfoSection.style.removeProperty('right');
+                    sellerInfoSection.style.removeProperty('left');
+                    sellerInfoSection.style.removeProperty('width');
+                    sellerInfoSection.style.removeProperty('z-index');
+                }, 300);
+            }
+
+            // If switching back to auction-property-detail-section, restore its pointer events
+            if (sectionId === 'auction-property-detail-section') {
+                const propertyDetailSection = document.getElementById('auction-property-detail-section');
+                if (propertyDetailSection) {
+                    propertyDetailSection.style.pointerEvents = 'auto';
+                }
+            }
         }
 
         // Check if we're coming from auction-property-detail-section - handle zoom out (faster)

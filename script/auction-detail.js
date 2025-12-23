@@ -532,7 +532,7 @@
                     <div class="category-icon-placeholder">${categoryIcon}</div>
                     <h3 class="category-title">${auction.auction_compName}</h3>
                 </div>
-                <i data-lucide="chevron-left" id="seller-company-info-page-arrow-icon" class="info-icon" style="cursor: pointer;" onclick="window.switchToSection('company-details-section')"></i>
+                <i data-lucide="chevron-left" id="seller-company-info-page-arrow-icon" class="info-icon" style="cursor: pointer;"></i>
             </div>
 
 
@@ -543,11 +543,11 @@
 
             <!-- Auction Main Card -->
             <div class="auction-property-main-page-detail-top-image">
-            <img src="${auction.auction_image}" alt="${auction.auction_title || 'مزادنا للعقارات السعودية'}">
+            <img src="${auction.auction_image}" alt="${auction.userCompanyName || 'مزادنا للعقارات السعودية'}">
             </div>
 
             <div>
-                <h3 class="property-detail-auction-title">${auction.auction_title}</h3>
+                <h3 class="property-detail-auction-title">${auction.userCompanyName}</h3>
             </div>
 
             <!-- Info Section -->
@@ -661,6 +661,57 @@
                 }
             });
         }
+
+        // Use event delegation on the category header for the seller company info arrow icon
+        // This works even after Lucide icons replace the DOM elements
+        const categoryHeader = container.querySelector('.auction-property-main-page-detail-category-header');
+        if (categoryHeader) {
+            categoryHeader.addEventListener('click', function (e) {
+                // Check if click is on the arrow icon or its SVG/path elements
+                const arrowIcon = categoryHeader.querySelector('#seller-company-info-page-arrow-icon');
+                if (arrowIcon && (arrowIcon.contains(e.target) || e.target === arrowIcon ||
+                    e.target.closest('#seller-company-info-page-arrow-icon'))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentAuctionData && typeof window.openSellerCompanyInfo === 'function') {
+                        window.openSellerCompanyInfo(currentAuctionData.id);
+                    } else {
+                        console.error('Cannot open seller company info:', {
+                            hasData: !!currentAuctionData,
+                            hasFunction: typeof window.openSellerCompanyInfo === 'function',
+                            auctionId: currentAuctionData?.id
+                        });
+                    }
+                }
+            });
+        }
+
+        // Also add direct click handler after Lucide icons are initialized
+        setTimeout(() => {
+            const sellerCompanyInfoArrow = container.querySelector('#seller-company-info-page-arrow-icon');
+            if (sellerCompanyInfoArrow) {
+                // Remove any existing listeners by cloning
+                const newArrow = sellerCompanyInfoArrow.cloneNode(true);
+                sellerCompanyInfoArrow.parentNode.replaceChild(newArrow, sellerCompanyInfoArrow);
+
+                newArrow.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentAuctionData && typeof window.openSellerCompanyInfo === 'function') {
+                        window.openSellerCompanyInfo(currentAuctionData.id);
+                    }
+                });
+
+                // Ensure it's clickable
+                newArrow.style.pointerEvents = 'auto';
+                newArrow.style.cursor = 'pointer';
+
+                // Re-initialize Lucide icon if needed
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        }, 300);
     }
 
     /**

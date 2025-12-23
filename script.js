@@ -59,6 +59,7 @@
             'script/banner-slider.js',           // Banner slider
             'script/install-pwa.js',             // PWA installation
             'script/auction-detail.js',          // Auction property detail page
+            'script/seller-company-info.js',    // Seller company info page
             'script/profile-navigation.js',     // Profile navigation
             'script/user-acc-data.js',           // Account info tabs
             'script/user-actions-section.js',      // My actions section

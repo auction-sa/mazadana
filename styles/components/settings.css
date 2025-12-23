@@ -12,12 +12,15 @@
     position: relative;
 }
 
-.settings-content{
+.settings-content {
     padding: 0 var(--spacing-sm);
 }
 
 /* Ensure settings header is fixed at the top */
-#settings-header, #auction-property-main-page-detail-header, #start-auction-header {
+#settings-header,
+#auction-property-main-page-detail-header,
+#start-auction-header,
+#seller-company-info-page-header {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;

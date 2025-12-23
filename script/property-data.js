@@ -678,7 +678,7 @@
                     </div>
                 </div>
                 <div class="property-content-home-page">
-                    <h3 class="property-title-home-page">${auction.auction_title || 'عقار في المزاد'}</h3>
+                    <h3 class="property-title-home-page">${auction.userCompanyName || 'عقار في المزاد'}</h3>
                     <div class="auction-meta-home-page">
                         <div class="auction-timer-home-page">
                             <i data-lucide="clock" class="meta-icon"></i>
