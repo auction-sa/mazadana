@@ -31,7 +31,7 @@
         },
         step3: {
             startPrice: '',
-            reservePrice: '',
+            depositPrice: '',
             bidIncrement: '',
             auctionStartDate: '',
             auctionStartTime: '',
@@ -353,9 +353,9 @@
 
                     <!-- Reserve Price -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">السعر الاحتياطي (اختياري)</label>
+                        <label class="add-new-auction-form-label">قيمة التأمين (اختياري)</label>
                         <div class="input-with-currency">
-                            <input type="number" class="add-new-auction-form-input" id="reserve-price" value="${data.reservePrice}" 
+                            <input type="number" class="add-new-auction-form-input" id="deposit-amount" value="${data.depositPrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
                             <span class="input-currency">
                                 <img src="rial-icon.webp" alt="ريال" class="rial-icon">
@@ -619,8 +619,8 @@
                             <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">السعر الاحتياطي:</span>
-                            <span class="review-value">${data.step3.reservePrice ? formatCurrency(data.step3.reservePrice) : 'غير محدد'}</span>
+                            <span class="review-label">قيمة التأمين:</span>
+                            <span class="review-value">${data.step3.depositPrice ? formatCurrency(data.step3.depositPrice) : 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">قيمة الزيادة:</span>
@@ -1009,7 +1009,7 @@
 
         formData.step3 = {
             startPrice: document.getElementById('start-price')?.value || '',
-            reservePrice: document.getElementById('reserve-price')?.value || '',
+            depositPrice: document.getElementById('deposit-amount')?.value || '',
             bidIncrement: document.getElementById('bid-increment')?.value || '',
             auctionStartDate: startDateInput?.getAttribute('data-date-value') || '',
             auctionStartTime: startTimeInput?.value || '',
@@ -1273,8 +1273,8 @@
                     <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
-                    <span class="review-label">السعر الاحتياطي:</span>
-                    <span class="review-value">${data.step3.reservePrice ? formatCurrency(data.step3.reservePrice) : 'غير محدد'}</span>
+                    <span class="review-label">قيمة التأمين:</span>
+                    <span class="review-value">${data.step3.depositPrice ? formatCurrency(data.step3.depositPrice) : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">قيمة الزيادة:</span>
@@ -1681,7 +1681,7 @@
         }
 
         // Save step 3 inputs (excluding date inputs as they're handled by Pikaday)
-        ['start-price', 'reserve-price', 'bid-increment', 'auction-start-time'].forEach(id => {
+        ['start-price', 'deposit-amount', 'bid-increment', 'auction-start-time'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', saveStep3);
