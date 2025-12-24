@@ -631,11 +631,25 @@
             // Check if we need to switch sections (coming from a different section)
             const needsSectionSwitch = currentActiveSection && currentActiveSection.id !== 'home-section';
             const isComingFromProfile = currentActiveSection && currentActiveSection.id === 'profile-section';
-            const isComingFromPropertyDetail = currentActiveSection && currentActiveSection.id === 'auction-property-detail-section';
+            const isComingFromPropertyDetail = currentActiveSection && (currentActiveSection.id === 'auction-property-detail-section' || currentActiveSection.id === 'auction-asset-property-detail-section');
 
-            // Handle auction-property-detail-section slide down and fade out animation
+            // Handle auction-property-detail-section or auction-asset-property-detail-section slide down and fade out animation
             if (isComingFromPropertyDetail && currentActiveSection) {
                 const propertyDetailSection = currentActiveSection;
+
+                // Hide headers and bottom bars if applicable
+                if (currentActiveSection.id === 'auction-property-detail-section') {
+                    const propertyDetailHeader = document.getElementById('auction-property-main-page-detail-header');
+                    if (propertyDetailHeader) {
+                        propertyDetailHeader.style.display = 'none';
+                    }
+                } else if (currentActiveSection.id === 'auction-asset-property-detail-section') {
+                    const assetDetailHeader = document.getElementById('auction-asset-property-detail-header');
+                    if (assetDetailHeader) {
+                        assetDetailHeader.style.display = 'none';
+                    }
+                }
+
                 propertyDetailSection.style.transition = 'transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
                 propertyDetailSection.style.transform = 'translateY(20px)';
                 propertyDetailSection.style.opacity = '0';
@@ -851,6 +865,94 @@
                 targetSection.classList.add('active');
 
                 // Clean up will-change after animation completes
+                setTimeout(() => {
+                    targetSection.style.willChange = 'auto';
+                }, 350);
+            });
+
+            // Update current section
+            currentSection = sectionId;
+
+            // Push navigation state to history
+            setTimeout(() => {
+                if (typeof window.pushNavigationState === 'function') {
+                    window.pushNavigationState(false);
+                }
+            }, 100);
+
+            return;
+        }
+
+        // Special handling for auction-asset-property-detail-section with optimized slide animation (same as auction-property-detail-section)
+        if (sectionId === 'auction-asset-property-detail-section') {
+            const isFromHomeSection = currentActiveSection.id === 'home-section' || currentActiveSection.id === 'auction-property-detail-section';
+
+            // Batch DOM reads first (before any writes)
+            const targetSectionComputed = window.getComputedStyle(targetSection);
+
+            // If coming from home-section or auction-property-detail-section, keep it visible; otherwise hide current section
+            if (!isFromHomeSection) {
+                // Hide current section immediately (no animation needed)
+                currentActiveSection.classList.remove('active');
+                currentActiveSection.style.display = 'none';
+                currentActiveSection.style.opacity = '0';
+                currentActiveSection.style.visibility = 'hidden';
+                currentActiveSection.style.pointerEvents = 'none';
+            } else {
+                // Disable pointer events immediately to prevent interaction
+                currentActiveSection.style.pointerEvents = 'none';
+
+                // Optimized fade-out: use compositor-only properties
+                currentActiveSection.style.willChange = 'opacity';
+                currentActiveSection.style.transition = 'opacity 0.25s ease-out';
+
+                // Use single RAF for better performance
+                requestAnimationFrame(() => {
+                    currentActiveSection.style.opacity = '0';
+
+                    // Clean up after animation
+                    setTimeout(() => {
+                        currentActiveSection.style.display = 'none';
+                        currentActiveSection.classList.remove('active');
+                        currentActiveSection.style.willChange = 'auto';
+                        currentActiveSection.style.removeProperty('transition');
+                    }, 250);
+                });
+            }
+
+            // Prepare auction-asset-property-detail-section with GPU-accelerated properties
+            // Use transform3d for better GPU acceleration on low-end devices
+            targetSection.style.display = 'block';
+            targetSection.style.transform = 'translate3d(0, 20px, 0)'; // GPU acceleration
+            targetSection.style.opacity = '0';
+            targetSection.style.visibility = 'visible';
+            targetSection.style.pointerEvents = 'none';
+            targetSection.style.willChange = 'transform, opacity'; // Hint for browser optimization
+            targetSection.style.transition = 'transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            targetSection.classList.remove('active');
+
+            // If coming from home-section or auction-property-detail-section, position auction-asset-property-detail-section as overlay
+            if (isFromHomeSection) {
+                targetSection.style.position = 'absolute';
+                targetSection.style.top = '0';
+                targetSection.style.right = '0';
+                targetSection.style.left = '0';
+                targetSection.style.width = '100%';
+                targetSection.style.zIndex = '10';
+            }
+
+            // Single reflow before animation
+            targetSection.offsetHeight;
+
+            // Optimized animation: use single RAF with transform3d
+            requestAnimationFrame(() => {
+                // Use transform3d for GPU acceleration
+                targetSection.style.transform = 'translate3d(0, 0, 0)';
+                targetSection.style.opacity = '1';
+                targetSection.style.pointerEvents = 'auto';
+                targetSection.classList.add('active');
+
+                // Clean up will-change after animation completes (performance optimization)
                 setTimeout(() => {
                     targetSection.style.willChange = 'auto';
                 }, 350);
@@ -1246,13 +1348,21 @@
             }
         }
 
-        // Check if we're coming from auction-property-detail-section - handle zoom out (faster)
-        const isComingFromPropertyDetail = currentSection === 'auction-property-detail-section';
+        // Check if we're coming from auction-property-detail-section or auction-asset-property-detail-section - handle zoom out (faster)
+        const isComingFromPropertyDetail = currentSection === 'auction-property-detail-section' || currentSection === 'auction-asset-property-detail-section';
         if (isComingFromPropertyDetail) {
             const propertyDetailSection = document.getElementById('auction-property-detail-section');
+            const assetPropertyDetailSection = document.getElementById('auction-asset-property-detail-section');
             const homeSection = document.getElementById('home-section');
 
+            // Handle auction-property-detail-section
             if (propertyDetailSection && propertyDetailSection.classList.contains('active')) {
+                // Hide property detail header
+                const propertyDetailHeader = document.getElementById('auction-property-main-page-detail-header');
+                if (propertyDetailHeader) {
+                    propertyDetailHeader.style.display = 'none';
+                }
+
                 // Slide down and fade out animation
                 propertyDetailSection.style.transition = 'transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
                 propertyDetailSection.style.transform = 'translateY(20px)';
@@ -1270,6 +1380,34 @@
                     propertyDetailSection.style.removeProperty('left');
                     propertyDetailSection.style.removeProperty('width');
                     propertyDetailSection.style.removeProperty('z-index');
+                }, 300);
+            }
+
+            // Handle auction-asset-property-detail-section
+            if (assetPropertyDetailSection && assetPropertyDetailSection.classList.contains('active')) {
+                // Hide asset detail header
+                const assetDetailHeader = document.getElementById('auction-asset-property-detail-header');
+                if (assetDetailHeader) {
+                    assetDetailHeader.style.display = 'none';
+                }
+
+                // Slide down and fade out animation
+                assetPropertyDetailSection.style.transition = 'transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                assetPropertyDetailSection.style.transform = 'translateY(20px)';
+                assetPropertyDetailSection.style.opacity = '0';
+
+                setTimeout(() => {
+                    assetPropertyDetailSection.classList.remove('active');
+                    assetPropertyDetailSection.style.display = 'none';
+                    assetPropertyDetailSection.style.visibility = 'hidden';
+                    assetPropertyDetailSection.style.pointerEvents = 'none';
+                    // Remove overlay positioning if it was set
+                    assetPropertyDetailSection.style.removeProperty('position');
+                    assetPropertyDetailSection.style.removeProperty('top');
+                    assetPropertyDetailSection.style.removeProperty('right');
+                    assetPropertyDetailSection.style.removeProperty('left');
+                    assetPropertyDetailSection.style.removeProperty('width');
+                    assetPropertyDetailSection.style.removeProperty('z-index');
                 }, 300);
             }
 

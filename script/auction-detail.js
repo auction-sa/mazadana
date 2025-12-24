@@ -333,6 +333,9 @@
         });
     }
 
+    // Export updateCountdownTimer for use in other modules
+    window.updateAssetCountdownTimer = updateCountdownTimer;
+
     /**
      * Get asset status based on dates
      * @param {string} bidStartDate - The bid start date string
@@ -386,7 +389,7 @@
     /**
      * Render asset card HTML
      */
-    function renderAssetCard(asset, index) {
+    function renderAssetCard(asset, index, auctionId) {
         // Get dates - handle both naming conventions
         const bidStartDate = asset.auctionAsset_bidStartDate || asset.bidStartDate;
         const bidEndDate = asset.auctionAsset_bidEndDate || asset.bidEndDate;
@@ -411,7 +414,7 @@
         const assetStatus = getAssetStatus(bidStartDate, bidEndDate);
 
         return `
-            <div class="auction-property-main-page-detail-asset-card">
+            <div class="auction-property-main-page-detail-asset-card" data-asset-id="${asset.id || index}" data-auction-id="${auctionId || ''}">
                 <div class="auction-property-main-page-detail-asset-card-header">
                     <div class="asset-thumbnail">
                         <img src="${asset.auctionAsset_image || asset.auctionAsset_propertyImages?.[0] || ''}" alt="${asset.auctionAsset_title || 'عقار'}" onerror="this.style.display='none'">
@@ -583,7 +586,7 @@
             </div>
 
             <!-- Assets Section -->
-            ${assets.map((asset, index) => renderAssetCard(asset, index)).join('')}
+            ${assets.map((asset, index) => renderAssetCard(asset, index, auction.id)).join('')}
         `;
 
         // Batch DOM write operation
@@ -598,6 +601,36 @@
                 setTimeout(callback, 0);
             }
         };
+
+        // Add click handlers to asset cards
+        deferHeavyOperations(() => {
+            const assetCards = container.querySelectorAll('.auction-property-main-page-detail-asset-card');
+            assetCards.forEach((card) => {
+                card.addEventListener('click', function (e) {
+                    // Don't trigger if clicking on buttons or interactive elements
+                    if (e.target.closest('button') ||
+                        e.target.closest('.property-cta-btn-home-page') ||
+                        e.target.closest('.asset-menu-icon')) {
+                        return;
+                    }
+
+                    // Get asset and auction IDs from data attributes
+                    const assetId = card.getAttribute('data-asset-id');
+                    const auctionId = card.getAttribute('data-auction-id') || (currentAuctionData ? currentAuctionData.id : null);
+                    // Get the countdown container ID from this card
+                    const countdownContainerId = card.querySelector('[id^="asset-countdown-"]')?.id;
+
+                    if (assetId && auctionId && typeof window.openAssetDetail === 'function') {
+                        window.openAssetDetail(parseInt(auctionId), parseInt(assetId), countdownContainerId || null);
+                    } else {
+                        console.error('Cannot open asset detail:', { assetId, auctionId, hasFunction: typeof window.openAssetDetail === 'function' });
+                    }
+                });
+
+                // Make card cursor pointer
+                card.style.cursor = 'pointer';
+            });
+        });
 
         // Initialize countdown timers (deferred for better initial animation performance)
         deferHeavyOperations(() => {
