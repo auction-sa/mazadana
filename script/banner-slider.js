@@ -19,7 +19,7 @@
     function initBannerSlider() {
         // Get all slides and indicator dots
         const slides = document.querySelectorAll('.banner-slide');
-        const indicators = document.querySelectorAll('.indicator');
+        const indicators = document.querySelectorAll('.gallery-indicator');
 
         // If no slides found, exit early
         if (slides.length === 0 || indicators.length === 0) {

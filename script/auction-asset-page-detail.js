@@ -371,17 +371,18 @@
         if (!galleryContainer) return;
 
         const imageWrappers = galleryContainer.querySelectorAll('.gallery-image-wrapper');
-        const indicators = document.querySelectorAll('.gallery-indicator');
-        const currentIndexSpan = document.querySelector('.current-image-index');
+        // Get indicators within this gallery only
+        const gallerySection = galleryContainer.closest('.asset-detail-image-gallery');
+        const indicators = gallerySection ? gallerySection.querySelectorAll('.gallery-indicator') : [];
+        const currentIndexSpan = gallerySection ? gallerySection.querySelector('.current-image-index') : null;
         let currentIndex = 0;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
         let isZoomed = false;
         let currentScale = 1;
         let currentTranslateX = 0;
         let currentTranslateY = 0;
+        // Touch variables for swipe (matching banner-slider.js)
+        let touchStartX = 0;
+        let touchEndX = 0;
 
         // Show image by index
         function showImage(index) {
@@ -415,35 +416,40 @@
             }
         }
 
-        // Handle touch events for swipe
+        // Handle touch events for swipe (matching banner-slider.js functionality)
         galleryContainer.addEventListener('touchstart', (e) => {
             if (isZoomed) return;
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
+            touchStartX = e.changedTouches[0].screenX;
         }, { passive: true });
 
         galleryContainer.addEventListener('touchend', (e) => {
             if (isZoomed) return;
-            touchEndX = e.changedTouches[0].clientX;
-            touchEndY = e.changedTouches[0].clientY;
+            touchEndX = e.changedTouches[0].screenX;
             handleSwipe();
         }, { passive: true });
 
         function handleSwipe() {
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
+            const swipeThreshold = 50; // Minimum distance for a swipe
+            const diff = touchStartX - touchEndX;
 
-            // Only handle horizontal swipes
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0) {
-                    // Swipe left - next image
-                    showImage((currentIndex + 1) % imageWrappers.length);
-                } else {
-                    // Swipe right - previous image
+            // If swipe distance is large enough
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - previous image (matching banner behavior)
                     showImage((currentIndex - 1 + imageWrappers.length) % imageWrappers.length);
+                } else {
+                    // Swipe right - next image (matching banner behavior)
+                    showImage((currentIndex + 1) % imageWrappers.length);
                 }
             }
         }
+
+        // Add click handlers to gallery indicators (matching banner functionality)
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                showImage(index);
+            });
+        });
 
         // Handle pinch/zoom and double tap
         imageWrappers.forEach((wrapper, index) => {
@@ -633,6 +639,21 @@
         setTimeout(() => {
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
+                // Ensure download icons are white
+                setTimeout(() => {
+                    const downloadIcons = bottomSheet.querySelectorAll('.attachment-download-btn [data-lucide="download"]');
+                    downloadIcons.forEach(icon => {
+                        const svg = icon.querySelector('svg');
+                        if (svg) {
+                            svg.style.stroke = 'white';
+                            svg.style.color = 'white';
+                            const paths = svg.querySelectorAll('path');
+                            paths.forEach(path => {
+                                path.style.stroke = 'white';
+                            });
+                        }
+                    });
+                }, 50);
             }
             bottomSheet.classList.add('active');
         }, 10);

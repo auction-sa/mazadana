@@ -203,10 +203,10 @@
     position: absolute;
     top: var(--spacing-md);
     right: var(--spacing-md);
-    width: 44px;
-    height: 44px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--bg-white);
     border: none;
     color: var(--bg-white);
     cursor: pointer;
@@ -485,9 +485,32 @@
     flex-shrink: 0;
 }
 
+/* Override base icon styles for download button - ensure white icon */
+.attachment-download-btn [data-lucide="download"],
+.attachment-download-btn i[data-lucide="download"],
 .attachment-download-btn i {
     width: 20px;
     height: 20px;
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    stroke-width: 2 !important;
+}
+
+.attachment-download-btn [data-lucide="download"] svg,
+.attachment-download-btn i[data-lucide="download"] svg,
+.attachment-download-btn i svg {
+    stroke: #ffffff !important;
+    fill: none !important;
+    color: #ffffff !important;
+}
+
+.attachment-download-btn [data-lucide="download"] svg path,
+.attachment-download-btn i[data-lucide="download"] svg path,
+.attachment-download-btn i svg path,
+.attachment-download-btn [data-lucide="download"] svg *,
+.attachment-download-btn i svg * {
+    stroke: #ffffff !important;
+    fill: none !important;
 }
 
 /* Date Counter Container */
