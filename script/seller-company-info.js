@@ -762,6 +762,50 @@
     };
 
     /**
+     * Initialize the HTML structure for seller company info section
+     */
+    function initSellerCompanyInfoStructure() {
+        const section = document.getElementById('seller-company-info-section');
+        if (!section) {
+            console.error('Seller company info section not found');
+            return;
+        }
+
+        // Check if structure already exists
+        if (section.querySelector('.settings-container')) {
+            return;
+        }
+
+        // Create the HTML structure
+        const html = `
+            <div class="settings-container">
+                <!-- Header -->
+                <div id="seller-company-info-page-header" class="account-tabs-header" style="display: none;">
+                    <button class="back-to-profile-btn" id="seller-company-info-back-btn" aria-label="العودة">
+                        <i data-lucide="arrow-right" class="back-icon"></i>
+                    </button>
+                    <h2 class="account-tabs-title" id="seller-company-info-title">اسم الشركة</h2>
+                    <button class="share-btn" id="seller-company-info-share-btn" aria-label="مشاركة">
+                        <i data-lucide="share-2" class="share-icon"></i>
+                    </button>
+                </div>
+
+                <!-- Content Container -->
+                <div class="seller-company-info-container scrollable-container">
+                    <!-- Content will be rendered here by JavaScript -->
+                </div>
+            </div>
+        `;
+
+        section.innerHTML = html;
+
+        // Initialize Lucide icons if available
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    /**
      * Initialize back button
      */
     function initBackButton() {
@@ -806,11 +850,19 @@
         }
     }
 
+    /**
+     * Initialize all components
+     */
+    function init() {
+        initSellerCompanyInfoStructure();
+        initBackButton();
+    }
+
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBackButton);
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        initBackButton();
+        init();
     }
 
 })();
