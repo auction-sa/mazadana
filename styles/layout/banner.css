@@ -16,9 +16,21 @@
     will-change: transform, opacity;
 }
 
+.banner-section .gallery-indicators {
+    position: absolute;
+    bottom: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--spacing-xs);
+    z-index: 2;
+    background: transparent;
+    padding: 0;
+}
+
 .banner-slider {
     width: 100%;
-    height: 140px;
+    height: 180px;
     position: relative;
     overflow: hidden;
     border-radius: 0;
@@ -85,17 +97,4 @@
 .banner-content p {
     font-size: 0.7rem;
     opacity: 0.95;
-}
-
-/* Gallery indicators for banner (reusing gallery-indicator styles from auction-asset-property-detail.css) */
-.banner-section .gallery-indicators {
-    position: absolute;
-    bottom: var(--spacing-md);
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: var(--spacing-xs);
-    z-index: 2;
-    background: transparent;
-    padding: 0;
 }

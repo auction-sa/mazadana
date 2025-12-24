@@ -132,6 +132,11 @@
     margin: 0.7rem 0;
 }
 
+.property-detail-info-card .info-icon {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
 .info-label {
     display: flex;
     align-items: center;

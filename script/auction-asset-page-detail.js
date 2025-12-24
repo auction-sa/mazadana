@@ -238,7 +238,13 @@
                 </div>
             </div>
 
-            <!-- Bottom Spacer for Sticky Bar -->
+            <!-- Property Address Details Section -->
+            <div class="asset-detail-section">
+                <h3 class="asset-detail-section-title">موقع العقار والمعالم الجاورة</h3>
+                <div id="auction-asset-property-location-google-map-container" class="product-details-list">
+                    /* Google Map Embed Code (will be browsed within my website url) */
+                </div>
+            </div>
         `;
 
         container.innerHTML = html;
