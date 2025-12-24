@@ -24,7 +24,7 @@
      */
     async function fetchUserData() {
         // Check localStorage first for saved company data
-        const savedCompanyData = localStorage.getItem('userCompanyDetails');
+        const savedCompanyData = localStorage.getItem('sellerCompanyDetails');
 
         if (userData && !savedCompanyData) {
             return userData; // Return cached data if no localStorage changes
@@ -41,10 +41,10 @@
             if (savedCompanyData) {
                 try {
                     const savedData = JSON.parse(savedCompanyData);
-                    if (userData.userCompanyDetails && userData.userCompanyDetails.length > 0) {
-                        userData.userCompanyDetails[0] = { ...userData.userCompanyDetails[0], ...savedData };
+                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                        userData.sellerCompanyDetails[0] = { ...userData.sellerCompanyDetails[0], ...savedData };
                     } else {
-                        userData.userCompanyDetails = [savedData];
+                        userData.sellerCompanyDetails = [savedData];
                     }
                 } catch (e) {
                     console.warn('Error parsing saved company data:', e);
@@ -79,22 +79,22 @@
         const userEmail = data?.userEmailAddress || 'غير محدد';
         const userPhone = data?.userPhoneNumber || 'غير محدد';
 
-        // Get company details from userCompanyDetails array
-        const companyDetails = data?.userCompanyDetails && data.userCompanyDetails.length > 0
-            ? data.userCompanyDetails[0]
+        // Get company details from sellerCompanyDetails array
+        const companyDetails = data?.sellerCompanyDetails && data.sellerCompanyDetails.length > 0
+            ? data.sellerCompanyDetails[0]
             : {};
-        const companyLogo = companyDetails?.userCompanyLogo || '';
-        const companyBanner = companyDetails?.userCompanyBanner || '';
-        const companyDescription = companyDetails?.userCompanyDescription || '';
-        const companyAddress = companyDetails?.userCompanyAddress || '';
-        const companyAddressUrl = companyDetails?.userCompanyAddressUrl || '';
-        const companyPhone = companyDetails?.userCompanyPhone || '';
-        const companyEmail = companyDetails?.userCompanyEmail || '';
-        const companyInstagram = companyDetails?.userCompanyInstagram || '';
-        const companyTikTok = companyDetails?.userCompanyTikTok || '';
-        const companyTwitter = companyDetails?.userCompanyTwitter || '';
-        const companyFacebook = companyDetails?.userCompanyFacebook || '';
-        const companyYouTube = companyDetails?.userCompanyYouTube || '';
+        const companyLogo = companyDetails?.sellerCompanyLogo || '';
+        const companyBanner = companyDetails?.sellerCompanyBanner || '';
+        const companyDescription = companyDetails?.sellerCompanyDescription || '';
+        const companyAddress = companyDetails?.sellerCompanyAddress || '';
+        const companyAddressUrl = companyDetails?.sellerCompanyAddressUrl || '';
+        const companyPhone = companyDetails?.sellerCompanyPhone || '';
+        const companyEmail = companyDetails?.sellerCompanyEmail || '';
+        const companyInstagram = companyDetails?.sellerCompanyInstagram || '';
+        const companyTikTok = companyDetails?.sellerCompanyTikTok || '';
+        const companyTwitter = companyDetails?.sellerCompanyTwitter || '';
+        const companyFacebook = companyDetails?.sellerCompanyFacebook || '';
+        const companyYouTube = companyDetails?.sellerCompanyYouTube || '';
 
         accountInfoView.innerHTML = `
             <div class="account-info-container">
@@ -834,30 +834,30 @@
                 const bannerInput = document.getElementById('company-banner-input');
 
                 const companyData = {
-                    userCompanyLogo: logoInput?.dataset.dataUrl || logoInput?.value || document.getElementById('company-logo-preview')?.querySelector('img')?.src || '',
-                    userCompanyBanner: bannerInput?.dataset.dataUrl || bannerInput?.value || document.getElementById('company-banner-preview')?.querySelector('img')?.src || '',
-                    userCompanyDescription: document.getElementById('company-description-input')?.value.trim() || '',
-                    userCompanyAddress: document.getElementById('company-address-input')?.value.trim() || '',
-                    userCompanyAddressUrl: document.getElementById('company-address-url-input')?.value.trim() || '',
-                    userCompanyPhone: document.getElementById('company-phone-input')?.value.trim() || '',
-                    userCompanyEmail: document.getElementById('company-email-input')?.value.trim() || '',
-                    userCompanyInstagram: document.getElementById('company-instagram-input')?.value.trim() || '',
-                    userCompanyTikTok: document.getElementById('company-tiktok-input')?.value.trim() || '',
-                    userCompanyTwitter: document.getElementById('company-twitter-input')?.value.trim() || '',
-                    userCompanyFacebook: document.getElementById('company-facebook-input')?.value.trim() || '',
-                    userCompanyYouTube: document.getElementById('company-youtube-input')?.value.trim() || ''
+                    sellerCompanyLogo: logoInput?.dataset.dataUrl || logoInput?.value || document.getElementById('company-logo-preview')?.querySelector('img')?.src || '',
+                    sellerCompanyBanner: bannerInput?.dataset.dataUrl || bannerInput?.value || document.getElementById('company-banner-preview')?.querySelector('img')?.src || '',
+                    sellerCompanyDescription: document.getElementById('company-description-input')?.value.trim() || '',
+                    sellerCompanyAddress: document.getElementById('company-address-input')?.value.trim() || '',
+                    sellerCompanyAddressUrl: document.getElementById('company-address-url-input')?.value.trim() || '',
+                    sellerCompanyPhone: document.getElementById('company-phone-input')?.value.trim() || '',
+                    sellerCompanyEmail: document.getElementById('company-email-input')?.value.trim() || '',
+                    sellerCompanyInstagram: document.getElementById('company-instagram-input')?.value.trim() || '',
+                    sellerCompanyTikTok: document.getElementById('company-tiktok-input')?.value.trim() || '',
+                    sellerCompanyTwitter: document.getElementById('company-twitter-input')?.value.trim() || '',
+                    sellerCompanyFacebook: document.getElementById('company-facebook-input')?.value.trim() || '',
+                    sellerCompanyYouTube: document.getElementById('company-youtube-input')?.value.trim() || ''
                 };
 
                 // Save to localStorage
-                localStorage.setItem('userCompanyDetails', JSON.stringify(companyData));
+                localStorage.setItem('sellerCompanyDetails', JSON.stringify(companyData));
 
                 // Update in-memory cache
                 const currentData = await fetchUserData();
                 if (currentData) {
-                    if (!currentData.userCompanyDetails || currentData.userCompanyDetails.length === 0) {
-                        currentData.userCompanyDetails = [companyData];
+                    if (!currentData.sellerCompanyDetails || currentData.sellerCompanyDetails.length === 0) {
+                        currentData.sellerCompanyDetails = [companyData];
                     } else {
-                        currentData.userCompanyDetails[0] = { ...currentData.userCompanyDetails[0], ...companyData };
+                        currentData.sellerCompanyDetails[0] = { ...currentData.sellerCompanyDetails[0], ...companyData };
                     }
                     userData = currentData;
                 }

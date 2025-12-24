@@ -112,11 +112,12 @@
             return;
         }
 
-        const companyName = companyData.userCompanyName || companyData.auction_compName || 'شركة غير معروفة';
-        const companyLogo = companyData.userCompanyLogo || companyData.auction_compLogo || '';
-        // userCompanyBanner should come from userCompanyDetails object
-        const companyImage = companyData.userCompanyBanner || 'default-company-banner.png';
-        const companyDescription = companyData.userCompanyDescription || '';
+        // Use sellerCompanyname from user-data.json if available, otherwise fallback
+        const companyName = companyData.sellerCompanyname || companyData.sellerCompanyName || 'شركة غير معروفة';
+        const companyLogo = companyData.sellerCompanyLogo || '';
+        // sellerCompanyBanner should come from sellerCompanyDetails object
+        const companyImage = companyData.sellerCompanyBanner || 'default-company-banner.png';
+        const companyDescription = companyData.sellerCompanyDescription || '';
 
         const html = `
             <!-- Banner Section with Badge -->
@@ -180,57 +181,57 @@
                 </div>
                     
                 <!-- Company Details -->
-                ${companyData.userCompanyAddress ? `
-                <div class="seller-company-detail-item ${companyData.userCompanyAddressUrl ? 'clickable' : ''}" ${companyData.userCompanyAddressUrl ? `data-url="${companyData.userCompanyAddressUrl}"` : ''}>
+                ${companyData.sellerCompanyAddress ? `
+                <div class="seller-company-detail-item ${companyData.sellerCompanyAddressUrl ? 'clickable' : ''}" ${companyData.sellerCompanyAddressUrl ? `data-url="${companyData.sellerCompanyAddressUrl}"` : ''}>
                     <i data-lucide="map-pin" class="seller-company-detail-icon"></i>
-                    <span class="seller-company-detail-text">${companyData.userCompanyAddress}</span>
+                    <span class="seller-company-detail-text">${companyData.sellerCompanyAddress}</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyPhone ? `
+                ${companyData.sellerCompanyPhone ? `
                 <div class="seller-company-detail-item">
                     <i data-lucide="phone" class="seller-company-detail-icon"></i>
-                    <span class="seller-company-detail-text">${companyData.userCompanyPhone}</span>
+                    <span class="seller-company-detail-text">${companyData.sellerCompanyPhone}</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyEmail ? `
+                ${companyData.sellerCompanyEmail ? `
                 <div class="seller-company-detail-item">
                     <i data-lucide="mail" class="seller-company-detail-icon"></i>
-                    <span class="seller-company-detail-text">${companyData.userCompanyEmail}</span>
+                    <span class="seller-company-detail-text">${companyData.sellerCompanyEmail}</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyInstagram ? `
-                <div class="seller-company-detail-item clickable" data-url="${companyData.userCompanyInstagram}">
+                ${companyData.sellerCompanyInstagram ? `
+                <div class="seller-company-detail-item clickable" data-url="${companyData.sellerCompanyInstagram}">
                     <i data-lucide="instagram" class="seller-company-detail-icon"></i>
                     <span class="seller-company-detail-text">إنستغرام</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyTikTok ? `
-                <div class="seller-company-detail-item clickable" data-url="${companyData.userCompanyTikTok}">
+                ${companyData.sellerCompanyTikTok ? `
+                <div class="seller-company-detail-item clickable" data-url="${companyData.sellerCompanyTikTok}">
                     <i data-lucide="music" class="seller-company-detail-icon"></i>
                     <span class="seller-company-detail-text">تيك توك</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyTwitter ? `
-                <div class="seller-company-detail-item clickable" data-url="${companyData.userCompanyTwitter}">
+                ${companyData.sellerCompanyTwitter ? `
+                <div class="seller-company-detail-item clickable" data-url="${companyData.sellerCompanyTwitter}">
                     <i data-lucide="twitter" class="seller-company-detail-icon"></i>
                     <span class="seller-company-detail-text">تويتر</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyFacebook ? `
-                <div class="seller-company-detail-item clickable" data-url="${companyData.userCompanyFacebook}">
+                ${companyData.sellerCompanyFacebook ? `
+                <div class="seller-company-detail-item clickable" data-url="${companyData.sellerCompanyFacebook}">
                     <i data-lucide="facebook" class="seller-company-detail-icon"></i>
                     <span class="seller-company-detail-text">فيسبوك</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
                 </div>
                 ` : ''}
-                ${companyData.userCompanyYouTube ? `
-                <div class="seller-company-detail-item clickable" data-url="${companyData.userCompanyYouTube}">
+                ${companyData.sellerCompanyYouTube ? `
+                <div class="seller-company-detail-item clickable" data-url="${companyData.sellerCompanyYouTube}">
                     <i data-lucide="youtube" class="seller-company-detail-icon"></i>
                     <span class="seller-company-detail-text">يوتيوب</span>
                     <i data-lucide="chevron-left" class="seller-company-detail-arrow"></i>
@@ -492,7 +493,7 @@
             // Filter auctions by matching userPlatformIdNumber (same userPlatformIdNumber = same company)
             const companyAuctions = auctions.filter(auction => auction.userPlatformIdNumber === parseInt(userPlatformIdNumber));
 
-            renderCompanyAuctions(companyAuctions);
+            await renderCompanyAuctions(companyAuctions);
         } catch (error) {
             console.error('Error loading company auctions:', error);
         }
@@ -501,7 +502,7 @@
     /**
      * Render company auctions
      */
-    function renderCompanyAuctions(auctions) {
+    async function renderCompanyAuctions(auctions) {
         const auctionsList = document.getElementById('seller-auctions-list');
         const countElement = document.getElementById('seller-auctions-count');
 
@@ -511,10 +512,26 @@
             countElement.textContent = auctions.length;
         }
 
+        // Fetch user data to get sellerCompanyname and sellerCompanyLogo
+        let sellerCompanyName = null;
+        let sellerCompanyLogo = null;
+        try {
+            const userResponse = await fetch('json-data/user-data.json');
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                    sellerCompanyName = userData.sellerCompanyDetails[0].sellerCompanyname || null;
+                    sellerCompanyLogo = userData.sellerCompanyDetails[0].sellerCompanyLogo || null;
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to fetch user data for seller company details:', error);
+        }
+
         auctionsList.innerHTML = auctions.map(auction => {
             const imageUrl = auction.auction_image || '';
             const imageStyle = imageUrl ? `style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;"` : '';
-            const companyLogo = auction.auction_compLogo ? `<img src="${auction.auction_compLogo}" alt="${auction.auction_compName || 'شركة'}" class="company-logo">` : '';
+            const companyLogo = sellerCompanyLogo ? `<img src="${sellerCompanyLogo}" alt="${sellerCompanyName || 'شركة'}" class="company-logo">` : '';
             const specialWordBadge = auction.auction_specialWord ?
                 `<div class="home-page-special-word-badge">${auction.auction_specialWord}</div>` : '';
 
@@ -522,8 +539,11 @@
             const auctionLocation = auction.auction_location || 'غير محدد';
             const assetCount = auction.auction_numberOfAssets || (auction.assets ? auction.assets.length : 0);
             const viewCount = auction.auction_viewCount || 0;
-            const auctionTitle = auction.auction_title || auction.userCompanyName || 'عقار في المزاد';
+            const auctionTitle = auction.auction_title || 'عقار في المزاد';
             const remainingInfo = getRemainingTimeInfo(auction.auction_bidStartDate, auction.auction_bidEndDate);
+
+            // Use sellerCompanyname from user-data.json if available, otherwise use a default company name
+            const companyNameText = sellerCompanyName || 'شركة لمزاد العقارات';
 
             // Determine status badge (reuse existing statusClass/text)
             let statusBadgeText = '';
@@ -550,7 +570,7 @@
                     <div class="card-header">
                         <div class="company-details">
                             ${companyLogo}
-                            <span class="company-name">${auction.auction_compName || ''}</span>
+                            <span class="company-name">${companyNameText}</span>
                         </div>
                         ${specialWordBadge}
                     </div>
@@ -658,7 +678,7 @@
                 window._previousSectionBeforeSellerInfo = window.getCurrentSection();
             }
 
-            // Fetch user data from JSON (contains userCompanyDetails)
+            // Fetch user data from JSON (contains sellerCompanyDetails)
             const userResponse = await fetch('json-data/user-data.json');
             if (!userResponse.ok) {
                 throw new Error('Failed to fetch user data');
@@ -667,14 +687,14 @@
             const userData = await userResponse.json();
 
             // Check localStorage for saved company data and merge it
-            const savedCompanyData = localStorage.getItem('userCompanyDetails');
+            const savedCompanyData = localStorage.getItem('sellerCompanyDetails');
             if (savedCompanyData) {
                 try {
                     const savedData = JSON.parse(savedCompanyData);
-                    if (userData.userCompanyDetails && userData.userCompanyDetails.length > 0) {
-                        userData.userCompanyDetails[0] = { ...userData.userCompanyDetails[0], ...savedData };
+                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                        userData.sellerCompanyDetails[0] = { ...userData.sellerCompanyDetails[0], ...savedData };
                     } else {
-                        userData.userCompanyDetails = [savedData];
+                        userData.sellerCompanyDetails = [savedData];
                     }
                 } catch (e) {
                     console.warn('Error parsing saved company data:', e);
@@ -688,9 +708,9 @@
                 return;
             }
 
-            // Get company data from userCompanyDetails
-            const companyDetails = userData.userCompanyDetails && userData.userCompanyDetails.length > 0
-                ? userData.userCompanyDetails[0]
+            // Get company data from sellerCompanyDetails
+            const companyDetails = userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0
+                ? userData.sellerCompanyDetails[0]
                 : null;
 
             if (!companyDetails) {
@@ -700,9 +720,11 @@
             }
 
             // Build company data object
+            // Use sellerCompanyname from sellerCompanyDetails if available
             const companyData = {
                 ...companyDetails,
-                userCompanyName: userData.userName || companyDetails.userCompanyName || 'شركة غير معروفة'
+                sellerCompanyName: companyDetails.sellerCompanyname || userData.userName || companyDetails.sellerCompanyName || 'شركة غير معروفة',
+                sellerCompanyname: companyDetails.sellerCompanyname || companyDetails.sellerCompanyName || userData.userName || 'شركة غير معروفة'
             };
 
             // Render the company info page
@@ -715,7 +737,7 @@
                 // Update title
                 const titleElement = document.getElementById('seller-company-info-title');
                 if (titleElement) {
-                    titleElement.textContent = companyData.userCompanyName || companyData.auction_compName || 'معلومات البائع';
+                    titleElement.textContent = companyData.sellerCompanyName || companyData.auction_compName || 'معلومات البائع';
                 }
             }
 
@@ -765,7 +787,7 @@
         if (shareBtn) {
             shareBtn.addEventListener('click', function () {
                 if (navigator.share && currentCompanyData) {
-                    const companyName = currentCompanyData.userCompanyName || currentCompanyData.auction_compName || 'شركة';
+                    const companyName = currentCompanyData.sellerCompanyName || currentCompanyData.auction_compName || 'شركة';
                     navigator.share({
                         title: companyName,
                         text: `تعرف على ${companyName}`,

@@ -1,7 +1,6 @@
 [
   {
     "id": 1,
-    "userCompanyName": "مزاد النخبة",
     "userPlatformIdNumber": 1,
     
 
@@ -10,8 +9,6 @@
     "auction_location": "مكة المكرمة",
     "auction_approval_number": "8465",
     "auction_image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-    "auction_compLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
-    "auction_compName": "بندر مزاد المملكة",
     "auction_specialWord": "جديد",
     "auction_numberOfAssets": 3,
     "auction_viewCount": 3,

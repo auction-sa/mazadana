@@ -10,20 +10,21 @@
   "userPersonalProfileImage": "https://images.unsplash.com/photo-1633332755192-727a05c4013d",
 
   
-  "userCompanyDetails": [
+  "sellerCompanyDetails": [
     {
-      "userCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
-      "userCompanyBanner": "https://cdn05.zipify.com/5mDK9lBkS1oEG4YP6C7sP_LpTII=/fit-in/1940x0/4918d15ad95747f1a240a725d04df79c/gambar-depan-banyak-yang-belum-tahu-ini-dia-perbedaan-banner-dan-spanduk.jpeg",
-      "userCompanyDescription": "شركة متخصصة في إدارة وتنظيم المزادات العقارية الإلكترونية. نقدم خدماتنا باحترافية عالية ونضمن الشفافية والعدالة في جميع عملياتنا.",
-      "userCompanyAddress": "الرياض - النرجس",
-      "userCompanyAddressUrl": "https://maps.app.goo.gl/JZretK3mZqKDXTC5A",
-      "userCompanyPhone": "0557894321",
-      "userCompanyEmail": "info@mazadana.sa",
-      "userCompanyInstagram": "https://www.instagram.com/fl_0ky/",
-      "userCompanyTikTok": "https://www.tiktok.com/@fl_0ky",
-      "userCompanyTwitter": "https://x.com/fl__0ky",
-      "userCompanyFacebook": "https://www.facebook.com/profile.php?id=61582085849224",
-      "userCompanyYouTube": "https://www.youtube.com/@NewMedia_Life"
+      "sellerCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
+      "sellerCompanyBanner": "https://cdn05.zipify.com/5mDK9lBkS1oEG4YP6C7sP_LpTII=/fit-in/1940x0/4918d15ad95747f1a240a725d04df79c/gambar-depan-banyak-yang-belum-tahu-ini-dia-perbedaan-banner-dan-spanduk.jpeg",
+      "sellerCompanyname": "مزاد النخبة",
+      "sellerCompanyDescription": "شركة متخصصة في إدارة وتنظيم المزادات العقارية الإلكترونية. نقدم خدماتنا باحترافية عالية ونضمن الشفافية والعدالة في جميع عملياتنا.",
+      "sellerCompanyAddress": "الرياض - النرجس",
+      "sellerCompanyAddressUrl": "https://maps.app.goo.gl/JZretK3mZqKDXTC5A",
+      "sellerCompanyPhone": "0557894321",
+      "sellerCompanyEmail": "info@mazadana.sa",
+      "sellerCompanyInstagram": "https://www.instagram.com/fl_0ky/",
+      "sellerCompanyTikTok": "https://www.tiktok.com/@fl_0ky",
+      "sellerCompanyTwitter": "https://x.com/fl__0ky",
+      "sellerCompanyFacebook": "https://www.facebook.com/profile.php?id=61582085849224",
+      "sellerCompanyYouTube": "https://www.youtube.com/@NewMedia_Life"
     }
   ]
 }

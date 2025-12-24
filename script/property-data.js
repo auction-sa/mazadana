@@ -636,13 +636,19 @@
     /**
      * Render auction card (for auction section)
      * Creates the HTML for an auction property card
+     * @param {Object} auction - The auction data object
+     * @param {Object} sellerCompanyDetails - Optional seller company details from user-data.json
      */
-    function renderAuctionCard(auction) {
+    function renderAuctionCard(auction, sellerCompanyDetails = null) {
         if (!auction) return '';
+
+        // Get seller company info from user-data.json if available
+        const sellerCompanyName = sellerCompanyDetails?.sellerCompanyname || 'شركة لمزاد العقارات';
+        const sellerCompanyLogo = sellerCompanyDetails?.sellerCompanyLogo || null;
 
         const imageUrl = getImageUrl(auction);
         const imageStyle = imageUrl ? `style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;"` : '';
-        const companyLogo = auction.auction_compLogo ? `<img src="${auction.auction_compLogo}" alt="${auction.auction_compName || 'شركة'}" class="company-logo">` : '';
+        const companyLogo = sellerCompanyLogo ? `<img src="${sellerCompanyLogo}" alt="${sellerCompanyName}" class="company-logo">` : '';
         const specialWordBadge = auction.auction_specialWord ?
             `<div class="home-page-special-word-badge">${auction.auction_specialWord}</div>` : '';
 
@@ -661,7 +667,7 @@
                 <div class="card-header">
                     <div class="company-details">
                         ${companyLogo}
-                        <span class="company-name">${auction.auction_compName || ''}</span>
+                        <span class="company-name">${sellerCompanyName}</span>
                     </div>
                     ${specialWordBadge}
                 </div>
@@ -678,7 +684,7 @@
                     </div>
                 </div>
                 <div class="property-content-home-page">
-                    <h3 class="property-title-home-page">${auction.userCompanyName || 'عقار في المزاد'}</h3>
+                    <h3 class="property-title-home-page">${auction.auction_title || sellerCompanyName || 'عقار في المزاد'}</h3>
                     <div class="auction-meta-home-page">
                         <div class="auction-timer-home-page">
                             <i data-lucide="clock" class="meta-icon"></i>
@@ -721,8 +727,12 @@
     /**
      * Render properties to grid with image preloading
      * Takes an array of properties and renders them as cards in a grid
+     * @param {Array} properties - Array of property objects
+     * @param {HTMLElement} gridElement - The grid container element
+     * @param {string} renderFunction - The name of the render function to use
+     * @param {Object} sellerCompanyDetails - Optional seller company details from user-data.json
      */
-    async function renderProperties(properties, gridElement, renderFunction) {
+    async function renderProperties(properties, gridElement, renderFunction, sellerCompanyDetails = null) {
         if (!gridElement) {
             console.error('Grid element not found');
             return;
@@ -757,7 +767,7 @@
                     cardHTML = renderRentalCard(property);
                     break;
                 case 'renderAuctionCard':
-                    cardHTML = renderAuctionCard(property);
+                    cardHTML = renderAuctionCard(property, sellerCompanyDetails);
                     break;
                 default:
                     console.error('Unknown render function:', renderFunction);
@@ -936,6 +946,23 @@
 
         // Handle home-section differently (has multiple grids)
         if (sectionId === 'home-section' && config.grids) {
+            // Fetch seller company details once for all auction grids
+            let sellerCompanyDetails = null;
+            const hasAuctionGrid = Object.values(config.grids).some(grid => grid.renderFunction === 'renderAuctionCard');
+            if (hasAuctionGrid) {
+                try {
+                    const userResponse = await fetch('json-data/user-data.json');
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                            sellerCompanyDetails = userData.sellerCompanyDetails[0];
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to fetch user data for seller company details:', error);
+                }
+            }
+
             // Load all three grids for home section (regular + special)
             const loadPromises = Object.entries(config.grids).map(async ([key, gridConfig]) => {
                 const gridElement = document.getElementById(gridConfig.gridId);
@@ -984,12 +1011,15 @@
                     // Filter special properties based on special status field
                     const specialProperties = properties.filter(p => p[gridConfig.specialField] === true);
 
+                    // Pass sellerCompanyDetails only for auction cards
+                    const companyDetails = gridConfig.renderFunction === 'renderAuctionCard' ? sellerCompanyDetails : null;
+
                     // Render all properties to regular grid
-                    await renderProperties(properties, gridElement, gridConfig.renderFunction);
+                    await renderProperties(properties, gridElement, gridConfig.renderFunction, companyDetails);
 
                     // Render special properties to special grid if it exists
                     if (specialGridElement && specialProperties && specialProperties.length > 0) {
-                        await renderProperties(specialProperties, specialGridElement, gridConfig.renderFunction);
+                        await renderProperties(specialProperties, specialGridElement, gridConfig.renderFunction, companyDetails);
                     } else if (specialGridElement) {
                         specialGridElement.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا توجد عقارات مميزة حالياً</p>';
                     }
@@ -1061,8 +1091,24 @@
                 return;
             }
 
+            // Fetch seller company details from user-data.json if rendering auction cards
+            let sellerCompanyDetails = null;
+            if (config.renderFunction === 'renderAuctionCard') {
+                try {
+                    const userResponse = await fetch('json-data/user-data.json');
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                            sellerCompanyDetails = userData.sellerCompanyDetails[0];
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Failed to fetch user data for seller company details:', error);
+                }
+            }
+
             // Render properties (with image preloading)
-            await renderProperties(properties, gridElement, config.renderFunction);
+            await renderProperties(properties, gridElement, config.renderFunction, sellerCompanyDetails);
 
             // Verify cards were rendered
             const renderedCards = gridElement.querySelectorAll('.property-card-home-page');

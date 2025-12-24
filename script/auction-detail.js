@@ -490,7 +490,7 @@
     /**
      * Render the property detail page
      */
-    function renderPropertyDetail(auction, badgeStatus) {
+    function renderPropertyDetail(auction, badgeStatus, sellerCompanyName, sellerCompanyLogo) {
         if (!auction) {
             console.error('No auction data provided');
             return;
@@ -522,15 +522,18 @@
             categoryStatusClass = 'property-detail-status-upcoming';
         }
 
-        // Get company logo for category icon
-        const categoryIcon = auction.auction_compLogo ? `<img src="${auction.auction_compLogo}" alt="${auction.auction_compName || 'شركة'}" class="category-icon-image">` : '';
+        // Get company logo for category icon - use sellerCompanyLogo from user-data.json if available
+        const categoryIcon = sellerCompanyLogo ? `<img src="${sellerCompanyLogo}" alt="${sellerCompanyName || 'شركة'}" class="category-icon-image">` : '';
+
+        // Use sellerCompanyName from user-data.json if available, otherwise use a default company name
+        const categoryTitleText = sellerCompanyName || 'شركة لمزاد العقارات';
 
         const html = `
             <!-- Category Section -->
             <div class="auction-property-main-page-detail-category-header">
                 <div class="auction-property-main-page-detail-category-header-right">
                     <div class="category-icon-placeholder">${categoryIcon}</div>
-                    <h3 class="category-title">${auction.auction_compName}</h3>
+                    <h3 class="category-title">${categoryTitleText}</h3>
                 </div>
                 <i data-lucide="chevron-left" id="seller-company-info-page-arrow-icon" class="info-icon" style="cursor: pointer;"></i>
             </div>
@@ -543,11 +546,11 @@
 
             <!-- Auction Main Card -->
             <div class="auction-property-main-page-detail-top-image">
-            <img src="${auction.auction_image}" alt="${auction.userCompanyName || 'مزادنا للعقارات السعودية'}">
+            <img src="${auction.auction_image}" alt="${sellerCompanyName || auction.auction_title || 'مزادنا للعقارات السعودية'}">
             </div>
 
             <div>
-                <h3 class="property-detail-auction-title">${auction.userCompanyName}</h3>
+                <h3 class="property-detail-auction-title">${auction.auction_title || sellerCompanyName || 'عقار في المزاد'}</h3>
             </div>
 
             <!-- Info Section -->
@@ -809,8 +812,24 @@
                 return;
             }
 
+            // Fetch user data to get sellerCompanyname and sellerCompanyLogo
+            let sellerCompanyName = null;
+            let sellerCompanyLogo = null;
+            try {
+                const userResponse = await fetch('json-data/user-data.json');
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
+                        sellerCompanyName = userData.sellerCompanyDetails[0].sellerCompanyname || null;
+                        sellerCompanyLogo = userData.sellerCompanyDetails[0].sellerCompanyLogo || null;
+                    }
+                }
+            } catch (error) {
+                console.warn('Failed to fetch user data for seller company details:', error);
+            }
+
             // Render the detail page (optimized: render before navigation for smoother transition)
-            renderPropertyDetail(auction, badgeStatus);
+            renderPropertyDetail(auction, badgeStatus, sellerCompanyName, sellerCompanyLogo);
 
             // Show header
             const header = document.getElementById('auction-property-main-page-detail-header');
