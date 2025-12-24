@@ -23,6 +23,7 @@
         "auctionAsset_bidStartDate": "2025/12/11 — 08:00 مساءً",
         "auctionAsset_bidEndDate": "2025/12/28 — 08:00 مساءً",
         "auctionAsset_location": "مكة المكرمة",
+        "auctionAsset_AddressUrl": "21.424115, 39.814039",
         "auctionAsset_depositAmount": "25,000",
         "auctionAsset_bidAmount": "10,000",
         "auctionAsset_startingPrice": "650,000",
@@ -43,6 +44,7 @@
         "bidStartDate": "2025/10/22 — 05:00 مساءً",
         "bidEndDate": "2025/10/30 — 05:00 مساءً",
         "auctionAsset_location": "الرياض",
+        "auctionAsset_AddressUrl": "21.423226, 39.786473",
         "auctionAsset_depositAmount": "25,000",
         "auctionAsset_bidAmount": "20,500",
         "auctionAsset_startingPrice": "1,200,000",
@@ -62,6 +64,7 @@
         "bidStartDate": "2025/12/25 — 07:00 صباحً",
         "bidEndDate": "2025/12/31 — 07:00 صباحً",
         "auctionAsset_location": "جدة",
+        "auctionAsset_AddressUrl": "21.423226, 39.786473",
         "auctionAsset_depositAmount": "25,000",
         "auctionAsset_bidAmount": "5,000",
         "auctionAsset_startingPrice": "350,000",
@@ -77,6 +80,8 @@
   },
 
 
+
+  
   {
     "id": 2,
     "userPlatformIdNumber": 1,

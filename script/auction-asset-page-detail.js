@@ -602,13 +602,44 @@
             return;
         }
 
-        // For testing: Use a hardcoded location in Riyadh, Saudi Arabia
-        // Riyadh coordinates: 24.7136° N, 46.6753° E
-        const testLocation = {
-            lat: 24.7136,
-            lon: 46.6753,
-            name: 'الرياض، المملكة العربية السعودية'
-        };
+        // Parse coordinates from auctionAsset_AddressUrl
+        let propertyLocation = null;
+
+        if (asset && asset.auctionAsset_AddressUrl) {
+            try {
+                // Parse the coordinates string (format: "lat, lon" or "lat,lon")
+                const coordsString = asset.auctionAsset_AddressUrl.trim();
+                const coordsArray = coordsString.split(',').map(coord => parseFloat(coord.trim()));
+
+                if (coordsArray.length === 2 &&
+                    !isNaN(coordsArray[0]) &&
+                    !isNaN(coordsArray[1]) &&
+                    coordsArray[0] >= -90 && coordsArray[0] <= 90 && // Valid latitude
+                    coordsArray[1] >= -180 && coordsArray[1] <= 180) { // Valid longitude
+
+                    propertyLocation = {
+                        lat: coordsArray[0],
+                        lon: coordsArray[1],
+                        name: asset.auctionAsset_location || asset.auctionAsset_title || 'موقع العقار'
+                    };
+                } else {
+                    console.warn('Invalid coordinates format in auctionAsset_AddressUrl:', asset.auctionAsset_AddressUrl);
+                }
+            } catch (error) {
+                console.error('Error parsing coordinates from auctionAsset_AddressUrl:', error);
+            }
+        }
+
+        // Fallback to default location if coordinates are not available or invalid
+        if (!propertyLocation) {
+            console.warn('Using default location - auctionAsset_AddressUrl not available or invalid');
+            // Default location: Riyadh, Saudi Arabia
+            propertyLocation = {
+                lat: 24.7136,
+                lon: 46.6753,
+                name: asset?.auctionAsset_location || 'الرياض، المملكة العربية السعودية'
+            };
+        }
 
         // Clear container
         mapContainer.innerHTML = '';
@@ -624,7 +655,7 @@
         // Wait a bit to ensure the div is rendered
         setTimeout(() => {
             try {
-                // Initialize Leaflet map with test coordinates
+                // Initialize Leaflet map with property coordinates
                 const map = L.map('property-location-map', {
                     zoomControl: true,
                     scrollWheelZoom: true,
@@ -633,7 +664,7 @@
                     keyboard: true,
                     dragging: true,
                     touchZoom: true
-                }).setView([testLocation.lat, testLocation.lon], 15);
+                }).setView([propertyLocation.lat, propertyLocation.lon], 15);
 
                 // Add OpenStreetMap tile layer
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -642,11 +673,11 @@
                 }).addTo(map);
 
                 // Add marker for property location
-                const marker = L.marker([testLocation.lat, testLocation.lon]).addTo(map);
-                marker.bindPopup(`<b>${testLocation.name}</b><br>موقع تجريبي للعقار`).openPopup();
+                const marker = L.marker([propertyLocation.lat, propertyLocation.lon]).addTo(map);
+                marker.bindPopup(`<b>${propertyLocation.name}</b><br>${asset?.auctionAsset_title || 'موقع العقار'}`).openPopup();
 
                 // Add a circle to show area of interest
-                L.circle([testLocation.lat, testLocation.lon], {
+                L.circle([propertyLocation.lat, propertyLocation.lon], {
                     color: '#2c5aa0',
                     fillColor: '#2c5aa0',
                     fillOpacity: 0.1,
