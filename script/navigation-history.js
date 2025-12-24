@@ -21,7 +21,24 @@
      */
     function getCurrentState() {
         // Find the currently active section
-        const activeSection = document.querySelector('.tab-section.active');
+        let activeSection = document.querySelector('.tab-section.active');
+
+        // Fallback: check for visible sections if no active class found
+        // This handles cases where sections might be visible but not marked as active yet
+        if (!activeSection) {
+            const allSections = document.querySelectorAll('.tab-section');
+            for (let section of allSections) {
+                const style = window.getComputedStyle(section);
+                if (style.display !== 'none' &&
+                    style.visibility !== 'hidden' &&
+                    parseFloat(style.opacity) > 0 &&
+                    section.id !== 'home-section') { // Exclude home-section as default
+                    activeSection = section;
+                    break;
+                }
+            }
+        }
+
         const sectionId = activeSection ? activeSection.id : 'home-section';
 
         // Check if we're in the profile section and which view
@@ -197,8 +214,15 @@
             return;
         }
 
+        // Check if auction-asset-property-detail-section is visible (even if not in state)
+        const assetDetailSection = document.getElementById('auction-asset-property-detail-section');
+        const isAssetDetailVisible = assetDetailSection &&
+            window.getComputedStyle(assetDetailSection).display !== 'none' &&
+            window.getComputedStyle(assetDetailSection).visibility !== 'hidden' &&
+            parseFloat(window.getComputedStyle(assetDetailSection).opacity) > 0;
+
         // If we're in auction-asset-property-detail-section, go back to auction-property-detail-section
-        if (currentState.section === 'auction-asset-property-detail-section') {
+        if (currentState.section === 'auction-asset-property-detail-section' || isAssetDetailVisible) {
             // Hide header if it exists
             const header = document.getElementById('auction-asset-property-detail-header');
             if (header) {
@@ -229,8 +253,15 @@
             return;
         }
 
+        // Check if seller-company-info-section is visible (even if not in state)
+        const sellerInfoSection = document.getElementById('seller-company-info-section');
+        const isSellerInfoVisible = sellerInfoSection &&
+            window.getComputedStyle(sellerInfoSection).display !== 'none' &&
+            window.getComputedStyle(sellerInfoSection).visibility !== 'hidden' &&
+            parseFloat(window.getComputedStyle(sellerInfoSection).opacity) > 0;
+
         // If we're in seller-company-info-section, go back to auction-property-detail-section
-        if (currentState.section === 'seller-company-info-section') {
+        if (currentState.section === 'seller-company-info-section' || isSellerInfoVisible) {
             // Hide header if it exists (using correct ID)
             const header = document.getElementById('seller-company-info-page-header');
             if (header) {

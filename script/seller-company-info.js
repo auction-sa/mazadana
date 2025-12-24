@@ -750,6 +750,13 @@
 
                 // Switch to seller company info section
                 window.switchToSection('seller-company-info-section');
+
+                // Push navigation state to history after section is opened
+                setTimeout(() => {
+                    if (typeof window.pushNavigationState === 'function') {
+                        window.pushNavigationState(false);
+                    }
+                }, 400); // Wait for animation to complete
             } else {
                 console.error('switchToSection function not available');
             }

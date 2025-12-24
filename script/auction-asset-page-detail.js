@@ -961,6 +961,13 @@
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-asset-property-detail-section');
 
+                // Push navigation state to history after section is opened
+                setTimeout(() => {
+                    if (typeof window.pushNavigationState === 'function') {
+                        window.pushNavigationState(false);
+                    }
+                }, 400); // Wait for animation to complete
+
                 // Scroll scrollable containers within auction-asset-property-detail-section to top once section opens
                 if (typeof window.scrollOnSectionOpen === 'function') {
                     window.scrollOnSectionOpen('auction-asset-property-detail-section');
