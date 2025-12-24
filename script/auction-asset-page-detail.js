@@ -589,36 +589,74 @@
     }
 
     /**
-     * Initialize property location Google Map
+     * Initialize property location map using Leaflet (OpenStreetMap)
      */
     function initPropertyLocationMap(asset) {
         const mapContainer = document.getElementById('auction-asset-property-location-google-map-container');
-        if (!mapContainer || !asset) return;
+        if (!mapContainer) return;
 
-        const location = asset.auctionAsset_location || asset.location || '';
-        if (!location) {
-            mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا يتوفر موقع محدد</p>';
+        // Check if Leaflet is available
+        if (typeof L === 'undefined') {
+            console.error('Leaflet library not loaded');
+            mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">مكتبة الخريطة غير محملة</p>';
             return;
         }
 
-        // URL encode the location for Google Maps
-        const encodedLocation = encodeURIComponent(location + ', Saudi Arabia');
+        // For testing: Use a hardcoded location in Riyadh, Saudi Arabia
+        // Riyadh coordinates: 24.7136° N, 46.6753° E
+        const testLocation = {
+            lat: 24.7136,
+            lon: 46.6753,
+            name: 'الرياض، المملكة العربية السعودية'
+        };
 
-        // Use Google Maps Embed API (no API key needed for basic embed)
-        // This will show the location with surrounding buildings and places
-        const mapIframe = document.createElement('iframe');
-        mapIframe.src = `https://www.google.com/maps?q=${encodedLocation}&output=embed&zoom=15&hl=ar`;
-        mapIframe.width = '100%';
-        mapIframe.height = '400';
-        mapIframe.frameBorder = '0';
-        mapIframe.style.border = '0';
-        mapIframe.style.borderRadius = 'var(--radius-sm)';
-        mapIframe.allowFullscreen = true;
-        mapIframe.loading = 'lazy';
-        mapIframe.setAttribute('aria-label', `خريطة موقع ${location}`);
-
+        // Clear container
         mapContainer.innerHTML = '';
-        mapContainer.appendChild(mapIframe);
+
+        // Create map div
+        const mapDiv = document.createElement('div');
+        mapDiv.id = 'property-location-map';
+        mapDiv.style.width = '100%';
+        mapDiv.style.height = '400px';
+        mapDiv.style.borderRadius = 'var(--radius-sm)';
+        mapContainer.appendChild(mapDiv);
+
+        // Wait a bit to ensure the div is rendered
+        setTimeout(() => {
+            try {
+                // Initialize Leaflet map with test coordinates
+                const map = L.map('property-location-map', {
+                    zoomControl: true,
+                    scrollWheelZoom: true,
+                    doubleClickZoom: true,
+                    boxZoom: true,
+                    keyboard: true,
+                    dragging: true,
+                    touchZoom: true
+                }).setView([testLocation.lat, testLocation.lon], 15);
+
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Add marker for property location
+                const marker = L.marker([testLocation.lat, testLocation.lon]).addTo(map);
+                marker.bindPopup(`<b>${testLocation.name}</b><br>موقع تجريبي للعقار`).openPopup();
+
+                // Add a circle to show area of interest
+                L.circle([testLocation.lat, testLocation.lon], {
+                    color: '#2c5aa0',
+                    fillColor: '#2c5aa0',
+                    fillOpacity: 0.1,
+                    radius: 500 // 500 meters
+                }).addTo(map);
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">حدث خطأ أثناء تحميل الخريطة: ' + error.message + '</p>';
+            }
+        }, 100);
     }
 
     /**

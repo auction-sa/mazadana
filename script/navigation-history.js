@@ -197,6 +197,56 @@
             return;
         }
 
+        // If we're in auction-asset-property-detail-section, go back to auction-property-detail-section
+        if (currentState.section === 'auction-asset-property-detail-section') {
+            // Hide header if it exists
+            const header = document.getElementById('auction-asset-property-detail-header');
+            if (header) {
+                header.style.display = 'none';
+            }
+
+            // Navigate back to auction-property-detail-section
+            if (typeof window.switchToSection === 'function') {
+                window.switchToSection('auction-property-detail-section');
+            } else {
+                // Fallback: trigger navigation click
+                const propertyDetailNavItem = document.querySelector('[data-section="auction-property-detail-section"]');
+                if (propertyDetailNavItem) {
+                    propertyDetailNavItem.click();
+                }
+            }
+            setTimeout(() => {
+                pushHistoryState(null, false);
+                isHandlingBackNavigation = false;
+            }, 100);
+            return;
+        }
+
+        // If we're in seller-company-info-section, go back to auction-property-detail-section
+        if (currentState.section === 'seller-company-info-section') {
+            // Hide header if it exists
+            const header = document.getElementById('seller-company-info-header');
+            if (header) {
+                header.style.display = 'none';
+            }
+
+            // Navigate back to auction-property-detail-section
+            if (typeof window.switchToSection === 'function') {
+                window.switchToSection('auction-property-detail-section');
+            } else {
+                // Fallback: trigger navigation click
+                const propertyDetailNavItem = document.querySelector('[data-section="auction-property-detail-section"]');
+                if (propertyDetailNavItem) {
+                    propertyDetailNavItem.click();
+                }
+            }
+            setTimeout(() => {
+                pushHistoryState(null, false);
+                isHandlingBackNavigation = false;
+            }, 100);
+            return;
+        }
+
         // If we're in auction-property-detail-section, go back to home-section (especially important for mobile)
         if (currentState.section === 'auction-property-detail-section') {
             // Hide header if it exists (cleanup is handled by the back button handler in auction-detail.js)
