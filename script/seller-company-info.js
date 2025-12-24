@@ -648,10 +648,9 @@
         const auctionCards = auctionsList.querySelectorAll('.seller-company-auction-card');
         auctionCards.forEach(card => {
             card.addEventListener('click', function () {
-                if (typeof window.scrollScrollableContainersToTop === 'function') {
-                    setTimeout(() => {
-                        window.scrollScrollableContainersToTop('auction-property-detail-section');
-                    }, 15); // Wait for section to open
+                // Scroll scrollable containers within auction-property-detail-section to top once section opens
+                if (typeof window.scrollOnSectionOpen === 'function') {
+                    window.scrollOnSectionOpen('auction-property-detail-section');
                 }
                 const auctionId = this.getAttribute('data-auction-id');
                 if (auctionId && typeof window.openPropertyDetail === 'function') {

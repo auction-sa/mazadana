@@ -829,11 +829,9 @@
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-asset-property-detail-section');
 
-                // Scroll scrollable containers within auction-asset-property-detail-section to top
-                if (typeof window.scrollScrollableContainersToTop === 'function') {
-                    setTimeout(() => {
-                        window.scrollScrollableContainersToTop('auction-asset-property-detail-section');
-                    }, 15); // Wait for section to open
+                // Scroll scrollable containers within auction-asset-property-detail-section to top once section opens
+                if (typeof window.scrollOnSectionOpen === 'function') {
+                    window.scrollOnSectionOpen('auction-asset-property-detail-section');
                 }
             } else {
                 console.error('switchToSection function not available');
