@@ -241,8 +241,8 @@
             <!-- Property Address Details Section -->
             <div class="asset-detail-section">
                 <h3 class="asset-detail-section-title">موقع العقار والمعالم الجاورة</h3>
-                <div id="auction-asset-property-location-google-map-container" class="product-details-list">
-                    /* Google Map Embed Code (will be browsed within my website url) */
+                <div id="auction-asset-property-location-google-map-container" class="google-map-container">
+                    <!-- Google Map will be embedded here -->
                 </div>
             </div>
         `;
@@ -365,6 +365,9 @@
 
         // Initialize attachments bottom sheet
         initAttachmentsBottomSheet();
+
+        // Initialize Google Map
+        initPropertyLocationMap(asset);
     }
 
     /**
@@ -583,6 +586,39 @@
                 document.body.style.overflow = '';
             }, 300);
         }
+    }
+
+    /**
+     * Initialize property location Google Map
+     */
+    function initPropertyLocationMap(asset) {
+        const mapContainer = document.getElementById('auction-asset-property-location-google-map-container');
+        if (!mapContainer || !asset) return;
+
+        const location = asset.auctionAsset_location || asset.location || '';
+        if (!location) {
+            mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">لا يتوفر موقع محدد</p>';
+            return;
+        }
+
+        // URL encode the location for Google Maps
+        const encodedLocation = encodeURIComponent(location + ', Saudi Arabia');
+
+        // Use Google Maps Embed API (no API key needed for basic embed)
+        // This will show the location with surrounding buildings and places
+        const mapIframe = document.createElement('iframe');
+        mapIframe.src = `https://www.google.com/maps?q=${encodedLocation}&output=embed&zoom=15&hl=ar`;
+        mapIframe.width = '100%';
+        mapIframe.height = '400';
+        mapIframe.frameBorder = '0';
+        mapIframe.style.border = '0';
+        mapIframe.style.borderRadius = 'var(--radius-sm)';
+        mapIframe.allowFullscreen = true;
+        mapIframe.loading = 'lazy';
+        mapIframe.setAttribute('aria-label', `خريطة موقع ${location}`);
+
+        mapContainer.innerHTML = '';
+        mapContainer.appendChild(mapIframe);
     }
 
     /**
