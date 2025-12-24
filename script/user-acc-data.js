@@ -232,7 +232,7 @@
                                         <div class="info-row profile-image-row">
                                             <div class="info-label">
                                                 <i data-lucide="image" class="info-icon"></i>
-                                                <span>لوجو الشركة</span>
+                                                <span>لوجو البائع</span>
                                             </div>
                                             <div class="info-value">
                                                 <div class="company-image-upload-wrapper">
@@ -246,7 +246,7 @@
                                         <div class="info-row profile-image-row">
                                             <div class="info-label">
                                                 <i data-lucide="image" class="info-icon"></i>
-                                                <span>بانر الشركة</span>
+                                                <span>بانر البائع</span>
                                             </div>
                                             <div class="info-value">
                                                 <div class="company-image-upload-wrapper">
@@ -260,18 +260,18 @@
                                         <div class="info-row seller-company-info-row">
                                             <div class="info-label">
                                                 <i data-lucide="file-text" class="info-icon"></i>
-                                                <span>وصف الشركة</span>
+                                                <span>وصف البائع</span>
                                             </div>
                                             <div class="info-value">
                                                 <textarea class="form-textarea" id="company-description-input" 
-                                                          placeholder="أدخل وصف الشركة..." 
+                                                          placeholder="أدخل وصف البائع..." 
                                                           rows="4">${companyDescription}</textarea>
                                             </div>
                                         </div>
                                         <div class="info-row seller-company-info-row">
                                             <div class="info-label">
                                                 <i data-lucide="map-pin" class="info-icon"></i>
-                                                <span>عنوان الشركة</span>
+                                                <span>عنوان البائع</span>
                                             </div>
                                             <div class="info-value">
                                                 <input type="text" class="form-input" id="company-address-input" 
