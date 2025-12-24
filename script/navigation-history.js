@@ -208,6 +208,13 @@
             // Navigate back to auction-property-detail-section
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-property-detail-section');
+
+                // Scroll scrollable containers to top
+                if (typeof window.scrollScrollableContainersToTop === 'function') {
+                    setTimeout(() => {
+                        window.scrollScrollableContainersToTop('auction-property-detail-section');
+                    }, 50);
+                }
             } else {
                 // Fallback: trigger navigation click
                 const propertyDetailNavItem = document.querySelector('[data-section="auction-property-detail-section"]');
@@ -224,8 +231,8 @@
 
         // If we're in seller-company-info-section, go back to auction-property-detail-section
         if (currentState.section === 'seller-company-info-section') {
-            // Hide header if it exists
-            const header = document.getElementById('seller-company-info-header');
+            // Hide header if it exists (using correct ID)
+            const header = document.getElementById('seller-company-info-page-header');
             if (header) {
                 header.style.display = 'none';
             }
@@ -233,6 +240,13 @@
             // Navigate back to auction-property-detail-section
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-property-detail-section');
+
+                // Scroll scrollable containers to top
+                if (typeof window.scrollScrollableContainersToTop === 'function') {
+                    setTimeout(() => {
+                        window.scrollScrollableContainersToTop('auction-property-detail-section');
+                    }, 50);
+                }
             } else {
                 // Fallback: trigger navigation click
                 const propertyDetailNavItem = document.querySelector('[data-section="auction-property-detail-section"]');
