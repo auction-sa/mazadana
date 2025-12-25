@@ -589,105 +589,75 @@
     }
 
     /**
-     * Initialize property location map using Leaflet (OpenStreetMap)
+     * Initialize property location map using Google Maps embedded iframe
      */
     function initPropertyLocationMap(asset) {
         const mapContainer = document.getElementById('auction-asset-property-location-google-map-container');
         if (!mapContainer) return;
 
-        // Check if Leaflet is available
-        if (typeof L === 'undefined') {
-            console.error('Leaflet library not loaded');
-            mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">مكتبة الخريطة غير محملة</p>';
-            return;
-        }
-
-        // Parse coordinates from auctionAsset_AddressUrl
-        let propertyLocation = null;
+        // Get address/coordinates from auctionAsset_AddressUrl
+        let mapQuery = null;
 
         if (asset && asset.auctionAsset_AddressUrl) {
             try {
-                // Parse the coordinates string (format: "lat, lon" or "lat,lon")
-                const coordsString = asset.auctionAsset_AddressUrl.trim();
-                const coordsArray = coordsString.split(',').map(coord => parseFloat(coord.trim()));
+                const addressUrl = asset.auctionAsset_AddressUrl.trim();
 
-                if (coordsArray.length === 2 &&
-                    !isNaN(coordsArray[0]) &&
-                    !isNaN(coordsArray[1]) &&
-                    coordsArray[0] >= -90 && coordsArray[0] <= 90 && // Valid latitude
-                    coordsArray[1] >= -180 && coordsArray[1] <= 180) { // Valid longitude
+                // Check if it's coordinates (format: "lat, lon" or "lat,lon")
+                const coordsMatch = addressUrl.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
 
-                    propertyLocation = {
-                        lat: coordsArray[0],
-                        lon: coordsArray[1],
-                        name: asset.auctionAsset_location || asset.auctionAsset_title || 'موقع العقار'
-                    };
+                if (coordsMatch) {
+                    // It's coordinates - parse and validate
+                    const lat = parseFloat(coordsMatch[1]);
+                    const lon = parseFloat(coordsMatch[2]);
+
+                    if (!isNaN(lat) && !isNaN(lon) &&
+                        lat >= -90 && lat <= 90 && // Valid latitude
+                        lon >= -180 && lon <= 180) { // Valid longitude
+
+                        // Use coordinates for Google Maps
+                        mapQuery = `${lat},${lon}`;
+                    } else {
+                        console.warn('Invalid coordinates in auctionAsset_AddressUrl:', addressUrl);
+                    }
                 } else {
-                    console.warn('Invalid coordinates format in auctionAsset_AddressUrl:', asset.auctionAsset_AddressUrl);
+                    // It's a text address - encode it for URL
+                    mapQuery = encodeURIComponent(addressUrl);
                 }
             } catch (error) {
-                console.error('Error parsing coordinates from auctionAsset_AddressUrl:', error);
+                console.error('Error parsing address from auctionAsset_AddressUrl:', error);
             }
         }
 
-        // Fallback to default location if coordinates are not available or invalid
-        if (!propertyLocation) {
+        // Fallback to default location if address is not available or invalid
+        if (!mapQuery) {
             console.warn('Using default location - auctionAsset_AddressUrl not available or invalid');
-            // Default location: Riyadh, Saudi Arabia
-            propertyLocation = {
-                lat: 24.7136,
-                lon: 46.6753,
-                name: asset?.auctionAsset_location || 'الرياض، المملكة العربية السعودية'
-            };
+            // Default location: Riyadh, Saudi Arabia coordinates
+            const defaultLocation = asset?.auctionAsset_location || 'الرياض، المملكة العربية السعودية';
+
+            // If we have a location name, use it, otherwise use coordinates
+            if (defaultLocation && defaultLocation.trim()) {
+                mapQuery = encodeURIComponent(defaultLocation);
+            } else {
+                mapQuery = '24.7136,46.6753'; // Riyadh coordinates
+            }
         }
 
         // Clear container
         mapContainer.innerHTML = '';
 
-        // Create map div
-        const mapDiv = document.createElement('div');
-        mapDiv.id = 'property-location-map';
-        mapDiv.style.width = '100%';
-        mapDiv.style.height = '400px';
-        mapDiv.style.borderRadius = 'var(--radius-sm)';
-        mapContainer.appendChild(mapDiv);
+        // Create Google Maps embedded iframe
+        // Google Maps embed URL format: https://www.google.com/maps?q=QUERY&output=embed
+        const mapIframe = document.createElement('iframe');
+        mapIframe.src = `https://www.google.com/maps?q=${mapQuery}&output=embed&zoom=15`;
+        mapIframe.width = '100%';
+        mapIframe.height = '400';
+        mapIframe.style.border = 'none';
+        mapIframe.style.borderRadius = 'var(--radius-sm)';
+        mapIframe.setAttribute('loading', 'lazy');
+        mapIframe.setAttribute('allowfullscreen', '');
+        mapIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
 
-        // Wait a bit to ensure the div is rendered
-        setTimeout(() => {
-            try {
-                // Initialize Leaflet map with property coordinates
-                const map = L.map('property-location-map', {
-                    zoomControl: true,
-                    scrollWheelZoom: true,
-                    doubleClickZoom: true,
-                    boxZoom: true,
-                    keyboard: true,
-                    dragging: true,
-                    touchZoom: true
-                }).setView([propertyLocation.lat, propertyLocation.lon], 15);
-
-                // Add OpenStreetMap tile layer
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    maxZoom: 19
-                }).addTo(map);
-
-                // Add marker for property location
-                const marker = L.marker([propertyLocation.lat, propertyLocation.lon]).addTo(map);
-                marker.bindPopup(`<b>${propertyLocation.name}</b><br>${asset?.auctionAsset_title || 'موقع العقار'}`).openPopup();
-
-                // Add a circle to show area of interest
-                L.circle([propertyLocation.lat, propertyLocation.lon], {
-                    color: '#2c5aa0',
-                    fillColor: '#2c5aa0',
-                    fillOpacity: 0.1,
-                    radius: 500 // 500 meters
-                }).addTo(map);
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">حدث خطأ أثناء تحميل الخريطة: ' + error.message + '</p>';
-            }
-        }, 100);
+        mapContainer.appendChild(mapIframe);
     }
 
     /**
