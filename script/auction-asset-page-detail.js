@@ -589,6 +589,192 @@
     }
 
     /**
+     * Store map query for reset functionality
+     */
+    let currentMapQuery = null;
+
+    /**
+     * Create Google Maps iframe with given query
+     */
+    function createMapIframe(mapQuery, height = '400') {
+        const mapIframe = document.createElement('iframe');
+        // Add hl=ar parameter to display map interface and place cards in Arabic
+        // Zoom level 19 provides a very close, building-level view (max is 20)
+        mapIframe.src = `https://www.google.com/maps?q=${mapQuery}&output=embed&zoom=19&hl=ar`;
+        mapIframe.width = '100%';
+        mapIframe.height = height;
+        mapIframe.style.border = 'none';
+        mapIframe.style.borderRadius = 'var(--radius-sm)';
+        mapIframe.setAttribute('loading', 'lazy');
+        mapIframe.setAttribute('allowfullscreen', '');
+        mapIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        return mapIframe;
+    }
+
+    /**
+     * Reset map view to original address
+     */
+    function resetMapView() {
+        if (!currentMapQuery) return;
+
+        const mapContainer = document.getElementById('auction-asset-property-location-google-map-container');
+        if (!mapContainer) return;
+
+        const mapWrapper = mapContainer.querySelector('.map-wrapper');
+        if (!mapWrapper) return;
+
+        // Remove old iframe
+        const oldIframe = mapWrapper.querySelector('iframe');
+        if (oldIframe) {
+            oldIframe.remove();
+        }
+
+        // Create new iframe with original query
+        const newIframe = createMapIframe(currentMapQuery, '400');
+        mapWrapper.appendChild(newIframe);
+    }
+
+    /**
+     * Open map in fullscreen modal (within website)
+     */
+    function openMapFullscreen() {
+        if (!currentMapQuery) return;
+
+        // Remove existing fullscreen modal if any
+        const existingModal = document.querySelector('.map-fullscreen-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Create fullscreen modal
+        const modal = document.createElement('div');
+        modal.className = 'map-fullscreen-modal';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'map-fullscreen-overlay';
+
+        const content = document.createElement('div');
+        content.className = 'map-fullscreen-content';
+
+        // Create buttons container to avoid overlap
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'map-fullscreen-buttons-container';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'map-fullscreen-close-btn';
+        closeBtn.setAttribute('aria-label', 'إغلاق');
+        closeBtn.innerHTML = '<i data-lucide="x"></i>';
+
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'map-fullscreen-reset-btn';
+        resetBtn.setAttribute('aria-label', 'إعادة تعيين الموقع');
+        resetBtn.innerHTML = '<i data-lucide="refresh-cw"></i><span>إعادة تعيين الموقع</span>';
+
+        // Add buttons to container
+        buttonsContainer.appendChild(closeBtn);
+        buttonsContainer.appendChild(resetBtn);
+
+        const mapContainer = document.createElement('div');
+        mapContainer.className = 'map-fullscreen-container';
+        const fullscreenIframe = createMapIframe(currentMapQuery, '100%');
+        fullscreenIframe.style.height = '100%';
+        mapContainer.appendChild(fullscreenIframe);
+
+        content.appendChild(buttonsContainer);
+        content.appendChild(mapContainer);
+        modal.appendChild(overlay);
+        modal.appendChild(content);
+
+        document.body.appendChild(modal);
+
+        // Initialize Lucide icons
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+
+                // Force reset button icon to be white
+                const forceResetIconWhite = () => {
+                    const resetIcon = resetBtn.querySelector('i[data-lucide="refresh-cw"]');
+                    if (resetIcon) {
+                        const svg = resetIcon.querySelector('svg');
+                        if (svg) {
+                            svg.style.stroke = '#ffffff';
+                            svg.style.color = '#ffffff';
+                            const paths = svg.querySelectorAll('path, line, circle, polyline');
+                            paths.forEach(path => {
+                                path.style.stroke = '#ffffff';
+                                path.style.fill = 'none';
+                            });
+                        } else {
+                            // SVG might not be ready yet, try again
+                            setTimeout(forceResetIconWhite, 50);
+                        }
+                    }
+                };
+                forceResetIconWhite();
+
+                // Force close button icon to be white
+                const forceCloseIconWhite = () => {
+                    const closeIcon = closeBtn.querySelector('i[data-lucide="x"]');
+                    if (closeIcon) {
+                        const svg = closeIcon.querySelector('svg');
+                        if (svg) {
+                            svg.style.stroke = '#ffffff';
+                            svg.style.color = '#ffffff';
+                            const paths = svg.querySelectorAll('path, line, circle, polyline');
+                            paths.forEach(path => {
+                                path.style.stroke = '#ffffff';
+                                path.style.fill = 'none';
+                            });
+                        } else {
+                            // SVG might not be ready yet, try again
+                            setTimeout(forceCloseIconWhite, 50);
+                        }
+                    }
+                };
+                forceCloseIconWhite();
+            }
+            modal.classList.add('active');
+        }, 10);
+
+        // Close handlers (buttons are already references)
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                if (modal.parentNode) {
+                    modal.parentNode.removeChild(modal);
+                }
+            }, 300);
+        };
+
+        const resetMapInFullscreen = () => {
+            const mapContainer = modal.querySelector('.map-fullscreen-container');
+            if (mapContainer) {
+                const oldIframe = mapContainer.querySelector('iframe');
+                if (oldIframe) {
+                    oldIframe.remove();
+                }
+                const newIframe = createMapIframe(currentMapQuery, '100%');
+                mapContainer.appendChild(newIframe);
+            }
+        };
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (overlay) overlay.addEventListener('click', closeModal);
+        if (resetBtn) resetBtn.addEventListener('click', resetMapInFullscreen);
+
+        // Close on Escape key
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+    }
+
+    /**
      * Initialize property location map using Google Maps embedded iframe
      */
     function initPropertyLocationMap(asset) {
@@ -642,22 +828,58 @@
             }
         }
 
+        // Store map query for reset functionality
+        currentMapQuery = mapQuery;
+
         // Clear container
         mapContainer.innerHTML = '';
 
-        // Create Google Maps embedded iframe
-        // Google Maps embed URL format: https://www.google.com/maps?q=QUERY&output=embed
-        const mapIframe = document.createElement('iframe');
-        mapIframe.src = `https://www.google.com/maps?q=${mapQuery}&output=embed&zoom=15`;
-        mapIframe.width = '100%';
-        mapIframe.height = '400';
-        mapIframe.style.border = 'none';
-        mapIframe.style.borderRadius = 'var(--radius-sm)';
-        mapIframe.setAttribute('loading', 'lazy');
-        mapIframe.setAttribute('allowfullscreen', '');
-        mapIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        // Create map wrapper and controls
+        const mapWrapper = document.createElement('div');
+        mapWrapper.className = 'map-wrapper';
+        mapWrapper.style.position = 'relative';
+        mapWrapper.style.width = '100%';
+        mapWrapper.style.height = '400px';
+        mapWrapper.style.borderRadius = 'var(--radius-sm)';
+        mapWrapper.style.overflow = 'hidden';
 
-        mapContainer.appendChild(mapIframe);
+        // Create Google Maps iframe
+        const mapIframe = createMapIframe(mapQuery, '400');
+        mapWrapper.appendChild(mapIframe);
+
+        // Create control buttons container
+        const mapControls = document.createElement('div');
+        mapControls.className = 'map-controls';
+        mapControls.innerHTML = `
+            <button class="map-control-btn map-fullscreen-btn" aria-label="ملء الشاشة" title="ملء الشاشة">
+                <i data-lucide="maximize-2"></i>
+            </button>
+            <button class="map-control-btn map-reset-btn" aria-label="إعادة تعيين الموقع" title="إعادة تعيين الموقع">
+                <i data-lucide="refresh-cw"></i>
+            </button>
+        `;
+
+        mapWrapper.appendChild(mapControls);
+        mapContainer.appendChild(mapWrapper);
+
+        // Initialize Lucide icons
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
+
+        // Add event listeners for buttons
+        const fullscreenBtn = mapControls.querySelector('.map-fullscreen-btn');
+        const resetBtn = mapControls.querySelector('.map-reset-btn');
+
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', openMapFullscreen);
+        }
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetMapView);
+        }
     }
 
     /**

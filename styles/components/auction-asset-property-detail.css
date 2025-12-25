@@ -492,25 +492,6 @@
     width: 20px;
     height: 20px;
     color: #ffffff !important;
-    stroke: #ffffff !important;
-    stroke-width: 2 !important;
-}
-
-.attachment-download-btn [data-lucide="download"] svg,
-.attachment-download-btn i[data-lucide="download"] svg,
-.attachment-download-btn i svg {
-    stroke: #ffffff !important;
-    fill: none !important;
-    color: #ffffff !important;
-}
-
-.attachment-download-btn [data-lucide="download"] svg path,
-.attachment-download-btn i[data-lucide="download"] svg path,
-.attachment-download-btn i svg path,
-.attachment-download-btn [data-lucide="download"] svg *,
-.attachment-download-btn i svg * {
-    stroke: #ffffff !important;
-    fill: none !important;
 }
 
 /* Google Map Container */
@@ -523,11 +504,321 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
 .google-map-container iframe {
     width: 100%;
     height: 100%;
     border: none;
     display: block;
+}
+
+/* Map Controls */
+.map-controls {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    z-index: 10;
+}
+
+.map-control-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-white);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-base);
+    padding: 0;
+}
+
+.map-control-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.map-control-btn:active {
+    transform: scale(0.95);
+}
+
+.map-control-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Fullscreen Map Modal */
+.map-fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.map-fullscreen-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.map-fullscreen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+.map-fullscreen-content {
+    position: relative;
+    width: 95%;
+    height: 95%;
+    max-width: 1400px;
+    max-height: 900px;
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform var(--transition-base);
+}
+
+.map-fullscreen-modal.active .map-fullscreen-content {
+    transform: scale(1);
+}
+
+/* Buttons Container */
+.map-fullscreen-buttons-container {
+    position: absolute;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+    z-index: 20;
+    pointer-events: none;
+    /* Allow clicks to pass through container */
+}
+
+.map-fullscreen-buttons-container>* {
+    pointer-events: auto;
+    /* Re-enable clicks on buttons */
+}
+
+.map-fullscreen-close-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background: rgb(192, 35, 35);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+    order: 1;
+    /* Close button appears first (on top) */
+}
+
+.map-fullscreen-close-btn i {
+    width: 25px;
+    height: 25px;
+    color: #ffffff !important;
+}
+
+/* Ensure close button icon SVG is white - comprehensive targeting */
+.map-fullscreen-close-btn i svg,
+.map-fullscreen-close-btn [data-lucide] svg,
+.map-fullscreen-close-btn svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+/* Target all SVG child elements */
+.map-fullscreen-close-btn i svg *,
+.map-fullscreen-close-btn [data-lucide] svg *,
+.map-fullscreen-close-btn svg * {
+    stroke: #ffffff !important;
+    fill: none !important;
+    color: #ffffff !important;
+}
+
+/* Specific targeting for paths, lines, circles, etc. */
+.map-fullscreen-close-btn i svg path,
+.map-fullscreen-close-btn [data-lucide] svg path,
+.map-fullscreen-close-btn svg path,
+.map-fullscreen-close-btn i svg line,
+.map-fullscreen-close-btn [data-lucide] svg line,
+.map-fullscreen-close-btn svg line,
+.map-fullscreen-close-btn i svg circle,
+.map-fullscreen-close-btn [data-lucide] svg circle,
+.map-fullscreen-close-btn svg circle,
+.map-fullscreen-close-btn i svg polyline,
+.map-fullscreen-close-btn [data-lucide] svg polyline,
+.map-fullscreen-close-btn svg polyline {
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+.map-fullscreen-reset-btn {
+    position: relative;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary-color);
+    color: var(--bg-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    flex-shrink: 0;
+    order: 2;
+    /* Reset button appears second (below close button) */
+}
+
+.map-fullscreen-reset-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.map-fullscreen-reset-btn:active {
+    transform: translateY(0);
+}
+
+/* Ensure reset button icon is white - comprehensive targeting */
+.map-fullscreen-reset-btn i,
+.map-fullscreen-reset-btn [data-lucide],
+.map-fullscreen-reset-btn i[data-lucide="refresh-cw"] {
+    width: 18px;
+    height: 18px;
+    color: #ffffff !important;
+}
+
+/* Ensure SVG icon paths are white - target all SVG elements */
+.map-fullscreen-reset-btn i svg,
+.map-fullscreen-reset-btn [data-lucide] svg,
+.map-fullscreen-reset-btn svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+/* Target all SVG child elements */
+.map-fullscreen-reset-btn i svg *,
+.map-fullscreen-reset-btn [data-lucide] svg *,
+.map-fullscreen-reset-btn svg * {
+    stroke: #ffffff !important;
+    fill: none !important;
+    color: #ffffff !important;
+}
+
+/* Specific targeting for paths, lines, circles, etc. */
+.map-fullscreen-reset-btn i svg path,
+.map-fullscreen-reset-btn [data-lucide] svg path,
+.map-fullscreen-reset-btn svg path,
+.map-fullscreen-reset-btn i svg line,
+.map-fullscreen-reset-btn [data-lucide] svg line,
+.map-fullscreen-reset-btn svg line,
+.map-fullscreen-reset-btn i svg circle,
+.map-fullscreen-reset-btn [data-lucide] svg circle,
+.map-fullscreen-reset-btn svg circle,
+.map-fullscreen-reset-btn i svg polyline,
+.map-fullscreen-reset-btn [data-lucide] svg polyline,
+.map-fullscreen-reset-btn svg polyline {
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+.map-fullscreen-container {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    overflow: hidden;
+}
+
+.map-fullscreen-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Responsive adjustments for map controls */
+@media (max-width: 768px) {
+    .map-control-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .map-control-btn i {
+        width: 18px;
+        height: 18px;
+    }
+
+    .map-fullscreen-content {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+
+    .map-fullscreen-buttons-container {
+        top: var(--spacing-sm);
+        left: var(--spacing-sm);
+        gap: var(--spacing-xs);
+    }
+
+    .map-fullscreen-reset-btn {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: var(--font-size-xs);
+    }
+
+    .map-fullscreen-reset-btn span {
+        display: none;
+    }
+
+    .map-fullscreen-reset-btn i {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 /* Date Counter Container */
