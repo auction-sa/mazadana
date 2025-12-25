@@ -1299,11 +1299,9 @@
                 if (isFavorited) {
                     // Remove favorited state (turn back to white)
                     heartIcon.classList.remove('favorited');
-                    console.log('removed favorited state');
                 } else {
                     // Add favorited state (turn red) and trigger animation
                     heartIcon.classList.add('favorited');
-                    console.log('removed favorited state');
                 }
             });
 

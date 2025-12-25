@@ -163,8 +163,6 @@
             deleteAccountBtn.addEventListener('click', function () {
                 // TODO: Implement delete account functionality
                 if (confirm('هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.')) {
-                    console.log('Delete account confirmed');
-                    // TODO: Implement actual delete account logic
                 }
             });
         }

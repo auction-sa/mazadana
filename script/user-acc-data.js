@@ -868,7 +868,6 @@
                 } else {
                     alert('تم حفظ البيانات بنجاح');
                 }
-                console.log('Company data saved:', companyData);
             } catch (error) {
                 console.error('Error saving company data:', error);
                 if (typeof window.showToastMessage === 'function') {

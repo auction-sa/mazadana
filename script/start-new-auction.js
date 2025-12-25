@@ -1977,7 +1977,6 @@
 
                 if (confirm('هل أنت متأكد من إرسال المعلومات للمراجعة؟')) {
                     // TODO: Submit to Supabase when backend is ready
-                    console.log('Submitting auction data:', formData);
                     alert('تم إرسال المعلومات بنجاح! سيتم مراجعتها والتواصل معك قريباً.');
 
                     // Clear saved data

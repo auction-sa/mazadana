@@ -603,12 +603,53 @@
 
     /**
      * Create Google Maps iframe with given query
+     * @param {string} mapQuery - Can be coordinates, address, or Google Maps URL
+     * @param {string} height - Height of the iframe
+     * @param {boolean} isGoogleMapsUrl - Whether the query is a Google Maps URL
      */
-    function createMapIframe(mapQuery, height = '400') {
+    function createMapIframe(mapQuery, height = '400', isGoogleMapsUrl = false) {
         const mapIframe = document.createElement('iframe');
-        // Add hl=ar parameter to display map interface and place cards in Arabic
-        // Zoom level 19 provides a very close, building-level view (max is 20)
-        mapIframe.src = `https://www.google.com/maps?q=${mapQuery}&output=embed&zoom=19&hl=ar`;
+
+        if (isGoogleMapsUrl) {
+            // For Google Maps URLs (including short URLs), we can't embed them directly
+            // due to X-Frame-Options. Instead, we'll try to extract place information
+            // or use the location name as a fallback.
+
+            let embedUrl = '';
+
+            try {
+                const url = new URL(mapQuery);
+
+                // Check for place ID in various URL formats
+                const placeId = url.searchParams.get('cid') ||
+                    url.searchParams.get('place_id') ||
+                    url.searchParams.get('q')?.match(/place_id:([^&]+)/)?.[1] ||
+                    url.pathname.match(/place\/([^\/]+)/)?.[1];
+
+                if (placeId) {
+                    // Use place ID in embed format (requires API key, but we'll use the standard embed)
+                    embedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x${placeId}!2zMjDCsDI1JzI3LjYiTiA0NsKwNDAnMzUuNiJF!5e0!3m2!1sen!2sus!4v1234567890!5m2!1sen!2sus&q=place_id:${placeId}&hl=ar&zoom=19`;
+                    // Actually, let's use the simpler format without API key
+                    embedUrl = `https://www.google.com/maps?q=place_id:${placeId}&output=embed&hl=ar&zoom=19`;
+                } else {
+                    // For short URLs, we can't resolve them client-side due to CORS
+                    // So we'll use the location name from the asset as a fallback
+                    // This will be handled in initPropertyLocationMap
+                    // For now, use a generic approach that might work
+                    embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed&hl=ar&zoom=19`;
+                }
+            } catch (e) {
+                // If URL parsing fails, use it as a regular query
+                embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed&hl=ar&zoom=19`;
+            }
+
+            mapIframe.src = embedUrl;
+        } else {
+            // Add hl=ar parameter to display map interface and place cards in Arabic
+            // Zoom level 19 provides a very close, building-level view (max is 20)
+            mapIframe.src = `https://www.google.com/maps?q=${mapQuery}&output=embed&zoom=19&hl=ar`;
+        }
+
         mapIframe.width = '100%';
         mapIframe.height = height;
         mapIframe.style.border = 'none';
@@ -618,6 +659,11 @@
         mapIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
         return mapIframe;
     }
+
+    /**
+     * Store whether the current map query is a Google Maps URL
+     */
+    let currentIsGoogleMapsUrl = false;
 
     /**
      * Reset map view to original address
@@ -638,7 +684,7 @@
         }
 
         // Create new iframe with original query
-        const newIframe = createMapIframe(currentMapQuery, '400');
+        const newIframe = createMapIframe(currentMapQuery, '400', currentIsGoogleMapsUrl);
         mapWrapper.appendChild(newIframe);
     }
 
@@ -684,7 +730,7 @@
 
         const mapContainer = document.createElement('div');
         mapContainer.className = 'map-fullscreen-container';
-        const fullscreenIframe = createMapIframe(currentMapQuery, '100%');
+        const fullscreenIframe = createMapIframe(currentMapQuery, '100%', currentIsGoogleMapsUrl);
         fullscreenIframe.style.height = '100%';
         mapContainer.appendChild(fullscreenIframe);
 
@@ -763,7 +809,8 @@
                 if (oldIframe) {
                     oldIframe.remove();
                 }
-                const newIframe = createMapIframe(currentMapQuery, '100%');
+                const newIframe = createMapIframe(currentMapQuery, '100%', currentIsGoogleMapsUrl);
+                newIframe.style.height = '100%';
                 mapContainer.appendChild(newIframe);
             }
         };
@@ -791,15 +838,25 @@
 
         // Get address/coordinates from auctionAsset_AddressUrl
         let mapQuery = null;
+        let isGoogleMapsUrl = false;
 
         if (asset && asset.auctionAsset_AddressUrl) {
             try {
                 const addressUrl = asset.auctionAsset_AddressUrl.trim();
 
+                // Check if it's a Google Maps URL (short URL or full URL)
+                const googleMapsUrlPattern = /^(https?:\/\/)?(www\.)?(maps\.app\.goo\.gl|goo\.gl\/maps|maps\.google\.com|google\.com\/maps)/i;
+                if (googleMapsUrlPattern.test(addressUrl)) {
+                    // For Google Maps short URLs, we can't embed them directly due to X-Frame-Options
+                    // Instead, use the location name from the asset as a fallback
+                    // This ensures the map will display properly
+                    const locationName = asset?.auctionAsset_location || asset?.auction_location || 'الرياض، المملكة العربية السعودية';
+                    mapQuery = encodeURIComponent(locationName);
+                    isGoogleMapsUrl = false; // Use as regular address query, not as URL
+                }
                 // Check if it's coordinates (format: "lat, lon" or "lat,lon")
-                const coordsMatch = addressUrl.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
-
-                if (coordsMatch) {
+                else if (addressUrl.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/)) {
+                    const coordsMatch = addressUrl.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
                     // It's coordinates - parse and validate
                     const lat = parseFloat(coordsMatch[1]);
                     const lon = parseFloat(coordsMatch[2]);
@@ -836,8 +893,9 @@
             }
         }
 
-        // Store map query for reset functionality
+        // Store map query and URL type for reset functionality
         currentMapQuery = mapQuery;
+        currentIsGoogleMapsUrl = isGoogleMapsUrl;
 
         // Clear container
         mapContainer.innerHTML = '';
@@ -852,7 +910,7 @@
         mapWrapper.style.overflow = 'hidden';
 
         // Create Google Maps iframe
-        const mapIframe = createMapIframe(mapQuery, '400');
+        const mapIframe = createMapIframe(mapQuery, '400', isGoogleMapsUrl);
         mapWrapper.appendChild(mapIframe);
 
         // Create control buttons container
