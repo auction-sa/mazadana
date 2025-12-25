@@ -196,6 +196,15 @@
     .auction-property-main-page-detail-top-image {
         width: 30rem;
     }
+
+    .bottom-sheet-content {
+        width: 50%;
+        justify-self: center;
+    }
+    
+    .boundaries-group {
+        gap: 1rem;
+    }
 }
 
 

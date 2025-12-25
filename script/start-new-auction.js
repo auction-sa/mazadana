@@ -23,16 +23,23 @@
         },
         step2: {
             propertyTitle: '',
-            propertyAddress: '',
+            propertyAddressUrl: '',
             propertySize: '',
-            propertySizeUnit: 'متر²',
+            propertySizeUnit: 'م²',
             propertyDescription: '',
+            propertyBoundaries: {
+                north: '',
+                south: '',
+                east: '',
+                west: ''
+            },
             propertyImages: []
         },
         step3: {
             startPrice: '',
             depositPrice: '',
             bidIncrement: '',
+            minimumSalePrice: '',
             auctionStartDate: '',
             auctionStartTime: '',
             auctionDaysAmount: '',
@@ -270,15 +277,15 @@
                         <label class="add-new-auction-form-label">عنوان العقار</label>
                         <input type="text" class="add-new-auction-form-input" id="property-title" value="${data.propertyTitle}" 
                                placeholder="مثل: شقة فاخرة في حي العليا">
-                        <small class="form-helper">عنوان قصير يصف العقار (مثلاً "شقة فاخرة في حي العليا" او "فيلا حديثة في شمال الرياض")</small>
+                        <small class="form-helper">عنوان قصير يصف العقار (مثلاً "شقة في مكة في حي العزيزية" او "ارض زراعية في شمال الرياض")</small>
                     </div>
 
                     <!-- Property Address -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">العنوان الكامل</label>
-                        <textarea class="add-new-auction-form-input form-textarea" id="property-address" rows="3" 
-                                  placeholder="أدخل العنوان الكامل للعقار">${data.propertyAddress}</textarea>
-                        <small class="form-helper">العنوان الكامل مع الشارع والحي والمدينة (مثلاً "شارع الملك فهد، حي العليا، الرياض، المملكة العربية السعودية")</small>
+                        <textarea class="add-new-auction-form-input form-textarea" id="property-address-url" rows="3" 
+                                  placeholder="أدخل العنوان الكامل للعقار">${data.propertyAddressUrl}</textarea>
+                        <small class="form-helper">العنوان الكامل من قوقل ماب (مثلاً رابط قوقل ماب او وصف كامل لعنوان العقار")</small>
                     </div>
 
                     <!-- Property Size -->
@@ -297,6 +304,34 @@
                         <textarea class="add-new-auction-form-input form-textarea" id="property-description" rows="5" 
                                   placeholder="وصف تفصيلي للعقار...">${data.propertyDescription}</textarea>
                         <small class="form-helper">وصف شامل للعقار ومميزاته</small>
+                    </div>
+
+                    <!-- Property Boundaries -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">حدود وأطوال العقار</label>
+                        <div class="boundaries-group">
+                            <div class="boundary-item">
+                                <label class="boundary-label">شمال</label>
+                                <textarea class="add-new-auction-form-input form-textarea" id="property-boundary-north" rows="3" 
+                                          placeholder="وصف حدود العقار من الشمال...">${data.propertyBoundaries?.north || ''}</textarea>
+                            </div>
+                            <div class="boundary-item">
+                                <label class="boundary-label">جنوب</label>
+                                <textarea class="add-new-auction-form-input form-textarea" id="property-boundary-south" rows="3" 
+                                          placeholder="وصف حدود العقار من الجنوب...">${data.propertyBoundaries?.south || ''}</textarea>
+                            </div>
+                            <div class="boundary-item">
+                                <label class="boundary-label">شرق</label>
+                                <textarea class="add-new-auction-form-input form-textarea" id="property-boundary-east" rows="3" 
+                                          placeholder="وصف حدود العقار من الشرق...">${data.propertyBoundaries?.east || ''}</textarea>
+                            </div>
+                            <div class="boundary-item">
+                                <label class="boundary-label">غرب</label>
+                                <textarea class="add-new-auction-form-input form-textarea" id="property-boundary-west" rows="3" 
+                                          placeholder="وصف حدود العقار من الغرب...">${data.propertyBoundaries?.west || ''}</textarea>
+                            </div>
+                        </div>
+                        <small class="form-helper">وصف مختصر لحدود العقار من جميع الجهات</small>
                     </div>
 
                     <!-- Property Images -->
@@ -353,7 +388,7 @@
 
                     <!-- Reserve Price -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">قيمة التأمين (اختياري)</label>
+                        <label class="add-new-auction-form-label">قيمة التأمين</label>
                         <div class="input-with-currency">
                             <input type="number" class="add-new-auction-form-input" id="deposit-amount" value="${data.depositPrice}" 
                                    placeholder="0" min="0" step="100" dir="ltr">
@@ -361,7 +396,7 @@
                                 <img src="rial-icon.webp" alt="ريال" class="rial-icon">
                             </span>
                         </div>
-                        <small class="form-helper">السعر الأدنى الذي تقبله (اختياري)</small>
+                        <small class="form-helper">سعر التأمين للمشاركة في المزاد</small>
                     </div>
 
                     <!-- Bid Increment -->
@@ -375,6 +410,19 @@
                             </span>
                         </div>
                         <small class="form-helper">القيمة الدنيا للزيادة في كل مزايدة</small>
+                    </div>
+
+                    <!-- Minimum Sale Price -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">السعر الأدنى لبيع العقار (إختياري)</label>
+                        <div class="input-with-currency">
+                            <input type="number" class="add-new-auction-form-input" id="minimum-sale-price" value="${data.minimumSalePrice}" 
+                                   placeholder="0" min="0" step="100" dir="ltr">
+                            <span class="input-currency">
+                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
+                            </span>
+                        </div>
+                        <small class="form-helper">السعر الأدنى الذي تقبل به بيع العقار (حقل اختياري)</small>
                     </div>
 
                      <!-- Auction Start Date & Time -->
@@ -596,7 +644,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">العنوان الكامل:</span>
-                            <span class="review-value">${data.step2.propertyAddress || 'غير محدد'}</span>
+                            <span class="review-value">${data.step2.propertyAddressUrl || 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">المساحة:</span>
@@ -605,6 +653,27 @@
                         <div class="review-item">
                             <span class="review-label">الوصف:</span>
                             <span class="review-value">${data.step2.propertyDescription || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">حدود وأطوال العقار:</span>
+                            <div class="review-boundaries">
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">شمال:</span>
+                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.north || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">جنوب:</span>
+                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.south || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">شرق:</span>
+                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.east || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">غرب:</span>
+                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.west || 'غير محدد'}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="review-item">
                             <span class="review-label">عدد الصور:</span>
@@ -625,6 +694,10 @@
                         <div class="review-item">
                             <span class="review-label">قيمة الزيادة:</span>
                             <span class="review-value">${data.step3.bidIncrement ? formatCurrency(data.step3.bidIncrement) : 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">السعر الأدنى لبيع العقار:</span>
+                            <span class="review-value">${data.step3.minimumSalePrice ? formatCurrency(data.step3.minimumSalePrice) : 'لايوجد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">تاريخ ووقت البداية:</span>
@@ -809,7 +882,7 @@
 
         // Step 2
         if (!data.step2.propertyTitle) missing.push('عنوان العقار');
-        if (!data.step2.propertyAddress) missing.push('العنوان الكامل');
+        if (!data.step2.propertyAddressUrl) missing.push('عنوان العقار (من قوقل ماب)');
         if (!data.step2.propertySize) missing.push('مساحة العقار');
 
         // Step 3
@@ -946,10 +1019,16 @@
     function saveStep2() {
         formData.step2 = {
             propertyTitle: document.getElementById('property-title')?.value || '',
-            propertyAddress: document.getElementById('property-address')?.value || '',
+            propertyAddressUrl: document.getElementById('property-address-url')?.value || '',
             propertySize: document.getElementById('property-size')?.value || '',
-            propertySizeUnit: 'متر²',
+            propertySizeUnit: 'م²',
             propertyDescription: document.getElementById('property-description')?.value || '',
+            propertyBoundaries: {
+                north: document.getElementById('property-boundary-north')?.value || '',
+                south: document.getElementById('property-boundary-south')?.value || '',
+                east: document.getElementById('property-boundary-east')?.value || '',
+                west: document.getElementById('property-boundary-west')?.value || ''
+            },
             propertyImages: formData.step2.propertyImages || []
         };
         autoSaveData();
@@ -1011,6 +1090,7 @@
             startPrice: document.getElementById('start-price')?.value || '',
             depositPrice: document.getElementById('deposit-amount')?.value || '',
             bidIncrement: document.getElementById('bid-increment')?.value || '',
+            minimumSalePrice: document.getElementById('minimum-sale-price')?.value || '',
             auctionStartDate: startDateInput?.getAttribute('data-date-value') || '',
             auctionStartTime: startTimeInput?.value || '',
             auctionDaysAmount: document.getElementById('auction-days-amount')?.value || '',
@@ -1250,7 +1330,7 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">العنوان الكامل:</span>
-                    <span class="review-value">${data.step2.propertyAddress || 'غير محدد'}</span>
+                    <span class="review-value">${data.step2.propertyAddressUrl || 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">المساحة:</span>
@@ -1261,6 +1341,27 @@
                     <span class="review-value">${data.step2.propertyDescription || 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
+                    <span class="review-label">حدود وأطوال العقار:</span>
+                    <div class="review-boundaries">
+                        <div class="review-boundary-item">
+                            <span class="review-boundary-label">شمال:</span>
+                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.north || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-boundary-item">
+                            <span class="review-boundary-label">جنوب:</span>
+                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.south || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-boundary-item">
+                            <span class="review-boundary-label">شرق:</span>
+                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.east || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-boundary-item">
+                            <span class="review-boundary-label">غرب:</span>
+                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.west || 'غير محدد'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-item">
                     <span class="review-label">عدد الصور:</span>
                     <span class="review-value">${convertArabicToEnglish(data.step2.propertyImages.length)} صورة</span>
                 </div>
@@ -1268,7 +1369,7 @@
 
             <div class="review-section">
                 <h4 class="review-section-title">المرحلة 3: إعداد المزاد</h4>
-                <div class="review-item"></div>
+                <div class="review-item">
                     <span class="review-label">سعر البداية:</span>
                     <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
                 </div>
@@ -1279,6 +1380,10 @@
                 <div class="review-item">
                     <span class="review-label">قيمة الزيادة:</span>
                     <span class="review-value">${data.step3.bidIncrement ? formatCurrency(data.step3.bidIncrement) : 'غير محدد'}</span>
+                </div>
+                <div class="review-item">
+                    <span class="review-label">السعر الأدنى لبيع العقار:</span>
+                    <span class="review-value">${data.step3.minimumSalePrice ? formatCurrency(data.step3.minimumSalePrice) : 'غير محدد (إختياري)'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">تاريخ ووقت البداية:</span>
@@ -1487,7 +1592,7 @@
         });
 
         // Save step 2 inputs
-        ['property-title', 'property-address', 'property-size', 'property-description'].forEach(id => {
+        ['property-title', 'property-address-url', 'property-size', 'property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('blur', saveStep2);
@@ -1681,7 +1786,7 @@
         }
 
         // Save step 3 inputs (excluding date inputs as they're handled by Pikaday)
-        ['start-price', 'deposit-amount', 'bid-increment', 'auction-start-time'].forEach(id => {
+        ['start-price', 'deposit-amount', 'bid-increment', 'minimum-sale-price', 'auction-start-time'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', saveStep3);

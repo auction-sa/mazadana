@@ -175,8 +175,8 @@
                 
                 <!-- Pricing Buttons Row -->
                 <div class="pricing-buttons-row">
-                    <button class="bottom-action-btn">المشاركة في المزاد</button>
-                    <button class="outlined-btn">تفاصيل الرسوم</button>
+                    <button class="auction-asset-bottom-action-btn">المشاركة في المزاد</button>
+                    <button class="auction-asset-fee-detail-button">تفاصيل الرسوم</button>
                 </div>
                 <div class="vat-notice">
                     تطبق ضريبة القيمة المضافة %15 على السعر لجميع المنتجات في هذا المزاد
@@ -208,7 +208,7 @@
                         <span class="detail-value">${asset.auctionAsset_bidEndDate || 'غير محدد'}</span>
                     </div>
                 </div>
-                <button class="product-attachments-btn outlined-btn" id="open-attachments-btn">مرفقات العقار</button>
+                <button class="product-attachments-btn" id="open-attachments-btn">مرفقات العقار</button>
             </div>
 
             <!-- Property Address Details Section -->

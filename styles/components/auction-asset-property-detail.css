@@ -224,11 +224,16 @@
 
 /* Section Styles */
 .asset-detail-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     border-radius: var(--radius-sm);
     margin-bottom: var(--spacing-md);
 }
 
 .asset-detail-section-title {
+    width: 100%;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
@@ -242,6 +247,7 @@
     background: var(--bg-white);
     border-radius: 5px;
     font-size: 0.5rem;
+    width: 100%;
 }
 
 /* Pricing Information Card */
@@ -290,7 +296,7 @@
 
 /* Outlined Button */
 .outlined-btn {
-    width: 100%;
+    width: fit-content;
     padding: 0.2rem 0;
     border: 2px solid var(--primary-color);
     border-radius: 5px;
@@ -316,6 +322,7 @@
 
 /* Product Details List */
 .product-details-list {
+    width: 100%;
     background: var(--bg-white);
     display: flex;
     flex-direction: column;
@@ -357,7 +364,17 @@
 }
 
 .product-attachments-btn {
-    margin-top: var(--spacing-md);
+    width: fit-content;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--primary-color);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    direction: rtl;
 }
 
 /* Bottom Sheet for Attachments */
@@ -389,6 +406,7 @@
 }
 
 .bottom-sheet-content {
+    width: 100%;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -843,22 +861,33 @@
 /* Pricing Buttons Row */
 .pricing-buttons-row {
     display: flex;
+    justify-content: center;
     gap: var(--spacing-sm);
     margin-top: var(--spacing-md);
     direction: rtl;
 }
 
-.pricing-buttons-row .outlined-btn {
-    flex: 1;
-}
-
-.bottom-action-btn {
+.auction-asset-bottom-action-btn {
     width: fit-content;
     padding: var(--spacing-sm) var(--spacing-md);
     border: none;
     border-radius: var(--radius-sm);
     background: var(--primary-color);
     color: var(--bg-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: center;
+}
+
+.auction-asset-fee-detail-button {
+    width: fit-content;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--primary-color);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     cursor: pointer;
