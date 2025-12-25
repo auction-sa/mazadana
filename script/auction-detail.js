@@ -607,10 +607,9 @@
             const assetCards = container.querySelectorAll('.auction-property-main-page-detail-asset-card');
             assetCards.forEach((card) => {
                 card.addEventListener('click', function (e) {
-                    // Don't trigger if clicking on buttons or interactive elements
-                    if (e.target.closest('button') ||
-                        e.target.closest('.property-cta-btn-home-page') ||
-                        e.target.closest('.asset-menu-icon')) {
+                    // Only exclude the menu icon (which might have its own menu functionality)
+                    // All other elements, including buttons, should open the detail page
+                    if (e.target.closest('.asset-menu-icon')) {
                         return;
                     }
 

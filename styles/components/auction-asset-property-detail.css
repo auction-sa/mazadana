@@ -250,6 +250,11 @@
     width: 100%;
 }
 
+.asset-detail-section .empty-state .empty-text {
+    width: 100%;
+    text-align: right;
+}
+
 /* Pricing Information Card */
 .asset-detail-pricing-card {
     background: var(--bg-white);
@@ -272,9 +277,9 @@
 }
 
 .pricing-row-total {
-    margin-top: var(--spacing-xs);
     padding-top: var(--spacing-md);
-    border-top: 2px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 0 solid var(--border-color);
 }
 
 .pricing-label {
@@ -869,7 +874,7 @@
 
 .auction-asset-bottom-action-btn {
     width: fit-content;
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
     border: none;
     border-radius: var(--radius-sm);
     background: var(--primary-color);
@@ -883,7 +888,7 @@
 
 .auction-asset-fee-detail-button {
     width: fit-content;
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
     border: none;
     border-radius: var(--radius-sm);
     background: transparent;

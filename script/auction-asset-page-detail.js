@@ -175,7 +175,7 @@
                 
                 <!-- Pricing Buttons Row -->
                 <div class="pricing-buttons-row">
-                    <button class="auction-asset-bottom-action-btn">المشاركة في المزاد</button>
+                    <button class="auction-asset-bottom-action-btn" id="auction-asset-bottom-action-btn">المشاركة في المزاد</button>
                     <button class="auction-asset-fee-detail-button">تفاصيل الرسوم</button>
                 </div>
                 <div class="vat-notice">
@@ -368,6 +368,14 @@
 
         // Initialize Google Map
         initPropertyLocationMap(asset);
+
+        // Expose current asset data for deposit payment modal
+        window.currentAssetData = asset;
+
+        // Re-initialize deposit payment modal if function exists
+        if (typeof window.reinitDepositPaymentModal === 'function') {
+            window.reinitDepositPaymentModal();
+        }
     }
 
     /**

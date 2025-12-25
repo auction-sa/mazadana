@@ -61,6 +61,7 @@
             'script/install-pwa.js',             // PWA installation
             'script/auction-detail.js',          // Auction property detail page
             'script/auction-asset-page-detail.js',          // Auction property detail page
+            'script/auction-place-bid-page.js',  // Auction place bid / deposit payment modal
             'script/seller-company-info.js',    // Seller company info page
             'script/profile-navigation.js',     // Profile navigation
             'script/user-acc-data.js',           // Account info tabs
