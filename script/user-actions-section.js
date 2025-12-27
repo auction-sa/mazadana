@@ -10,21 +10,78 @@
         'wallet-cash-flow': null
     };
 
-    // Generate test wallet data
-    function generateWalletTestData() {
-        const today = new Date();
-        return [
-            { type: 'entry', amount: 500000, date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000) }, // دخول - green
-            { type: 'exit', amount: 250000, date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000) }, // خروج - red
-            { type: 'processing', amount: 100000, date: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000) }, // تحت المعالجة - gray
-            { type: 'entry', amount: 750000, date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000) },
-            { type: 'exit', amount: 300000, date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000) },
-            { type: 'entry', amount: 200000, date: new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000) },
-            { type: 'processing', amount: 150000, date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000) },
-            { type: 'exit', amount: 400000, date: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000) },
-            { type: 'entry', amount: 600000, date: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000) },
-            { type: 'processing', amount: 80000, date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000) }
-        ];
+    // Fetch wallet data from user-data.json
+    async function generateWalletTestData() {
+        try {
+            const response = await fetch('json-data/user-data.json');
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const userData = await response.json();
+            const walletMovements = userData.userWalletMovementsDataObject;
+
+            if (!walletMovements) {
+                console.warn('userWalletMovementsDataObject not found in user data');
+                return [];
+            }
+
+            // Combine all movements with type indicators
+            const allMovements = [];
+
+            // Process entry movements
+            if (walletMovements.entryMovements && Array.isArray(walletMovements.entryMovements)) {
+                walletMovements.entryMovements.forEach(movement => {
+                    allMovements.push({
+                        type: 'entry',
+                        amount: movement.amount || 0,
+                        date: new Date(movement.date),
+                        id: movement.id,
+                        description: movement.description,
+                        referenceNumber: movement.referenceNumber,
+                        status: movement.status
+                    });
+                });
+            }
+
+            // Process exit movements
+            if (walletMovements.exitMovements && Array.isArray(walletMovements.exitMovements)) {
+                walletMovements.exitMovements.forEach(movement => {
+                    allMovements.push({
+                        type: 'exit',
+                        amount: movement.amount || 0,
+                        date: new Date(movement.date),
+                        id: movement.id,
+                        description: movement.description,
+                        referenceNumber: movement.referenceNumber,
+                        status: movement.status
+                    });
+                });
+            }
+
+            // Process processing movements
+            if (walletMovements.processingMovements && Array.isArray(walletMovements.processingMovements)) {
+                walletMovements.processingMovements.forEach(movement => {
+                    allMovements.push({
+                        type: 'processing',
+                        amount: movement.amount || 0,
+                        date: new Date(movement.date),
+                        id: movement.id,
+                        description: movement.description,
+                        referenceNumber: movement.referenceNumber,
+                        status: movement.status
+                    });
+                });
+            }
+
+            // Sort by date (newest first)
+            allMovements.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+            return allMovements;
+        } catch (error) {
+            console.error('Error fetching wallet data:', error);
+            return [];
+        }
     }
 
     // Format date to Arabic format
@@ -34,13 +91,13 @@
     }
 
     // Render wallet cash flow rows
-    function renderWalletRows(filterType = 'all') {
+    async function renderWalletRows(filterType = 'all') {
         const walletContent = document.getElementById('wallet-cash-flow-content');
         if (!walletContent) return;
 
-        // Generate test data if not already generated
+        // Fetch data if not already loaded
         if (walletData.length === 0) {
-            walletData = generateWalletTestData();
+            walletData = await generateWalletTestData();
         }
 
         // Filter data based on type
@@ -195,7 +252,9 @@
                     } else if (this.id === 'wallet-processing') {
                         filterType = 'processing';
                     }
-                    renderWalletRows(filterType);
+                    renderWalletRows(filterType).catch(error => {
+                        console.error('Error rendering wallet rows:', error);
+                    });
                 }
             });
         });
@@ -316,7 +375,9 @@
                             } else if (savedActiveId === 'wallet-processing') {
                                 filterType = 'processing';
                             }
-                            renderWalletRows(filterType);
+                            renderWalletRows(filterType).catch(error => {
+                                console.error('Error rendering wallet rows:', error);
+                            });
                         }, 10);
                     }
                 }

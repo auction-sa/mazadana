@@ -24,7 +24,7 @@
      */
     async function fetchUserData() {
         // Check localStorage first for saved company data
-        const savedCompanyData = localStorage.getItem('sellerCompanyDetails');
+        const savedCompanyData = localStorage.getItem('sellerCompanyDataObject');
 
         if (userData && !savedCompanyData) {
             return userData; // Return cached data if no localStorage changes
@@ -41,10 +41,10 @@
             if (savedCompanyData) {
                 try {
                     const savedData = JSON.parse(savedCompanyData);
-                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                        userData.sellerCompanyDetails[0] = { ...userData.sellerCompanyDetails[0], ...savedData };
+                    if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                        userData.sellerCompanyDataObject[0] = { ...userData.sellerCompanyDataObject[0], ...savedData };
                     } else {
-                        userData.sellerCompanyDetails = [savedData];
+                        userData.sellerCompanyDataObject = [savedData];
                     }
                 } catch (e) {
                     console.warn('Error parsing saved company data:', e);
@@ -79,9 +79,9 @@
         const userEmail = data?.userEmailAddress || 'غير محدد';
         const userPhone = data?.userPhoneNumber || 'غير محدد';
 
-        // Get company details from sellerCompanyDetails array
-        const companyDetails = data?.sellerCompanyDetails && data.sellerCompanyDetails.length > 0
-            ? data.sellerCompanyDetails[0]
+        // Get company details from sellerCompanyDataObject array
+        const companyDetails = data?.sellerCompanyDataObject && data.sellerCompanyDataObject.length > 0
+            ? data.sellerCompanyDataObject[0]
             : {};
         const companyLogo = companyDetails?.sellerCompanyLogo || '';
         const companyBanner = companyDetails?.sellerCompanyBanner || '';
@@ -849,15 +849,15 @@
                 };
 
                 // Save to localStorage
-                localStorage.setItem('sellerCompanyDetails', JSON.stringify(companyData));
+                localStorage.setItem('sellerCompanyDataObject', JSON.stringify(companyData));
 
                 // Update in-memory cache
                 const currentData = await fetchUserData();
                 if (currentData) {
-                    if (!currentData.sellerCompanyDetails || currentData.sellerCompanyDetails.length === 0) {
-                        currentData.sellerCompanyDetails = [companyData];
+                    if (!currentData.sellerCompanyDataObject || currentData.sellerCompanyDataObject.length === 0) {
+                        currentData.sellerCompanyDataObject = [companyData];
                     } else {
-                        currentData.sellerCompanyDetails[0] = { ...currentData.sellerCompanyDetails[0], ...companyData };
+                        currentData.sellerCompanyDataObject[0] = { ...currentData.sellerCompanyDataObject[0], ...companyData };
                     }
                     userData = currentData;
                 }

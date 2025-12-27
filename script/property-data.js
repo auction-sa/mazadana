@@ -637,14 +637,14 @@
      * Render auction card (for auction section)
      * Creates the HTML for an auction property card
      * @param {Object} auction - The auction data object
-     * @param {Object} sellerCompanyDetails - Optional seller company details from user-data.json
+     * @param {Object} sellerCompanyDataObject - Optional seller company details from user-data.json
      */
-    function renderAuctionCard(auction, sellerCompanyDetails = null) {
+    function renderAuctionCard(auction, sellerCompanyDataObject = null) {
         if (!auction) return '';
 
         // Get seller company info from user-data.json if available
-        const sellerCompanyName = sellerCompanyDetails?.sellerCompanyname || 'شركة لمزاد العقارات';
-        const sellerCompanyLogo = sellerCompanyDetails?.sellerCompanyLogo || null;
+        const sellerCompanyName = sellerCompanyDataObject?.sellerCompanyname || 'شركة لمزاد العقارات';
+        const sellerCompanyLogo = sellerCompanyDataObject?.sellerCompanyLogo || null;
 
         const imageUrl = getImageUrl(auction);
         const imageStyle = imageUrl ? `style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;"` : '';
@@ -730,9 +730,9 @@
      * @param {Array} properties - Array of property objects
      * @param {HTMLElement} gridElement - The grid container element
      * @param {string} renderFunction - The name of the render function to use
-     * @param {Object} sellerCompanyDetails - Optional seller company details from user-data.json
+     * @param {Object} sellerCompanyDataObject - Optional seller company details from user-data.json
      */
-    async function renderProperties(properties, gridElement, renderFunction, sellerCompanyDetails = null) {
+    async function renderProperties(properties, gridElement, renderFunction, sellerCompanyDataObject = null) {
         if (!gridElement) {
             console.error('Grid element not found');
             return;
@@ -767,7 +767,7 @@
                     cardHTML = renderRentalCard(property);
                     break;
                 case 'renderAuctionCard':
-                    cardHTML = renderAuctionCard(property, sellerCompanyDetails);
+                    cardHTML = renderAuctionCard(property, sellerCompanyDataObject);
                     break;
                 default:
                     console.error('Unknown render function:', renderFunction);
@@ -943,15 +943,15 @@
         // Handle home-section differently (has multiple grids)
         if (sectionId === 'home-section' && config.grids) {
             // Fetch seller company details once for all auction grids
-            let sellerCompanyDetails = null;
+            let sellerCompanyDataObject = null;
             const hasAuctionGrid = Object.values(config.grids).some(grid => grid.renderFunction === 'renderAuctionCard');
             if (hasAuctionGrid) {
                 try {
                     const userResponse = await fetch('json-data/user-data.json');
                     if (userResponse.ok) {
                         const userData = await userResponse.json();
-                        if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                            sellerCompanyDetails = userData.sellerCompanyDetails[0];
+                        if (userData.sellesellerCompanyDataObjectrCompanyDetails && userData.sellerCompanyDataObject.length > 0) {
+                            sellerCompanyDataObject = userData.sellerCompanyDataObject[0];
                         }
                     }
                 } catch (error) {
@@ -1007,8 +1007,8 @@
                     // Filter special properties based on special status field
                     const specialProperties = properties.filter(p => p[gridConfig.specialField] === true);
 
-                    // Pass sellerCompanyDetails only for auction cards
-                    const companyDetails = gridConfig.renderFunction === 'renderAuctionCard' ? sellerCompanyDetails : null;
+                    // Pass sellerCompanyDataObject only for auction cards
+                    const companyDetails = gridConfig.renderFunction === 'renderAuctionCard' ? sellerCompanyDataObject : null;
 
                     // Render all properties to regular grid
                     await renderProperties(properties, gridElement, gridConfig.renderFunction, companyDetails);
@@ -1088,14 +1088,14 @@
             }
 
             // Fetch seller company details from user-data.json if rendering auction cards
-            let sellerCompanyDetails = null;
+            let sellerCompanyDataObject = null;
             if (config.renderFunction === 'renderAuctionCard') {
                 try {
                     const userResponse = await fetch('json-data/user-data.json');
                     if (userResponse.ok) {
                         const userData = await userResponse.json();
-                        if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                            sellerCompanyDetails = userData.sellerCompanyDetails[0];
+                        if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                            sellerCompanyDataObject = userData.sellerCompanyDataObject[0];
                         }
                     }
                 } catch (error) {
@@ -1104,7 +1104,7 @@
             }
 
             // Render properties (with image preloading)
-            await renderProperties(properties, gridElement, config.renderFunction, sellerCompanyDetails);
+            await renderProperties(properties, gridElement, config.renderFunction, sellerCompanyDataObject);
 
             // Verify cards were rendered
             const renderedCards = gridElement.querySelectorAll('.property-card-home-page');

@@ -115,7 +115,7 @@
         // Use sellerCompanyname from user-data.json if available, otherwise fallback
         const companyName = companyData.sellerCompanyname || companyData.sellerCompanyName || 'شركة غير معروفة';
         const companyLogo = companyData.sellerCompanyLogo || '';
-        // sellerCompanyBanner should come from sellerCompanyDetails object
+        // sellerCompanyBanner should come from sellerCompanyDataObject object
         const companyImage = companyData.sellerCompanyBanner || 'default-company-banner.png';
         const companyDescription = companyData.sellerCompanyDescription || '';
 
@@ -519,9 +519,9 @@
             const userResponse = await fetch('json-data/user-data.json');
             if (userResponse.ok) {
                 const userData = await userResponse.json();
-                if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                    sellerCompanyName = userData.sellerCompanyDetails[0].sellerCompanyname || null;
-                    sellerCompanyLogo = userData.sellerCompanyDetails[0].sellerCompanyLogo || null;
+                if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                    sellerCompanyName = userData.sellerCompanyDataObject[0].sellerCompanyname || null;
+                    sellerCompanyLogo = userData.sellerCompanyDataObject[0].sellerCompanyLogo || null;
                 }
             }
         } catch (error) {
@@ -677,7 +677,7 @@
                 window._previousSectionBeforeSellerInfo = window.getCurrentSection();
             }
 
-            // Fetch user data from JSON (contains sellerCompanyDetails)
+            // Fetch user data from JSON (contains sellerCompanyDataObject)
             const userResponse = await fetch('json-data/user-data.json');
             if (!userResponse.ok) {
                 throw new Error('Failed to fetch user data');
@@ -686,14 +686,14 @@
             const userData = await userResponse.json();
 
             // Check localStorage for saved company data and merge it
-            const savedCompanyData = localStorage.getItem('sellerCompanyDetails');
+            const savedCompanyData = localStorage.getItem('sellerCompanyDataObject');
             if (savedCompanyData) {
                 try {
                     const savedData = JSON.parse(savedCompanyData);
-                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                        userData.sellerCompanyDetails[0] = { ...userData.sellerCompanyDetails[0], ...savedData };
+                    if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                        userData.sellerCompanyDataObject[0] = { ...userData.sellerCompanyDataObject[0], ...savedData };
                     } else {
-                        userData.sellerCompanyDetails = [savedData];
+                        userData.sellerCompanyDataObject = [savedData];
                     }
                 } catch (e) {
                     console.warn('Error parsing saved company data:', e);
@@ -707,9 +707,9 @@
                 return;
             }
 
-            // Get company data from sellerCompanyDetails
-            const companyDetails = userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0
-                ? userData.sellerCompanyDetails[0]
+            // Get company data from sellerCompanyDataObject
+            const companyDetails = userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0
+                ? userData.sellerCompanyDataObject[0]
                 : null;
 
             if (!companyDetails) {
@@ -719,7 +719,7 @@
             }
 
             // Build company data object
-            // Use sellerCompanyname from sellerCompanyDetails if available
+            // Use sellerCompanyname from sellerCompanyDataObject if available
             const companyData = {
                 ...companyDetails,
                 sellerCompanyName: companyDetails.sellerCompanyname || userData.userName || companyDetails.sellerCompanyName || 'شركة غير معروفة',

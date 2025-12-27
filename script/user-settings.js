@@ -39,13 +39,13 @@
                                 <span class="radio-checkmark"></span>
                             </label>
                             <label class="radio-option">
-                                <input type="radio" name="auction-display" value="full-name">
-                                <span class="radio-label">الاسم الكامل</span>
+                                <input type="radio" name="auction-display" value="first-name">
+                                <span class="radio-label">الإسم الأول</span>
                                 <span class="radio-checkmark"></span>
                             </label>
                             <label class="radio-option">
-                                <input type="radio" name="auction-display" value="bidder-number">
-                                <span class="radio-label">رقم المزايد في المزاد</span>
+                                <input type="radio" name="auction-display" value="full-name">
+                                <span class="radio-label">الإسم الكامل</span>
                                 <span class="radio-checkmark"></span>
                             </label>
                         </div>

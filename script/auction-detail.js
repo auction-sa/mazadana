@@ -697,6 +697,51 @@
             });
         }
 
+        // Add click handler for brochure PDF button
+        const brochureButton = container.querySelector('.auction-property-main-page-detail-btn-primary');
+        if (brochureButton && currentAuctionData && currentAuctionData.auction_brochure_pdf) {
+            brochureButton.addEventListener('click', async function () {
+                const pdfUrl = currentAuctionData.auction_brochure_pdf;
+
+                try {
+                    // Fetch the PDF file
+                    const response = await fetch(pdfUrl);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch PDF');
+                    }
+
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+
+                    // Open PDF in new tab
+                    const newWindow = window.open(blobUrl, '_blank');
+
+                    // Clean up the blob URL after a delay to allow the browser to load it
+                    setTimeout(() => {
+                        URL.revokeObjectURL(blobUrl);
+                    }, 1000);
+
+                    // If popup was blocked, try downloading instead
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        // Download the PDF as fallback
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = blobUrl;
+                        downloadLink.download = pdfUrl.split('/').pop() || 'brochure.pdf';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    }
+                } catch (error) {
+                    console.error('Error loading PDF:', error);
+                    if (window.showToastMessage) {
+                        window.showToastMessage('فشل تحميل البروشور', 2000);
+                    } else {
+                        alert('فشل تحميل البروشور');
+                    }
+                }
+            });
+        }
+
         // Use event delegation on the category header for the seller company info arrow icon
         // This works even after Lucide icons replace the DOM elements
         const categoryHeader = container.querySelector('.auction-property-main-page-detail-category-header');
@@ -851,9 +896,9 @@
                 const userResponse = await fetch('json-data/user-data.json');
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
-                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                        sellerCompanyName = userData.sellerCompanyDetails[0].sellerCompanyname || null;
-                        sellerCompanyLogo = userData.sellerCompanyDetails[0].sellerCompanyLogo || null;
+                    if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                        sellerCompanyName = userData.sellerCompanyDataObject[0].sellerCompanyname || null;
+                        sellerCompanyLogo = userData.sellerCompanyDataObject[0].sellerCompanyLogo || null;
                     }
                 }
             } catch (error) {

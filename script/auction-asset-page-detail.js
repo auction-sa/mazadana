@@ -1189,9 +1189,9 @@
                 const userResponse = await fetch('json-data/user-data.json');
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
-                    if (userData.sellerCompanyDetails && userData.sellerCompanyDetails.length > 0) {
-                        sellerCompanyName = userData.sellerCompanyDetails[0].sellerCompanyname || null;
-                        sellerCompanyLogo = userData.sellerCompanyDetails[0].sellerCompanyLogo || null;
+                    if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                        sellerCompanyName = userData.sellerCompanyDataObject[0].sellerCompanyname || null;
+                        sellerCompanyLogo = userData.sellerCompanyDataObject[0].sellerCompanyLogo || null;
                     }
                 }
             } catch (error) {

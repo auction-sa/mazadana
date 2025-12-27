@@ -8,9 +8,7 @@
   "useSexType": "ذكر",
   "userNationalityCountry": "يمني",
   "userPersonalProfileImage": "https://images.unsplash.com/photo-1633332755192-727a05c4013d",
-
-  
-  "sellerCompanyDetails": [
+  "sellerCompanyDataObject": [
     {
       "sellerCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
       "sellerCompanyBanner": "https://cdn05.zipify.com/5mDK9lBkS1oEG4YP6C7sP_LpTII=/fit-in/1940x0/4918d15ad95747f1a240a725d04df79c/gambar-depan-banyak-yang-belum-tahu-ini-dia-perbedaan-banner-dan-spanduk.jpeg",
@@ -26,5 +24,93 @@
       "sellerCompanyFacebook": "https://www.facebook.com/profile.php?id=61582085849224",
       "sellerCompanyYouTube": "https://www.youtube.com/@NewMedia_Life"
     }
-  ]
+  ],
+  "userWalletMovementsDataObject": {
+    "entryMovements": [
+      {
+        "id": 1,
+        "amount": 500000,
+        "date": "2025-01-15T10:30:00Z",
+        "description": "إيداع من مزاد ناجح",
+        "referenceNumber": "REF-001",
+        "status": "completed"
+      },
+      {
+        "id": 2,
+        "amount": 750000,
+        "date": "2025-01-10T14:20:00Z",
+        "description": "إيداع من مزاد ناجح",
+        "referenceNumber": "REF-002",
+        "status": "completed"
+      },
+      {
+        "id": 3,
+        "amount": 200000,
+        "date": "2025-01-05T09:15:00Z",
+        "description": "إيداع من مزاد ناجح",
+        "referenceNumber": "REF-003",
+        "status": "completed"
+      },
+      {
+        "id": 4,
+        "amount": 600000,
+        "date": "2024-12-28T16:45:00Z",
+        "description": "إيداع من مزاد ناجح",
+        "referenceNumber": "REF-004",
+        "status": "completed"
+      }
+    ],
+    "exitMovements": [
+      {
+        "id": 1,
+        "amount": 250000,
+        "date": "2025-01-14T11:00:00Z",
+        "description": "سحب للمزاد",
+        "referenceNumber": "WTH-001",
+        "status": "completed"
+      },
+      {
+        "id": 2,
+        "amount": 300000,
+        "date": "2025-01-09T13:30:00Z",
+        "description": "سحب للمزاد",
+        "referenceNumber": "WTH-002",
+        "status": "completed"
+      },
+      {
+        "id": 3,
+        "amount": 400000,
+        "date": "2025-01-02T10:00:00Z",
+        "description": "سحب للمزاد",
+        "referenceNumber": "WTH-003",
+        "status": "completed"
+      }
+    ],
+    "processingMovements": [
+      {
+        "id": 1,
+        "amount": 100000,
+        "date": "2025-01-13T08:00:00Z",
+        "description": "معالجة إيداع",
+        "referenceNumber": "PRC-001",
+        "status": "processing"
+      },
+      {
+        "id": 2,
+        "amount": 150000,
+        "date": "2025-01-07T12:00:00Z",
+        "description": "معالجة إيداع",
+        "referenceNumber": "PRC-002",
+        "status": "processing"
+      },
+      {
+        "id": 3,
+        "amount": 80000,
+        "date": "2024-12-30T15:30:00Z",
+        "description": "معالجة إيداع",
+        "referenceNumber": "PRC-003",
+        "status": "processing"
+      }
+    ]
+  }
 }
