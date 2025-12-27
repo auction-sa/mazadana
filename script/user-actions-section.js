@@ -4,6 +4,103 @@
 
     let eventListenersAttached = false;
     let myActionsRendered = false;
+    let walletData = [];
+    let activeFilterStates = {
+        'finished': null,
+        'wallet-cash-flow': null
+    };
+
+    // Generate test wallet data
+    function generateWalletTestData() {
+        const today = new Date();
+        return [
+            { type: 'entry', amount: 500000, date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000) }, // دخول - green
+            { type: 'exit', amount: 250000, date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000) }, // خروج - red
+            { type: 'processing', amount: 100000, date: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000) }, // تحت المعالجة - gray
+            { type: 'entry', amount: 750000, date: new Date(today.getTime() - 4 * 24 * 60 * 60 * 1000) },
+            { type: 'exit', amount: 300000, date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000) },
+            { type: 'entry', amount: 200000, date: new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000) },
+            { type: 'processing', amount: 150000, date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000) },
+            { type: 'exit', amount: 400000, date: new Date(today.getTime() - 8 * 24 * 60 * 60 * 1000) },
+            { type: 'entry', amount: 600000, date: new Date(today.getTime() - 9 * 24 * 60 * 60 * 1000) },
+            { type: 'processing', amount: 80000, date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000) }
+        ];
+    }
+
+    // Format date to Arabic format
+    function formatDate(date) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('ar-SA', options);
+    }
+
+    // Render wallet cash flow rows
+    function renderWalletRows(filterType = 'all') {
+        const walletContent = document.getElementById('wallet-cash-flow-content');
+        if (!walletContent) return;
+
+        // Generate test data if not already generated
+        if (walletData.length === 0) {
+            walletData = generateWalletTestData();
+        }
+
+        // Filter data based on type
+        let filteredData = walletData;
+        if (filterType === 'entry') {
+            filteredData = walletData.filter(item => item.type === 'entry');
+        } else if (filterType === 'exit') {
+            filteredData = walletData.filter(item => item.type === 'exit');
+        } else if (filterType === 'processing') {
+            filteredData = walletData.filter(item => item.type === 'processing');
+        }
+
+        // Create container for rows
+        let rowsContainer = walletContent.querySelector('.wallet-rows-container');
+        if (!rowsContainer) {
+            rowsContainer = document.createElement('div');
+            rowsContainer.className = 'wallet-rows-container';
+            walletContent.innerHTML = '';
+            walletContent.appendChild(rowsContainer);
+        } else {
+            rowsContainer.innerHTML = '';
+        }
+
+        if (filteredData.length === 0) {
+            rowsContainer.innerHTML = `
+                <div class="my-actions-empty-state scrollable-container">
+                    <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
+                </div>
+            `;
+            return;
+        }
+
+        filteredData.forEach(item => {
+            const row = document.createElement('div');
+            row.className = `wallet-row wallet-row-${item.type}`;
+
+            const amountContainer = document.createElement('div');
+            amountContainer.className = 'wallet-row-amount';
+
+            const icon = document.createElement('img');
+            icon.src = 'rial-icon.webp';
+            icon.alt = 'Rial';
+            icon.className = 'wallet-rial-icon';
+
+            const amount = document.createElement('span');
+            amount.className = 'wallet-amount';
+            amount.textContent = item.amount.toLocaleString('en-US');
+
+            amountContainer.appendChild(amount);
+            amountContainer.appendChild(icon);
+
+            const date = document.createElement('div');
+            date.className = 'wallet-row-date';
+            date.textContent = formatDate(item.date);
+
+            row.appendChild(amountContainer);
+            row.appendChild(date);
+            rowsContainer.appendChild(row);
+        });
+    }
 
     // Create and append filter buttons to content
     function createFilterButtons(buttons, uniqueId) {
@@ -12,6 +109,24 @@
 
         // Get or create the finished-filters container
         let filterContainer = document.querySelector('.finished-filters');
+        const currentFilterFor = filterContainer ? filterContainer.getAttribute('data-filter-for') : null;
+
+        // Check if buttons already exist for this uniqueId
+        if (filterContainer && currentFilterFor === uniqueId) {
+            // Buttons already exist for this tab, just restore/update active state
+            const filterButtons = filterContainer.querySelectorAll('.my-actions-tab');
+            const filterFor = filterContainer.getAttribute('data-filter-for');
+
+            // Restore active state if it exists
+            if (activeFilterStates[filterFor]) {
+                const savedActiveButton = filterContainer.querySelector(`#${activeFilterStates[filterFor]}`);
+                if (savedActiveButton) {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    savedActiveButton.classList.add('active');
+                }
+            }
+            return;
+        }
 
         if (!filterContainer) {
             filterContainer = document.createElement('div');
@@ -22,32 +137,66 @@
                 finishedContent.appendChild(filterContainer);
             }
         } else {
-            // Clear existing buttons
+            // Clear existing buttons only if switching to a different tab
             filterContainer.innerHTML = '';
         }
 
         filterContainer.setAttribute('data-filter-for', uniqueId);
 
-        buttons.forEach(btn => {
+        buttons.forEach((btn, index) => {
             const button = document.createElement('button');
             button.className = 'my-actions-tab';
             button.id = btn.id;
             button.textContent = btn.text;
-            button.style.margin = '0';
-            button.style.padding = '8px 16px';
             filterContainer.appendChild(button);
         });
 
         const filterButtons = filterContainer.querySelectorAll('.my-actions-tab');
+        const filterFor = filterContainer.getAttribute('data-filter-for');
+
+        // Restore active state if it exists, otherwise set first button as active
+        if (activeFilterStates[filterFor]) {
+            const savedActiveButton = filterContainer.querySelector(`#${activeFilterStates[filterFor]}`);
+            if (savedActiveButton) {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                savedActiveButton.classList.add('active');
+            } else {
+                // Saved button doesn't exist, set first one as active
+                if (filterButtons.length > 0) {
+                    filterButtons[0].classList.add('active');
+                    activeFilterStates[filterFor] = filterButtons[0].id;
+                }
+            }
+        } else {
+            // No saved state, set first button as active
+            if (filterButtons.length > 0) {
+                filterButtons[0].classList.add('active');
+                activeFilterStates[filterFor] = filterButtons[0].id;
+            }
+        }
+
         filterButtons.forEach(btn => {
             btn.addEventListener('click', function () {
                 const isActive = this.classList.contains('active');
                 filterButtons.forEach(b => b.classList.remove('active'));
                 if (!isActive) {
                     this.classList.add('active');
+                    // Save the active button ID
+                    activeFilterStates[filterFor] = this.id;
                 }
-                // You can add custom functionality here based on button id
-                // Example: if (this.id === 'wallet-entry') { /* handle entry */ }
+
+                // Handle wallet cash flow filtering
+                if (filterFor === 'wallet-cash-flow') {
+                    let filterType = 'all';
+                    if (this.id === 'wallet-entry') {
+                        filterType = 'entry';
+                    } else if (this.id === 'wallet-exit') {
+                        filterType = 'exit';
+                    } else if (this.id === 'wallet-processing') {
+                        filterType = 'processing';
+                    }
+                    renderWalletRows(filterType);
+                }
             });
         });
     }
@@ -127,6 +276,7 @@
                     if (targetTab === 'finished') {
                         setTimeout(() => {
                             const finishedButtons = [
+                                { id: 'all-auctions', text: 'الكل' },
                                 { id: 'won-auctions', text: 'الرابحة' },
                                 { id: 'lost-auctions', text: 'الخاسرة' }
                             ];
@@ -145,6 +295,7 @@
                     } else if (targetTab === 'wallet-cash-flow') {
                         setTimeout(() => {
                             const walletButtons = [
+                                { id: 'all-wallet-movements', text: 'الكل' },
                                 { id: 'wallet-entry', text: 'دخول' },
                                 { id: 'wallet-exit', text: 'خروج' },
                                 { id: 'wallet-processing', text: 'تحت المعالجة' }
@@ -155,6 +306,17 @@
                             if (filters) {
                                 filters.style.display = 'flex';
                             }
+                            // Use saved active state to determine filter type
+                            const savedActiveId = activeFilterStates['wallet-cash-flow'];
+                            let filterType = 'all';
+                            if (savedActiveId === 'wallet-entry') {
+                                filterType = 'entry';
+                            } else if (savedActiveId === 'wallet-exit') {
+                                filterType = 'exit';
+                            } else if (savedActiveId === 'wallet-processing') {
+                                filterType = 'processing';
+                            }
+                            renderWalletRows(filterType);
                         }, 10);
                     }
                 }

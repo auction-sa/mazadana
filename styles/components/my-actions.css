@@ -36,6 +36,7 @@
 
 .finished-filters {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
     gap: 8px;
     margin: 1rem 0;
@@ -63,23 +64,18 @@
 /* Active Tab Styles */
 .my-actions-tab.active {
     background-color: #05762f;
-    /* Green background */
     color: #ffffff;
-    /* White text */
     border-color: #22c55e;
 }
 
 .my-actions-tab.active:hover {
     background-color: #05762f;
-    /* Darker green on hover */
 }
 
 /* Inactive Tab Styles */
 .my-actions-tab:not(.active) {
     background-color: #f5f5f5;
-    /* Very light gray */
     color: #666666;
-    /* Dark gray text */
     border-color: var(--border-color);
 }
 
@@ -114,6 +110,82 @@
     margin: 0;
 }
 
+/* Wallet Cash Flow Rows */
+.wallet-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding: var(--spacing-sm) 0;
+}
+
+.wallet-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-left: 4px solid;
+    border-radius: 5px;
+    background-color: var(--bg-white);
+    transition: all var(--transition-base);
+}
+
+.wallet-row:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(-2px);
+}
+
+.wallet-row-entry {
+    border-left-color: #22c55e;
+    background-color: #f0fdf4;
+}
+
+.wallet-row-exit {
+    border-left-color: #ef4444;
+    background-color: #fef2f2;
+}
+
+.wallet-row-processing {
+    border-left-color: #008fe2;
+    background-color: #2be6ff2c;
+}
+
+.wallet-row-amount {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 600;
+}
+
+.wallet-rial-icon {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+}
+
+.wallet-amount {
+    font-size: var(--font-size-lg);
+    direction: rtl;
+}
+
+.wallet-row-entry .wallet-amount {
+    color: #16a34a;
+}
+
+.wallet-row-exit .wallet-amount {
+    color: #dc2626;
+}
+
+.wallet-row-processing .wallet-amount {
+    color: #4b5563;
+}
+
+.wallet-row-date {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    direction: rtl;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .my-actions-header {
@@ -144,10 +216,36 @@
     .my-actions-empty-text {
         font-size: var(--font-size-base);
     }
+
+    .wallet-row {
+        padding: var(--spacing-sm);
+    }
+
+    .wallet-amount {
+        font-size: var(--font-size-base);
+    }
+
+    .wallet-row-date {
+        font-size: var(--font-size-xs);
+    }
 }
 
 @media (max-width: 480px) {
     .my-actions-empty-text {
+        font-size: var(--font-size-sm);
+    }
+
+    .wallet-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .wallet-row-amount {
+        width: 100%;
+    }
+
+    .wallet-amount {
         font-size: var(--font-size-sm);
     }
 }
