@@ -31,7 +31,7 @@
         "id": 1,
         "amount": 500000,
         "date": "2025-01-15T10:30:00Z",
-        "description": "إيداع من مزاد ناجح",
+        "description": "إيداع من تحويل بنكي",
         "referenceNumber": "REF-001",
         "status": "completed"
       },
@@ -39,7 +39,7 @@
         "id": 2,
         "amount": 750000,
         "date": "2025-01-10T14:20:00Z",
-        "description": "إيداع من مزاد ناجح",
+        "description": "إيداع من تحويل بنكي",
         "referenceNumber": "REF-002",
         "status": "completed"
       },
@@ -47,7 +47,7 @@
         "id": 3,
         "amount": 200000,
         "date": "2025-01-05T09:15:00Z",
-        "description": "إيداع من مزاد ناجح",
+        "description": "إيداع من تحويل بنكي",
         "referenceNumber": "REF-003",
         "status": "completed"
       },
@@ -55,7 +55,7 @@
         "id": 4,
         "amount": 600000,
         "date": "2024-12-28T16:45:00Z",
-        "description": "إيداع من مزاد ناجح",
+        "description": "إيداع من تحويل بنكي",
         "referenceNumber": "REF-004",
         "status": "completed"
       }

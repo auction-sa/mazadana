@@ -119,6 +119,16 @@
     padding: var(--spacing-sm) 0;
 }
 
+.wallet-row-wrapper {
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.wallet-row-wrapper.expanded .wallet-row {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
 .wallet-row {
     display: flex;
     justify-content: space-between;
@@ -179,6 +189,41 @@
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
     direction: rtl;
+}
+
+.wallet-row-expandable {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0 var(--spacing-md);
+}
+
+.wallet-row-wrapper.expanded .wallet-row-expandable {
+    max-height: 500px;
+    padding: var(--spacing-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.wallet-row-description,
+.wallet-row-reference {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    direction: rtl;
+    color: var(--text-secondary);
+}
+
+.wallet-row-reference {
+    margin-bottom: 0;
+}
+
+.wallet-row-label {
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* Responsive Design */

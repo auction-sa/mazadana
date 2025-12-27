@@ -131,8 +131,17 @@
         }
 
         filteredData.forEach(item => {
+            // Create main row container
+            const rowWrapper = document.createElement('div');
+            rowWrapper.className = 'wallet-row-wrapper';
+
             const row = document.createElement('div');
             row.className = `wallet-row wallet-row-${item.type}`;
+            row.style.cursor = 'pointer';
+
+            // Store item data for access
+            row.dataset.description = item.description || '';
+            row.dataset.referenceNumber = item.referenceNumber || '';
 
             const amountContainer = document.createElement('div');
             amountContainer.className = 'wallet-row-amount';
@@ -152,10 +161,60 @@
             const date = document.createElement('div');
             date.className = 'wallet-row-date';
             date.textContent = formatDate(item.date);
-
+            
             row.appendChild(amountContainer);
             row.appendChild(date);
-            rowsContainer.appendChild(row);
+
+            // Create expandable content
+            const expandableContent = document.createElement('div');
+            expandableContent.className = 'wallet-row-expandable';
+
+            if (item.description) {
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.className = 'wallet-row-description';
+                const descriptionLabel = document.createElement('span');
+                descriptionLabel.className = 'wallet-row-label';
+                descriptionLabel.textContent = 'الوصف: ';
+                const descriptionText = document.createElement('span');
+                descriptionText.textContent = item.description;
+                descriptionDiv.appendChild(descriptionLabel);
+                descriptionDiv.appendChild(descriptionText);
+                expandableContent.appendChild(descriptionDiv);
+            }
+
+            if (item.referenceNumber) {
+                const referenceDiv = document.createElement('div');
+                referenceDiv.className = 'wallet-row-reference';
+                const referenceLabel = document.createElement('span');
+                referenceLabel.className = 'wallet-row-label';
+                referenceLabel.textContent = 'رقم المرجع: ';
+                const referenceText = document.createElement('span');
+                referenceText.textContent = item.referenceNumber;
+                referenceDiv.appendChild(referenceLabel);
+                referenceDiv.appendChild(referenceText);
+                expandableContent.appendChild(referenceDiv);
+            }
+
+            rowWrapper.appendChild(row);
+            rowWrapper.appendChild(expandableContent);
+
+            // Only make row clickable if there's content to expand
+            if (expandableContent.children.length > 0) {
+                // Add click handler to toggle expansion
+                row.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const wrapper = this.closest('.wallet-row-wrapper');
+
+                    if (wrapper) {
+                        wrapper.classList.toggle('expanded');
+                    }
+                });
+            } else {
+                // Remove cursor pointer if no expandable content
+                row.style.cursor = 'default';
+            }
+
+            rowsContainer.appendChild(rowWrapper);
         });
     }
 
