@@ -26,10 +26,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     grid-template-columns: 1fr 1fr;
-    gap: 0 var(--spacing-sm);
+    gap: var(--spacing-sm);
     width: 100%;
-    padding: 0 var(--spacing-sm);
+    padding: 0 var(--spacing-sm) 1rem;
+    border-bottom: 1px solid var(--text-light);
 }
 
 .finished-filters {
@@ -42,7 +44,7 @@
 
 .my-actions-tab {
     width: fit-content;
-    padding: var(--spacing-xs) var(--spacing-md);
+    padding: 0.2rem var(--spacing-xs);
     border: none;
     border-radius: var(--radius-sm);
     background-color: var(--bg-white);
@@ -123,7 +125,7 @@
     }
 
     .my-actions-tabs-main-buttons {
-        gap: 0 var(--spacing-xs);
+        gap: var(--spacing-xs);
     }
 
     .my-actions-tab {
@@ -145,10 +147,6 @@
 }
 
 @media (max-width: 480px) {
-    .my-actions-tab {
-        font-size: var(--font-size-xs);
-    }
-
     .my-actions-empty-text {
         font-size: var(--font-size-sm);
     }

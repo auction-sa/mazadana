@@ -5,18 +5,28 @@
     let eventListenersAttached = false;
     let myActionsRendered = false;
 
-    // Create and append filter buttons to finished content
-    function createFilterButtons() {
+    // Create and append filter buttons to content
+    function createFilterButtons(buttons, uniqueId) {
         const finishedContent = document.querySelector('.my-actions-tabs');
-        if (!finishedContent || document.querySelector('.finished-filters')) return;
+        if (!finishedContent) return;
 
-        const filterContainer = document.createElement('div');
-        filterContainer.className = 'finished-filters';
+        // Get or create the finished-filters container
+        let filterContainer = document.querySelector('.finished-filters');
 
-        const buttons = [
-            { id: 'won-auctions', text: 'الرابحة' },
-            { id: 'lost-auctions', text: 'الخاسرة' }
-        ];
+        if (!filterContainer) {
+            filterContainer = document.createElement('div');
+            filterContainer.className = 'finished-filters';
+            if (finishedContent.lastChild) {
+                finishedContent.insertBefore(filterContainer, finishedContent.lastChild);
+            } else {
+                finishedContent.appendChild(filterContainer);
+            }
+        } else {
+            // Clear existing buttons
+            filterContainer.innerHTML = '';
+        }
+
+        filterContainer.setAttribute('data-filter-for', uniqueId);
 
         buttons.forEach(btn => {
             const button = document.createElement('button');
@@ -28,15 +38,6 @@
             filterContainer.appendChild(button);
         });
 
-        // Initially hide the finished-filters container (will be shown when finished tab is active)
-        filterContainer.style.display = 'none';
-
-        if (finishedContent.lastChild) {
-            finishedContent.insertBefore(filterContainer, finishedContent.lastChild);
-        } else {
-            finishedContent.appendChild(filterContainer);
-        }
-
         const filterButtons = filterContainer.querySelectorAll('.my-actions-tab');
         filterButtons.forEach(btn => {
             btn.addEventListener('click', function () {
@@ -45,6 +46,8 @@
                 if (!isActive) {
                     this.classList.add('active');
                 }
+                // You can add custom functionality here based on button id
+                // Example: if (this.id === 'wallet-entry') { /* handle entry */ }
             });
         });
     }
@@ -68,6 +71,9 @@
                         <button class="my-actions-tab" data-tab="finished" id="finished-tab">
                             <span>المزادات المنتهية</span>
                         </button>
+                        <button class="my-actions-tab" data-tab="wallet-cash-flow" id="wallet-cash-flow-tab">
+                            <span>حركة المحفظة</span>
+                        </button>
                     </div>
                 </div>
 
@@ -79,6 +85,12 @@
                     </div>
 
                     <div class="my-actions-tab-content" id="finished-content">
+                        <div class="my-actions-empty-state scrollable-container">
+                            <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
+                        </div>
+                    </div>
+
+                    <div class="my-actions-tab-content" id="wallet-cash-flow-content">
                         <div class="my-actions-empty-state scrollable-container">
                             <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
                         </div>
@@ -109,11 +121,16 @@
                 if (targetContent) {
                     targetContent.classList.add('active');
 
-                    // Show/hide finished-filters div based on active tab
+                    // Show/hide filter div based on active tab
                     const finishedFilters = document.querySelector('.finished-filters');
+
                     if (targetTab === 'finished') {
                         setTimeout(() => {
-                            createFilterButtons();
+                            const finishedButtons = [
+                                { id: 'won-auctions', text: 'الرابحة' },
+                                { id: 'lost-auctions', text: 'الخاسرة' }
+                            ];
+                            createFilterButtons(finishedButtons, 'finished');
                             // Show finished-filters when finished tab is active
                             const filters = document.querySelector('.finished-filters');
                             if (filters) {
@@ -121,10 +138,24 @@
                             }
                         }, 10);
                     } else if (targetTab === 'pending') {
-                        // Hide finished-filters when pending tab is active
+                        // Hide filter container when pending tab is active
                         if (finishedFilters) {
                             finishedFilters.style.display = 'none';
                         }
+                    } else if (targetTab === 'wallet-cash-flow') {
+                        setTimeout(() => {
+                            const walletButtons = [
+                                { id: 'wallet-entry', text: 'دخول' },
+                                { id: 'wallet-exit', text: 'خروج' },
+                                { id: 'wallet-processing', text: 'تحت المعالجة' }
+                            ];
+                            createFilterButtons(walletButtons, 'wallet-cash-flow');
+                            // Show finished-filters when wallet-cash-flow tab is active
+                            const filters = document.querySelector('.finished-filters');
+                            if (filters) {
+                                filters.style.display = 'flex';
+                            }
+                        }, 10);
                     }
                 }
             });
@@ -143,7 +174,7 @@
         renderMyActionsSection();
         initMyActionsTabs();
 
-        // Ensure finished-filters is hidden initially (pending tab is active by default)
+        // Ensure filter container is hidden initially (pending tab is active by default)
         setTimeout(() => {
             const finishedFilters = document.querySelector('.finished-filters');
             if (finishedFilters) {
