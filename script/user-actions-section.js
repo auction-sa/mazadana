@@ -161,6 +161,7 @@
             const date = document.createElement('div');
             date.className = 'wallet-row-date';
             date.textContent = formatDate(item.date);
+
             
             row.appendChild(amountContainer);
             row.appendChild(date);
