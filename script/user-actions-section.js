@@ -57,7 +57,7 @@
         myActionsSection.innerHTML = `
             <div class="section-content">
                 <div class="my-actions-header">
-                    <h1 class="my-actions-title">مشاركاتي</h1>
+                    <h1 class="my-actions-title">احصائياتي</h1>
                 </div>
 
                 <div class="my-actions-tabs">
