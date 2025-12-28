@@ -201,9 +201,13 @@
         width: 50%;
         justify-self: center;
     }
-    
+
     .boundaries-group {
         gap: 1rem;
+    }
+
+    .seller-company-auctions-list {
+        justify-content: flex-start;
     }
 }
 
@@ -223,7 +227,7 @@
         padding: 0 15vw;
     }
 
-    .auction-property-main-page-detail-asset-card{
+    .auction-property-main-page-detail-asset-card {
         padding: 1rem;
     }
 
@@ -241,8 +245,8 @@
         width: 5rem;
         height: 5rem;
     }
-    
-    #company-banner-preview{
+
+    #company-banner-preview {
         width: 15rem;
         height: 6rem;
     }

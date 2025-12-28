@@ -231,7 +231,8 @@
 /* Auctions List */
 .seller-company-auctions-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
 }
 

@@ -950,7 +950,7 @@
                     const userResponse = await fetch('json-data/user-data.json');
                     if (userResponse.ok) {
                         const userData = await userResponse.json();
-                        if (userData.sellesellerCompanyDataObjectrCompanyDetails && userData.sellerCompanyDataObject.length > 0) {
+                        if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
                             sellerCompanyDataObject = userData.sellerCompanyDataObject[0];
                         }
                     }

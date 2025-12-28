@@ -34,12 +34,12 @@
     border-bottom: 1px solid var(--text-light);
 }
 
-.finished-filters {
+.all-user-auction-history-filters {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 8px;
-    margin: 1rem 0;
+    margin: 1rem 0 0.5rem;
     width: 95%;
 }
 
@@ -378,5 +378,10 @@
     .wallet-balance-icon {
         width: 16px;
         height: 16px;
+    }
+
+    .my-actions-tabs-main-buttons > button {
+        flex: 1 1 0;
+        min-width: 140px;
     }
 }

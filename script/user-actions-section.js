@@ -7,8 +7,11 @@
     let walletData = [];
     let activeFilterStates = {
         'my-all-property-buying-history': null,
-        'wallet-cash-flow': null
+        'wallet-cash-flow': null,
+        'current-best-opportunities': null
     };
+    let auctionHistoryData = [];
+    let allAuctionsData = [];
 
     // Fetch wallet data from user-data.json
     async function generateWalletTestData() {
@@ -111,6 +114,387 @@
     function formatDate(date) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return date.toLocaleDateString('ar-SA', options);
+    }
+
+    // Parse Arabic date/time string to JavaScript Date object
+    function parseArabicDate(dateString) {
+        if (!dateString) return null;
+
+        try {
+            let normalized = dateString
+                .replace(/صباحً|ص/g, 'AM')
+                .replace(/مساءً|م/g, 'PM')
+                .replace(/[—–−]/g, '-')
+                .trim();
+
+            const parts = normalized.split(/\s+/);
+            if (parts.length < 2) return null;
+
+            const datePart = parts[0];
+            const timePart = parts.slice(1).join(' ');
+
+            const [year, month, day] = datePart.split(/[-\/]/).map(Number);
+            if (!year || !month || !day) return null;
+
+            const timeMatch = timePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+            if (!timeMatch) return null;
+
+            let hours = parseInt(timeMatch[1], 10);
+            const minutes = parseInt(timeMatch[2], 10);
+            const ampm = timeMatch[3].toUpperCase();
+
+            if (ampm === 'PM' && hours !== 12) hours += 12;
+            if (ampm === 'AM' && hours === 12) hours = 0;
+
+            return new Date(year, month - 1, day, hours, minutes);
+        } catch (error) {
+            console.warn('Error parsing date:', dateString, error);
+            return null;
+        }
+    }
+
+    // Get auction badge status
+    function getAuctionBadgeStatus(auction_bidStartDate, auction_bidEndDate) {
+        const now = new Date();
+        const auction_startDate = parseArabicDate(auction_bidStartDate);
+        const auction_endDate = parseArabicDate(auction_bidEndDate);
+
+        if (!auction_startDate || !auction_endDate) {
+            return {
+                text: 'جاري الآن',
+                className: 'live-badge-home-page'
+            };
+        }
+
+        if (now < auction_startDate) {
+            return {
+                text: 'قادم',
+                className: 'upcoming-badge-home-page'
+            };
+        }
+
+        if (now > auction_endDate) {
+            return {
+                text: 'إنتهى',
+                className: 'ended-badge-home-page'
+            };
+        }
+
+        return {
+            text: 'جاري الآن',
+            className: 'live-badge-home-page'
+        };
+    }
+
+    // Get remaining time info
+    function getRemainingTimeInfo(auction_bidStartDate, auction_bidEndDate) {
+        const now = new Date();
+        const auction_startDate = parseArabicDate(auction_bidStartDate);
+        const auction_endDate = parseArabicDate(auction_bidEndDate);
+
+        if (!auction_startDate || !auction_endDate) {
+            return {
+                label: 'ينتهي المزاد بعد:',
+                targetDate: auction_bidEndDate
+            };
+        }
+
+        if (now < auction_startDate) {
+            return {
+                label: 'يبدأ المزاد بعد:',
+                targetDate: auction_bidStartDate
+            };
+        }
+
+        if (now > auction_endDate) {
+            return {
+                label: 'انتهى المزاد',
+                targetDate: null
+            };
+        }
+
+        return {
+            label: 'ينتهي المزاد بعد:',
+            targetDate: auction_bidEndDate
+        };
+    }
+
+    // Get image URL from auction
+    function getAuctionImageUrl(auction) {
+        if (auction.auction_image) return auction.auction_image;
+        if (auction.assets && auction.assets.length > 0 && auction.assets[0].auctionAsset_image) {
+            return auction.assets[0].auctionAsset_image;
+        }
+        return null;
+    }
+
+    // Fetch user auction history data
+    async function fetchUserAuctionHistory() {
+        try {
+            const response = await fetch('json-data/user-data.json');
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const userData = await response.json();
+            const auctionHistory = userData.userAuctionHistoryDataObject;
+
+            if (!auctionHistory || !Array.isArray(auctionHistory)) {
+                return [];
+            }
+
+            return auctionHistory;
+        } catch (error) {
+            console.error('Error fetching user auction history:', error);
+            return [];
+        }
+    }
+
+    // Fetch all auction data
+    async function fetchAllAuctions() {
+        try {
+            const response = await fetch('json-data/auction-property.json');
+            if (!response.ok) {
+                throw new Error('Failed to fetch auction data');
+            }
+
+            const data = await response.json();
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.error('Error fetching auction data:', error);
+            return [];
+        }
+    }
+
+    // Render auction card HTML
+    function renderAuctionCardHTML(auction, sellerCompanyDataObject) {
+        if (!auction) return '';
+
+        const sellerCompanyName = sellerCompanyDataObject?.sellerCompanyname || 'شركة لمزاد العقارات';
+        const sellerCompanyLogo = sellerCompanyDataObject?.sellerCompanyLogo || null;
+
+        const imageUrl = getAuctionImageUrl(auction);
+        const imageStyle = imageUrl ? `style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;"` : '';
+        const companyLogo = sellerCompanyLogo ? `<img src="${sellerCompanyLogo}" alt="${sellerCompanyName}" class="company-logo">` : '';
+        const specialWordBadge = auction.auction_specialWord ?
+            `<div class="home-page-special-word-badge">${auction.auction_specialWord}</div>` : '';
+
+        const timeRemaining = auction.auction_bidStartDate || 'غير محدد';
+        const badgeStatus = getAuctionBadgeStatus(auction.auction_bidStartDate, auction.auction_bidEndDate);
+        const remainingTimeInfo = getRemainingTimeInfo(auction.auction_bidStartDate, auction.auction_bidEndDate);
+
+        return `
+            <div class="property-card-home-page auction-card-home-page seller-company-auction-card">
+                <div class="card-header">
+                    <div class="company-details">
+                        ${companyLogo}
+                        <span class="company-name">${sellerCompanyName}</span>
+                    </div>
+                    ${specialWordBadge}
+                </div>
+                <div class="property-image-home-page" ${imageStyle}>
+                    <div class="auction-badge-home-page">
+                        <span class="auction-status-badge-home-page ${badgeStatus.className}">
+                            <i data-lucide="circle" class="badge-dot-home-page"></i>
+                            ${badgeStatus.text}
+                        </span>
+                        <span class="auction-status-badge-home-page electronic-badge-home-page">
+                            <i data-lucide="globe" class="badge-icon-home-page"></i>
+                            إلكتروني
+                        </span>
+                    </div>
+                </div>
+                <div class="property-content-home-page">
+                    <h3 class="property-title-home-page">${auction.auction_title || sellerCompanyName || 'عقار في المزاد'}</h3>
+                    <div class="auction-meta-home-page">
+                        <div class="auction-timer-home-page">
+                            <i data-lucide="clock" class="meta-icon"></i>
+                            <span class="bid-start-date-text">بدأ المزاد: <strong>${timeRemaining}</strong></span>
+                        </div>
+                    </div>
+                    <div class="auction-bid-section">
+                        <div class="bid-section-top">
+                            <div class="location-wrapper">
+                                <i data-lucide="map-pin" class="property-card-location-icon"></i>
+                                <span>${auction.auction_location || 'غير محدد'}</span>
+                            </div>
+                            <i data-lucide="heart" class="property-card-heart-icon"></i>
+                        </div>
+                        <div class="bid-section-bottom">
+                            <div class="remaining-time-label">${remainingTimeInfo.label}</div>
+                            <div class="remaining-time-counter" 
+                                ${auction.auction_bidStartDate ? `data-bid-start-date="${auction.auction_bidStartDate}"` : ''}
+                                ${auction.auction_bidEndDate ? `data-bid-end-date="${auction.auction_bidEndDate}"` : ''}></div>
+                        </div>
+                    </div>
+                    <div class="property-cta-container-home-page">
+                        <div class="property-view-count-home-page">
+                            <i data-lucide="eye" class="property-view-icon-home-page"></i>
+                            <span class="property-view-number-home-page">${auction.auction_viewCount ? auction.auction_viewCount : '0'}</span>
+                        </div>
+                        <div class="auction-property-count-home-page">
+                            <span class="property-view-number-home-page">عدد الأصول</span>
+                            <span class="property-view-number-home-page">${auction.auction_numberOfAssets ? auction.auction_numberOfAssets : '1'}</span>
+                        </div>
+                        <button class="property-cta-btn-home-page">
+                            شارك الآن
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Render auction history cards
+    async function renderAuctionHistoryCards(filterType = 'all') {
+        const content = document.getElementById('my-all-auctions-history-content');
+        if (!content) return;
+
+        // Fetch data if not already loaded
+        if (auctionHistoryData.length === 0) {
+            auctionHistoryData = await fetchUserAuctionHistory();
+        }
+        if (allAuctionsData.length === 0) {
+            allAuctionsData = await fetchAllAuctions();
+        }
+
+        // Get seller company data
+        let sellerCompanyDataObject = null;
+        try {
+            const userResponse = await fetch('json-data/user-data.json');
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                if (userData.sellerCompanyDataObject && userData.sellerCompanyDataObject.length > 0) {
+                    sellerCompanyDataObject = userData.sellerCompanyDataObject[0];
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to fetch seller company data:', error);
+        }
+
+        // Filter auctions by auctionId from history
+        const auctionIds = auctionHistoryData.map(h => h.auctionId);
+        let filteredAuctions = allAuctionsData.filter(auction => auctionIds.includes(auction.id));
+
+        // Apply status filter
+        if (filterType !== 'all') {
+            const statusMap = {
+                'running': 'running',
+                'won': 'won',
+                'lost': 'lost'
+            };
+            const targetStatus = statusMap[filterType];
+            if (targetStatus) {
+                filteredAuctions = filteredAuctions.filter(auction => {
+                    const historyItem = auctionHistoryData.find(h => h.auctionId === auction.id);
+                    return historyItem && historyItem.status === targetStatus;
+                });
+            }
+        }
+
+        // Create or get container
+        let container = content.querySelector('.seller-company-auctions-list');
+        if (!container) {
+            // Remove empty state if exists
+            const emptyState = content.querySelector('.my-actions-empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            // Create seller-company-auctions-list container
+            container = document.createElement('div');
+            container.className = 'seller-company-auctions-list';
+            content.appendChild(container);
+        } else {
+            container.innerHTML = '';
+        }
+
+        // Handle empty state
+        if (filteredAuctions.length === 0) {
+            container.innerHTML = `
+                <div class="my-actions-empty-state scrollable-container">
+                    <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
+                </div>
+            `;
+            // Update results count to 0
+            const countElement = content.querySelector('#my-auctions-count');
+            if (countElement) {
+                countElement.textContent = '0';
+            }
+            return;
+        }
+
+        // Render cards
+        filteredAuctions.forEach(auction => {
+            const cardHTML = renderAuctionCardHTML(auction, sellerCompanyDataObject);
+            const temp = document.createElement('div');
+            temp.innerHTML = cardHTML.trim();
+            const cardElement = temp.firstChild;
+
+            if (cardElement) {
+                container.appendChild(cardElement);
+
+                // Add click handler
+                cardElement.addEventListener('click', function (e) {
+                    if (e.target.closest('button') ||
+                        e.target.closest('.property-cta-btn-home-page') ||
+                        e.target.closest('.property-card-heart-icon') ||
+                        e.target.classList.contains('property-card-heart-icon')) {
+                        return;
+                    }
+
+                    const auctionId = auction.id;
+                    const badgeStatus = getAuctionBadgeStatus(auction.auction_bidStartDate, auction.auction_bidEndDate);
+
+                    if (auctionId && typeof window.openPropertyDetail === 'function') {
+                        window.openPropertyDetail(auctionId, badgeStatus);
+                        if (typeof window.scrollOnSectionOpen === 'function') {
+                            window.scrollOnSectionOpen('auction-property-detail-section');
+                        }
+                    }
+                });
+
+                // Add button click handler
+                const ctaButton = cardElement.querySelector('.property-cta-btn-home-page');
+                if (ctaButton) {
+                    ctaButton.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const auctionId = auction.id;
+                        const badgeStatus = getAuctionBadgeStatus(auction.auction_bidStartDate, auction.auction_bidEndDate);
+
+                        if (auctionId && typeof window.openPropertyDetail === 'function') {
+                            window.openPropertyDetail(auctionId, badgeStatus);
+                            if (typeof window.scrollOnSectionOpen === 'function') {
+                                window.scrollOnSectionOpen('auction-property-detail-section');
+                            }
+                        }
+                    });
+                }
+
+                cardElement.style.cursor = 'pointer';
+            }
+        });
+
+        // Update results count
+        const countElement = content.querySelector('#my-auctions-count');
+        if (countElement) {
+            const visibleCards = container.querySelectorAll('.property-card-home-page.auction-card-home-page.seller-company-auction-card');
+            countElement.textContent = visibleCards.length;
+        }
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+        }
+
+        // Initialize countdown timers if function exists
+        if (typeof window.initializeAuctionCountdowns === 'function') {
+            setTimeout(() => {
+                window.initializeAuctionCountdowns();
+            }, 150);
+        }
     }
 
     // Render wallet cash flow rows
@@ -287,8 +671,8 @@
         const finishedContent = document.querySelector('.my-actions-tabs');
         if (!finishedContent) return;
 
-        // Get or create the finished-filters container
-        let filterContainer = document.querySelector('.finished-filters');
+        // Get or create the all-user-auction-history-filters container
+        let filterContainer = document.querySelector('.all-user-auction-history-filters');
         const currentFilterFor = filterContainer ? filterContainer.getAttribute('data-filter-for') : null;
 
         // Check if buttons already exist for this uniqueId
@@ -310,7 +694,7 @@
 
         if (!filterContainer) {
             filterContainer = document.createElement('div');
-            filterContainer.className = 'finished-filters';
+            filterContainer.className = 'all-user-auction-history-filters';
             if (finishedContent.lastChild) {
                 finishedContent.insertBefore(filterContainer, finishedContent.lastChild);
             } else {
@@ -371,6 +755,21 @@
                 // Save the active button ID
                 activeFilterStates[filterFor] = this.id;
 
+                // Handle auction history filtering
+                if (filterFor === 'finished') {
+                    let filterType = 'all';
+                    if (this.id === 'running-auctions') {
+                        filterType = 'running';
+                    } else if (this.id === 'won-auctions') {
+                        filterType = 'won';
+                    } else if (this.id === 'lost-auctions') {
+                        filterType = 'lost';
+                    }
+                    renderAuctionHistoryCards(filterType).catch(error => {
+                        console.error('Error rendering auction history cards:', error);
+                    });
+                }
+
                 // Handle wallet cash flow filtering
                 if (filterFor === 'wallet-cash-flow') {
                     let filterType = 'all';
@@ -411,14 +810,18 @@
                         <button class="my-actions-tab" data-tab="wallet-cash-flow" id="wallet-cash-flow-tab">
                             <span>حركة المحفظة</span>
                         </button>
+                        <button class="my-actions-tab" data-tab="current-best-opportunities" id="current-best-opportunities-tab">
+                            <span>أفضل الفرص الحالية</span>
+                        </button>
                     </div>
                 </div>
 
                 <div class="my-actions-content scrollable-container">
                     <div class="my-actions-tab-content active" id="my-all-auctions-history-content">
-                        <div class="my-actions-empty-state scrollable-container">
-                            <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
+                        <div class="seller-company-results-count">النتائج: 
+                            <span id="my-auctions-count">0</span> مزاد
                         </div>
+                        <div class="seller-company-auctions-list"></div>
                     </div>
 
                     <div class="my-actions-tab-content" id="my-all-property-buying-history-content">
@@ -428,6 +831,12 @@
                     </div>
 
                     <div class="my-actions-tab-content" id="wallet-cash-flow-content">
+                        <div class="my-actions-empty-state scrollable-container">
+                            <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
+                        </div>
+                    </div>
+
+                    <div class="my-actions-tab-content" id="current-best-opportunities-content">
                         <div class="my-actions-empty-state scrollable-container">
                             <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
                         </div>
@@ -444,7 +853,7 @@
     function initMyActionsTabs() {
         if (eventListenersAttached) return;
 
-        const tabs = document.querySelectorAll('.my-actions-tab:not(.finished-filters .my-actions-tab)');
+        const tabs = document.querySelectorAll('.my-actions-tab:not(.all-user-auction-history-filters .my-actions-tab)');
         const tabContents = document.querySelectorAll('.my-actions-tab-content');
 
         tabs.forEach(tab => {
@@ -459,16 +868,9 @@
                     targetContent.classList.add('active');
 
                     // Show/hide filter div based on active tab
-                    const finishedFilters = document.querySelector('.finished-filters');
+                    const finishedFilters = document.querySelector('.all-user-auction-history-filters');
 
-                    if (targetTab === 'my-all-property-buying-history') {
-                        // Hide filter container when my-all-property-buying-history tab is active
-                        if (finishedFilters) {
-                            finishedFilters.style.display = 'none';
-                        }
-
-
-                    } else if (targetTab === 'my-all-auctions-history') {
+                    if (targetTab === 'my-all-auctions-history') {
                         setTimeout(() => {
                             const finishedButtons = [
                                 { id: 'all-auctions', text: 'الكل' },
@@ -477,12 +879,32 @@
                                 { id: 'lost-auctions', text: 'الخاسرة' }
                             ];
                             createFilterButtons(finishedButtons, 'finished');
-                            // Show finished-filters when finished tab is active
-                            const filters = document.querySelector('.finished-filters');
+                            // Show all-user-auction-history-filters when finished tab is active
+                            const filters = document.querySelector('.all-user-auction-history-filters');
                             if (filters) {
                                 filters.style.display = 'flex';
                             }
+                            // Render auction cards with saved filter or default 'all'
+                            const savedActiveId = activeFilterStates['finished'];
+                            let filterType = 'all';
+                            if (savedActiveId === 'running-auctions') {
+                                filterType = 'running';
+                            } else if (savedActiveId === 'won-auctions') {
+                                filterType = 'won';
+                            } else if (savedActiveId === 'lost-auctions') {
+                                filterType = 'lost';
+                            }
+                            renderAuctionHistoryCards(filterType).catch(error => {
+                                console.error('Error rendering auction history cards:', error);
+                            });
                         }, 10);
+
+
+                    } else if (targetTab === 'my-all-property-buying-history') {
+                        // Hide filter container when my-all-property-buying-history tab is active
+                        if (finishedFilters) {
+                            finishedFilters.style.display = 'none';
+                        }
 
 
                     } else if (targetTab === 'wallet-cash-flow') {
@@ -494,8 +916,8 @@
                                 { id: 'wallet-processing', text: 'تحت المعالجة' }
                             ];
                             createFilterButtons(walletButtons, 'wallet-cash-flow');
-                            // Show finished-filters when wallet-cash-flow tab is active
-                            const filters = document.querySelector('.finished-filters');
+                            // Show all-user-auction-history-filters when wallet-cash-flow tab is active
+                            const filters = document.querySelector('.all-user-auction-history-filters');
                             if (filters) {
                                 filters.style.display = 'flex';
                             }
@@ -513,6 +935,13 @@
                                 console.error('Error rendering wallet rows:', error);
                             });
                         }, 10);
+
+
+                    }else if (targetTab === 'current-best-opportunities') {
+                        // Hide filter container when my-all-property-buying-history tab is active
+                        if (finishedFilters) {
+                            finishedFilters.style.display = 'none';
+                        }
                     }
                 }
             });
@@ -540,11 +969,15 @@
                 { id: 'lost-auctions', text: 'الخاسرة' }
             ];
             createFilterButtons(finishedButtons, 'finished');
-            // Show finished-filters
-            const filters = document.querySelector('.finished-filters');
+            // Show all-user-auction-history-filters
+            const filters = document.querySelector('.all-user-auction-history-filters');
             if (filters) {
                 filters.style.display = 'flex';
             }
+            // Render auction history cards initially
+            renderAuctionHistoryCards('all').catch(error => {
+                console.error('Error rendering auction history cards:', error);
+            });
         }, 50);
 
         const observer = new MutationObserver(function (mutations) {
