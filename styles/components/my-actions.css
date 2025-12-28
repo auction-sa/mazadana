@@ -194,13 +194,27 @@
 .wallet-row-expandable {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease 0.05s,
+        transform 0.3s ease 0.05s,
+        border-top 0.2s ease;
     background-color: rgba(255, 255, 255, 0.5);
     padding: 0 var(--spacing-md);
+    border-top: 1px solid transparent;
 }
 
 .wallet-row-wrapper.expanded .wallet-row-expandable {
     max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s ease 0.1s,
+        transform 0.35s ease 0.1s,
+        border-top 0.25s ease 0.15s;
     padding: var(--spacing-md);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom-left-radius: 5px;
