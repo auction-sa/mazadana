@@ -441,9 +441,9 @@
                          <label class="add-new-auction-form-label">عدد أيام تشغيل المزاد</label>
                          <div class="datetime-group">
                             <input type="number" class="add-new-auction-form-input" id="auction-days-amount" value="${data.auctionDaysAmount}" 
-                                  placeholder="0" min="0" step="1" dir="ltr">
+                                  placeholder="مثلاً 14 يوم" min="3" max="30" step="1" dir="ltr">
                          </div>
-                         <small class="form-helper">كم يوم لتشغيل المزاد</small>
+                         <small class="form-helper">كم يوم لتشغيل المزاد (من 3 إلى 93 يوم)</small>
                      </div>
 
                      <!-- Auction End Date & Time -->
@@ -1688,9 +1688,16 @@
             startDatePicker = null;
         }
 
+        // Calculate max date (90 days from today)
+        const today = new Date();
+        const maxDate = new Date(today);
+        maxDate.setDate(maxDate.getDate() + 90);
+
         // Initialize start date picker
         startDatePicker = new Pikaday({
             field: startDateInput,
+            minDate: today, // Prevent selecting past dates
+            maxDate: maxDate, // Prevent selecting dates more than 90 days from today
             i18n: {
                 previousMonth: 'الشهر السابق',
                 nextMonth: 'الشهر التالي',
@@ -1745,8 +1752,58 @@
         // Listen to days amount input to calculate end date
         const daysAmountInput = document.getElementById('auction-days-amount');
         if (daysAmountInput) {
-            daysAmountInput.addEventListener('input', calculateEndDate);
-            daysAmountInput.addEventListener('change', () => {
+            // Validate and clamp value on input
+            daysAmountInput.addEventListener('input', function () {
+                let value = parseInt(this.value, 10);
+
+                // If value is empty or NaN, allow it (user might be typing)
+                if (isNaN(value)) {
+                    calculateEndDate();
+                    return;
+                }
+
+                // Clamp value between 5 and 90
+                if (value < 3) {
+                    value = 3;
+                    this.value = value;
+                } else if (value > 30) {
+                    value = 30;
+                    this.value = value;
+                }
+
+                calculateEndDate();
+            });
+
+            // Validate and clamp value on change (when user leaves the field)
+            daysAmountInput.addEventListener('change', function () {
+                let value = parseInt(this.value, 10);
+
+                // If value is empty or NaN, set to minimum
+                if (isNaN(value) || value === '') {
+                    value = 5;
+                    this.value = value;
+                }
+
+                // Clamp value between 5 and 90
+                if (value < 5) {
+                    value = 5;
+                    this.value = value;
+                } else if (value > 90) {
+                    value = 90;
+                    this.value = value;
+                }
+
+                calculateEndDate();
+                saveStep3();
+            });
+
+            // Handle arrow/spinner clicks to ensure step of 1
+            daysAmountInput.addEventListener('wheel', function (e) {
+                e.preventDefault();
+                const currentValue = parseInt(this.value, 10) || 5;
+                const delta = e.deltaY > 0 ? -1 : 1;
+                const newValue = Math.max(5, Math.min(90, currentValue + delta));
+                this.value = newValue;
                 calculateEndDate();
                 saveStep3();
             });

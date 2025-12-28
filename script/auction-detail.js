@@ -524,7 +524,7 @@
         } else if (statusClassName.includes('upcoming')) {
             categoryStatusLabel = 'قادم قريباً';
             categoryStatusClass = 'property-detail-status-upcoming';
-        }else if (statusClassName.includes('ended')) {
+        } else if (statusClassName.includes('ended')) {
             categoryStatusLabel = 'إنتهى';
             categoryStatusClass = 'property-detail-status-ended';
         }
@@ -610,6 +610,23 @@
         deferHeavyOperations(() => {
             const assetCards = container.querySelectorAll('.auction-property-main-page-detail-asset-card');
             assetCards.forEach((card) => {
+                // Update button text based on status classes in the card
+                const ctaButton = card.querySelector('.property-cta-btn-home-page');
+                if (ctaButton) {
+                    // Check if card contains an element with status-ended class
+                    const statusEndedElement = card.querySelector('[class*="status-ended"]');
+                    if (statusEndedElement) {
+                        ctaButton.textContent = 'إنتهى المزاد';
+                    } else {
+                        // Check if card contains an element with status-upcoming class
+                        const statusUpcomingElement = card.querySelector('[class*="status-upcoming"]');
+                        if (statusUpcomingElement) {
+                            ctaButton.textContent = 'المزاد قادم قريباً';
+                        }
+                        // Otherwise, keep "المشاركة في المزاد" (default text)
+                    }
+                }
+
                 card.addEventListener('click', function (e) {
                     // Only exclude the menu icon (which might have its own menu functionality)
                     // All other elements, including buttons, should open the detail page
