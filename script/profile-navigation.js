@@ -31,7 +31,8 @@
         FAVORITES: 'favorites',    // Favorites page
         POLICY_TERMS: 'policy-terms',  // Policy Terms / Privacy Policy page
         HELP_CENTER: 'help-center',  // Help Center page
-        START_AUCTION: 'start-auction'  // Start New Auction page
+        START_AUCTION: 'start-auction',  // Start New Auction page
+        MANAGE_PROPERTIES: 'manage-properties'  // Manage My Properties page
     };
 
     // ============================================================================
@@ -139,8 +140,20 @@
                     }
                 }
             }
+        },
+        [ProfileRoutes.MANAGE_PROPERTIES]: {
+            headerId: 'manage-properties-header',
+            viewId: 'manage-my-own-property-view',
+            hash: '#/profile/manage-properties',
+            historyDelay: 400,
+            init: () => {
+                if (typeof window.ManagePropertiesPage !== 'undefined' && typeof window.ManagePropertiesPage.init === 'function') {
+                    setTimeout(() => {
+                        window.ManagePropertiesPage.init();
+                    }, 100);
+                }
+            }
         }
-        // Future pages (add-property, manage-properties) can be added here
     };
 
     // ============================================================================
@@ -170,10 +183,14 @@
             }
         });
 
-        // Hide settings, favorites, and policy-terms headers if not kept
+        // Hide settings, favorites, policy-terms, and manage-properties headers if not kept
         const settingsHeader = document.getElementById('settings-header');
         if (settingsHeader && !keepSet.has(settingsHeader.id)) {
             settingsHeader.style.display = 'none';
+        }
+        const managePropertiesHeader = document.getElementById('manage-properties-header');
+        if (managePropertiesHeader && !keepSet.has(managePropertiesHeader.id)) {
+            managePropertiesHeader.style.display = 'none';
         }
         const favoritesHeader = document.getElementById('favorites-header');
         if (favoritesHeader && !keepSet.has(favoritesHeader.id)) {
@@ -215,6 +232,10 @@
         if (addNewAuctionView && addNewAuctionView.id !== exceptViewId) {
             addNewAuctionView.classList.remove('active');
         }
+        const managePropertiesView = document.getElementById('manage-my-own-property-view');
+        if (managePropertiesView && managePropertiesView.id !== exceptViewId) {
+            managePropertiesView.classList.remove('active');
+        }
     }
 
     function showSingleProfilePage(route, config, { menuView, accountInfoView, profileSection }) {
@@ -239,7 +260,7 @@
         if (accountInfoView) accountInfoView.classList.remove('active');
         hideSecondaryViews(config.viewId);
 
-        // Also hide help-center-view and add-new-auction-view if not the target
+        // Also hide help-center-view, add-new-auction-view, and manage-my-own-property-view if not the target
         const helpCenterView = document.getElementById('help-center-view');
         if (helpCenterView && helpCenterView.id !== config.viewId) {
             helpCenterView.classList.remove('active');
@@ -247,6 +268,10 @@
         const addNewAuctionView = document.getElementById('add-new-auction-view');
         if (addNewAuctionView && addNewAuctionView.id !== config.viewId) {
             addNewAuctionView.classList.remove('active');
+        }
+        const managePropertiesView = document.getElementById('manage-my-own-property-view');
+        if (managePropertiesView && managePropertiesView.id !== config.viewId) {
+            managePropertiesView.classList.remove('active');
         }
 
         // Show the target view
@@ -681,6 +706,11 @@
                 // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
                 break;
 
+            case 'mannage-properties':
+                navigateActionToRoute(ProfileRoutes.MANAGE_PROPERTIES);
+                // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
+                break;
+
             case 'logout':
                 // User clicked "تسجيل الخروج"
                 // Ask for confirmation before logging out
@@ -877,6 +907,15 @@
             });
         }
 
+        // ROUTE 7: Navigate to Manage Properties page (single-page helper)
+        else if (route === ProfileRoutes.MANAGE_PROPERTIES && profileSinglePages[ProfileRoutes.MANAGE_PROPERTIES]) {
+            showSingleProfilePage(ProfileRoutes.MANAGE_PROPERTIES, profileSinglePages[ProfileRoutes.MANAGE_PROPERTIES], {
+                menuView,
+                accountInfoView,
+                profileSection
+            });
+        }
+
         // ROUTE 4: Navigate back to Menu
         else if (route === ProfileRoutes.MENU) {
             // Show the profile page title
@@ -910,6 +949,10 @@
             const addNewAuctionView = document.getElementById('add-new-auction-view');
             if (addNewAuctionView) {
                 addNewAuctionView.classList.remove('active');
+            }
+            const managePropertiesView = document.getElementById('manage-my-own-property-view');
+            if (managePropertiesView) {
+                managePropertiesView.classList.remove('active');
             }
 
 
@@ -1028,6 +1071,8 @@
                 navigateToProfileRoute(ProfileRoutes.POLICY_TERMS);
             } else if (hash === '#/profile/help-center') {
                 navigateToProfileRoute(ProfileRoutes.HELP_CENTER);
+            } else if (hash === '#/profile/manage-properties') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
             }
         });
 
@@ -1056,18 +1101,21 @@
                 navigateToProfileRoute(ProfileRoutes.POLICY_TERMS);
             } else if (hash === '#/profile/help-center') {
                 navigateToProfileRoute(ProfileRoutes.HELP_CENTER);
+            } else if (hash === '#/profile/manage-properties') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
             }
         });
 
         // Handle Android back button (for mobile apps)
         if (typeof document.addEventListener !== 'undefined') {
             document.addEventListener('backbutton', function (event) {
-                // If we're on account-info, settings, favorites, or policy-terms, go back to menu
+                // If we're on account-info, settings, favorites, policy-terms, help-center, or manage-properties, go back to menu
                 if (currentProfileRoute === ProfileRoutes.ACCOUNT_INFO ||
                     currentProfileRoute === ProfileRoutes.SETTINGS ||
                     currentProfileRoute === ProfileRoutes.FAVORITES ||
                     currentProfileRoute === ProfileRoutes.POLICY_TERMS ||
-                    currentProfileRoute === ProfileRoutes.HELP_CENTER) {
+                    currentProfileRoute === ProfileRoutes.HELP_CENTER ||
+                    currentProfileRoute === ProfileRoutes.MANAGE_PROPERTIES) {
                     // Go back to menu
                     navigateToProfileRoute(ProfileRoutes.MENU);
                     if (event && event.preventDefault) {

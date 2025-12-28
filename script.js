@@ -71,7 +71,8 @@
             'script/policy-terms.js',             // Policy terms page (includes terms and privacy content)
             'script/help-center.js',               // Help center page
             'script/start-new-auction.js',        // Start new auction wizard page
-            'script/user-settings.js'            // User settings
+            'script/user-settings.js',            // User settings
+            'script/manage-my-properties.js'      // Manage my properties page
         ];
 
         // Load scripts sequentially (one after another)
