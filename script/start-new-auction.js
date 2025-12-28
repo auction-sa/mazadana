@@ -443,7 +443,7 @@
                             <input type="number" class="add-new-auction-form-input" id="auction-days-amount" value="${data.auctionDaysAmount}" 
                                   placeholder="مثلاً 14 يوم" min="3" max="30" step="1" dir="ltr">
                          </div>
-                         <small class="form-helper">كم يوم لتشغيل المزاد (من 3 إلى 93 يوم)</small>
+                         <small class="form-helper">كم يوم لتشغيل المزاد (من 3 إلى 30 يوم)</small>
                      </div>
 
                      <!-- Auction End Date & Time -->

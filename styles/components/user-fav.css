@@ -26,14 +26,6 @@
     display: flex !important;
 }
 
-/* Favorites Content - Scrollable Container */
-.favorites-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 /* Favorites Icon */
 .favorites-icon {
     width: 80px;

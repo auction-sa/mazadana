@@ -871,15 +871,23 @@
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
                 lucide.createIcons();
+                // Restore favorited states after Lucide re-initializes
+                if (typeof window.restoreFavoritedStates === 'function') {
+                    window.restoreFavoritedStates(gridElement);
+                }
                 // Initialize heart icon click handlers after icons are created and DOM is ready
                 requestAnimationFrame(() => {
-                    initializeHeartIcons(gridElement);
+                    if (typeof window.initializeHeartIcons === 'function') {
+                        window.initializeHeartIcons(gridElement);
+                    }
                 });
             }, 100);
         } else {
             // If Lucide is not available, still initialize heart icons after DOM is ready
             requestAnimationFrame(() => {
-                initializeHeartIcons(gridElement);
+                if (typeof window.initializeHeartIcons === 'function') {
+                    window.initializeHeartIcons(gridElement);
+                }
             });
         }
 
@@ -1274,49 +1282,6 @@
         });
     }
 
-    /**
-     * Initialize heart icon click handlers
-     * Makes heart icons clickable and toggles favorited state with animation
-     * @param {HTMLElement} gridElement - The grid/container element
-     */
-    function initializeHeartIcons(gridElement) {
-        // Ensure DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                initializeHeartIcons(gridElement);
-            });
-            return;
-        }
-
-        if (!gridElement) return;
-
-        const heartIcons = gridElement.querySelectorAll('.property-card-heart-icon');
-
-        heartIcons.forEach(heartIcon => {
-            // Skip if already has a click handler attached
-            if (heartIcon.hasAttribute('data-heart-handler-attached')) {
-                return;
-            }
-
-            heartIcon.addEventListener('click', function (e) {
-                e.stopPropagation(); // Prevent card click event
-                e.preventDefault(); // Prevent any default behavior
-
-                const isFavorited = heartIcon.classList.contains('favorited');
-
-                if (isFavorited) {
-                    // Remove favorited state (turn back to white)
-                    heartIcon.classList.remove('favorited');
-                } else {
-                    // Add favorited state (turn red) and trigger animation
-                    heartIcon.classList.add('favorited');
-                }
-            });
-
-            // Mark as having handler attached
-            heartIcon.setAttribute('data-heart-handler-attached', 'true');
-        });
-    }
 
     /**
      * Initialize scroll indicators for a container

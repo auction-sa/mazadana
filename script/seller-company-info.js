@@ -635,6 +635,23 @@
         // Initialize Lucide icons for new content
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
+            // Restore favorited states after Lucide re-initializes
+            if (typeof window.restoreFavoritedStates === 'function') {
+                window.restoreFavoritedStates(auctionsList);
+            }
+            // Initialize heart icon click handlers after icons are created
+            setTimeout(() => {
+                if (typeof window.initializeHeartIcons === 'function') {
+                    window.initializeHeartIcons(auctionsList);
+                }
+            }, 100);
+        } else {
+            // If Lucide is not available, still initialize heart icons after DOM is ready
+            requestAnimationFrame(() => {
+                if (typeof window.initializeHeartIcons === 'function') {
+                    window.initializeHeartIcons(auctionsList);
+                }
+            });
         }
 
         // Initialize countdown timers for these cards (local)

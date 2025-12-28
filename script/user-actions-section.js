@@ -8,7 +8,7 @@
     let activeFilterStates = {
         'my-all-property-buying-history': null,
         'wallet-cash-flow': null,
-        'current-best-opportunities': null
+        'my-own-property-posting': null
     };
     let auctionHistoryData = [];
     let allAuctionsData = [];
@@ -447,7 +447,22 @@
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
                 lucide.createIcons();
+                // Restore favorited states after Lucide re-initializes
+                if (typeof window.restoreFavoritedStates === 'function') {
+                    window.restoreFavoritedStates(container);
+                }
+                // Initialize heart icon click handlers after icons are created
+                if (typeof window.initializeHeartIcons === 'function') {
+                    window.initializeHeartIcons(container);
+                }
             }, 100);
+        } else {
+            // If Lucide is not available, still initialize heart icons after DOM is ready
+            requestAnimationFrame(() => {
+                if (typeof window.initializeHeartIcons === 'function') {
+                    window.initializeHeartIcons(container);
+                }
+            });
         }
 
         // Initialize countdown timers for these cards (same functionality as seller-auctions-list)
@@ -720,7 +735,7 @@
                 activeFilterStates[filterFor] = this.id;
 
                 // Handle auction history filtering
-                if (filterFor === 'finished') {
+                if (filterFor === 'my-all-auctions-history') {
                     let filterType = 'all';
                     if (this.id === 'running-auctions') {
                         filterType = 'running';
@@ -748,6 +763,20 @@
                         console.error('Error rendering wallet rows:', error);
                     });
                 }
+
+                // Handle property posting filtering
+                if (filterFor === 'my-own-property-posting') {
+                    let filterType = 'all';
+                    if (this.id === 'running-postings') {
+                        filterType = 'running';
+                    } else if (this.id === 'previous-postings') {
+                        filterType = 'previous';
+                    }
+                    // TODO: Add render function for posting cards
+                    // renderPostingCards(filterType).catch(error => {
+                    //     console.error('Error rendering posting cards:', error);
+                    // });
+                }
             });
         });
     }
@@ -774,7 +803,7 @@
                         <button class="my-actions-tab" data-tab="wallet-cash-flow" id="wallet-cash-flow-tab">
                             <span>سجل المحفظة</span>
                         </button>
-                        <button class="my-actions-tab" data-tab="current-best-opportunities" id="current-best-opportunities-tab">
+                        <button class="my-actions-tab" data-tab="my-own-property-posting" id="my-own-property-posting-tab">
                             <span>سجل منشوراتي</span>
                         </button>
                     </div>
@@ -800,7 +829,7 @@
                         </div>
                     </div>
 
-                    <div class="my-actions-tab-content" id="current-best-opportunities-content">
+                    <div class="my-actions-tab-content" id="my-own-property-posting-content">
                         <div class="my-actions-empty-state scrollable-container">
                             <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
                         </div>
@@ -842,14 +871,14 @@
                                 { id: 'won-auctions', text: 'الرابحة' },
                                 { id: 'lost-auctions', text: 'الخاسرة' }
                             ];
-                            createFilterButtons(finishedButtons, 'finished');
-                            // Show all-user-auction-history-filters when finished tab is active
+                            createFilterButtons(finishedButtons, 'my-all-auctions-history');
+                            // Show all-user-auction-history-filters when my-all-auctions-history tab is active
                             const filters = document.querySelector('.all-user-auction-history-filters');
                             if (filters) {
                                 filters.style.display = 'flex';
                             }
                             // Render auction cards with saved filter or default 'all'
-                            const savedActiveId = activeFilterStates['finished'];
+                            const savedActiveId = activeFilterStates['my-all-auctions-history'];
                             let filterType = 'all';
                             if (savedActiveId === 'running-auctions') {
                                 filterType = 'running';
@@ -901,11 +930,32 @@
                         }, 10);
 
 
-                    } else if (targetTab === 'current-best-opportunities') {
-                        // Hide filter container when my-all-property-buying-history tab is active
-                        if (finishedFilters) {
-                            finishedFilters.style.display = 'none';
-                        }
+                    } else if (targetTab === 'my-own-property-posting') {
+                        setTimeout(() => {
+                            const postingButtons = [
+                                { id: 'all-postings', text: 'الكل' },
+                                { id: 'running-postings', text: 'جاري العرض' },
+                                { id: 'previous-postings', text: 'انتهى العرض' }
+                            ];
+                            createFilterButtons(postingButtons, 'my-own-property-posting');
+                            // Show all-user-auction-history-filters when my-own-property-posting tab is active
+                            const filters = document.querySelector('.all-user-auction-history-filters');
+                            if (filters) {
+                                filters.style.display = 'flex';
+                            }
+                            // Use saved active state to determine filter type
+                            const savedActiveId = activeFilterStates['my-own-property-posting'];
+                            let filterType = 'all';
+                            if (savedActiveId === 'running-postings') {
+                                filterType = 'running';
+                            } else if (savedActiveId === 'previous-postings') {
+                                filterType = 'previous';
+                            }
+                            // TODO: Add render function for posting cards
+                            // renderPostingCards(filterType).catch(error => {
+                            //     console.error('Error rendering posting cards:', error);
+                            // });
+                        }, 10);
                     }
                 }
             });
@@ -932,7 +982,7 @@
                 { id: 'won-auctions', text: 'الرابحة' },
                 { id: 'lost-auctions', text: 'الخاسرة' }
             ];
-            createFilterButtons(finishedButtons, 'finished');
+            createFilterButtons(finishedButtons, 'my-all-auctions-history');
             // Show all-user-auction-history-filters
             const filters = document.querySelector('.all-user-auction-history-filters');
             if (filters) {

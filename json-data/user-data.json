@@ -56,6 +56,45 @@
 
 
 
+  "userFavoritedDataObject":[
+    {
+      "auctionId": 1
+    },
+    {
+      "auctionId": 2
+    },
+    {
+      "auctionId": 5
+    }
+  ],
+
+
+
+  "userPostingAuctionHistoryDataObject":[
+    {
+      "status": "won",
+      "auctionId": 1
+    },
+    {
+      "status": "lost",
+      "auctionId": 2
+    },
+    {
+      "status": "lost",
+      "auctionId": 4
+    },
+    {
+      "status": "lost",
+      "auctionId": 5
+    },
+    {
+      "status": "running",
+      "auctionId": 3
+    }
+  ],
+
+
+
   "userWalletMovementsDataObject": {
     "currentUserTotalBalance": 150000,
     "entryMovements": [

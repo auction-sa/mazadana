@@ -65,7 +65,8 @@
     width: 100%;
 }
 
-#my-all-auctions-history-content .bid-section-top {
+#my-all-auctions-history-content .bid-section-top,
+#favorites-content .bid-section-top {
     padding-bottom: 0;
     border-bottom: none;
 }
