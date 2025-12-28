@@ -6,7 +6,7 @@
     let myActionsRendered = false;
     let walletData = [];
     let activeFilterStates = {
-        'finished': null,
+        'my-all-property-buying-history': null,
         'wallet-cash-flow': null
     };
 
@@ -149,7 +149,7 @@
 
             const balanceLabel = document.createElement('span');
             balanceLabel.className = 'wallet-balance-label';
-            balanceLabel.textContent = 'الرصيد الحالي: ';
+            balanceLabel.textContent = 'رصيدك الحالي: ';
 
             const balanceAmountContainer = document.createElement('span');
             balanceAmountContainer.className = 'wallet-balance-amount-container';
@@ -402,11 +402,11 @@
 
                 <div class="my-actions-tabs">
                     <div class="my-actions-tabs-main-buttons">
-                        <button class="my-actions-tab active" data-tab="pending" id="pending-tab">
-                            <span>المزادات قيد الانتظار</span>
+                        <button class="my-actions-tab active" data-tab="my-all-auctions-history" id="my-all-auctions-history-tab">
+                            <span>سجل المزادات</span>
                         </button>
-                        <button class="my-actions-tab" data-tab="finished" id="finished-tab">
-                            <span>المزادات المنتهية</span>
+                        <button class="my-actions-tab" data-tab="my-all-property-buying-history" id="my-all-property-buying-history-tab">
+                            <span>سجل شراء العقارات</span>
                         </button>
                         <button class="my-actions-tab" data-tab="wallet-cash-flow" id="wallet-cash-flow-tab">
                             <span>حركة المحفظة</span>
@@ -415,13 +415,13 @@
                 </div>
 
                 <div class="my-actions-content scrollable-container">
-                    <div class="my-actions-tab-content active" id="pending-content">
+                    <div class="my-actions-tab-content active" id="my-all-auctions-history-content">
                         <div class="my-actions-empty-state scrollable-container">
                             <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
                         </div>
                     </div>
 
-                    <div class="my-actions-tab-content" id="finished-content">
+                    <div class="my-actions-tab-content" id="my-all-property-buying-history-content">
                         <div class="my-actions-empty-state scrollable-container">
                             <p class="my-actions-empty-text">لا يوجد بيانات لعرضها</p>
                         </div>
@@ -461,10 +461,18 @@
                     // Show/hide filter div based on active tab
                     const finishedFilters = document.querySelector('.finished-filters');
 
-                    if (targetTab === 'finished') {
+                    if (targetTab === 'my-all-property-buying-history') {
+                        // Hide filter container when my-all-property-buying-history tab is active
+                        if (finishedFilters) {
+                            finishedFilters.style.display = 'none';
+                        }
+
+
+                    } else if (targetTab === 'my-all-auctions-history') {
                         setTimeout(() => {
                             const finishedButtons = [
                                 { id: 'all-auctions', text: 'الكل' },
+                                { id: 'running-auctions', text: 'الجارية' },
                                 { id: 'won-auctions', text: 'الرابحة' },
                                 { id: 'lost-auctions', text: 'الخاسرة' }
                             ];
@@ -475,11 +483,8 @@
                                 filters.style.display = 'flex';
                             }
                         }, 10);
-                    } else if (targetTab === 'pending') {
-                        // Hide filter container when pending tab is active
-                        if (finishedFilters) {
-                            finishedFilters.style.display = 'none';
-                        }
+
+
                     } else if (targetTab === 'wallet-cash-flow') {
                         setTimeout(() => {
                             const walletButtons = [
@@ -526,11 +531,19 @@
         renderMyActionsSection();
         initMyActionsTabs();
 
-        // Ensure filter container is hidden initially (pending tab is active by default)
+        // Create and show filters initially (my-all-auctions-history tab is active by default)
         setTimeout(() => {
-            const finishedFilters = document.querySelector('.finished-filters');
-            if (finishedFilters) {
-                finishedFilters.style.display = 'none';
+            const finishedButtons = [
+                { id: 'all-auctions', text: 'الكل' },
+                { id: 'running-auctions', text: 'الجارية' },
+                { id: 'won-auctions', text: 'الرابحة' },
+                { id: 'lost-auctions', text: 'الخاسرة' }
+            ];
+            createFilterButtons(finishedButtons, 'finished');
+            // Show finished-filters
+            const filters = document.querySelector('.finished-filters');
+            if (filters) {
+                filters.style.display = 'flex';
             }
         }, 50);
 

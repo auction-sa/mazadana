@@ -8,6 +8,9 @@
   "useSexType": "ذكر",
   "userNationalityCountry": "يمني",
   "userPersonalProfileImage": "https://images.unsplash.com/photo-1633332755192-727a05c4013d",
+
+
+
   "sellerCompanyDataObject": [
     {
       "sellerCompanyLogo": "https://cryptologos.cc/logos/compound-comp-logo.png?v=040",
@@ -25,6 +28,34 @@
       "sellerCompanyYouTube": "https://www.youtube.com/@NewMedia_Life"
     }
   ],
+
+
+
+  "userAuctionHistoryDataObject":[
+    {
+      "status": "won",
+      "auctionId": 1
+    },
+    {
+      "status": "lost",
+      "auctionId": 2
+    },
+    {
+      "status": "lost",
+      "auctionId": 4
+    },
+    {
+      "status": "lost",
+      "auctionId": 5
+    },
+    {
+      "status": "running",
+      "auctionId": 3
+    }
+  ],
+
+
+
   "userWalletMovementsDataObject": {
     "currentUserTotalBalance": 150000,
     "entryMovements": [
