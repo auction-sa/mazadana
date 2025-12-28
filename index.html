@@ -34,9 +34,21 @@
     <!-- Top Header -->
     <header class="top-header">
         <div class="header-content">
-            <button class="header-search-btn" data-section="profile-section" aria-label="بحث">
-                <i data-lucide="search" class="search-icon"></i>
-            </button>
+            <div class="header-menu-wrapper">
+                <button class="header-menu-btn" aria-label="القائمة" id="header-menu-btn">
+                    <i data-lucide="menu" class="menu-icon"></i>
+                </button>
+                <div class="header-menu-dropdown" id="header-menu-dropdown">
+                    <button class="header-menu-item" aria-label="بحث">
+                        <i data-lucide="search" class="menu-item-icon"></i>
+                        <span class="menu-item-text">بحث</span>
+                    </button>
+                    <button class="header-menu-item" aria-label="الإشعارات">
+                        <i data-lucide="bell" class="menu-item-icon"></i>
+                        <span class="menu-item-text">الإشعارات</span>
+                    </button>
+                </div>
+            </div>
             <h1 class="logo">مزادنا</h1>
             <button class="header-profile-btn" data-section="profile-section" aria-label="حسابي">
                 <i data-lucide="user" class="profile-icon"></i>

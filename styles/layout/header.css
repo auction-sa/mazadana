@@ -17,8 +17,12 @@
     position: relative;
 }
 
+.header-menu-wrapper {
+    position: relative;
+}
+
 .header-profile-btn,
-.header-search-btn {
+.header-menu-btn {
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
@@ -33,25 +37,81 @@
 }
 
 .header-profile-btn:hover,
-.header-search-btn:hover {
+.header-menu-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
 }
 
 .header-profile-btn:active,
-.header-search-btn:active {
+.header-menu-btn:active {
     transform: scale(0.95);
 }
 
 .profile-icon,
-.search-icon {
+.menu-icon {
     width: 20px;
     height: 20px;
     color: white;
     stroke: white;
     stroke-width: 2;
     fill: none;
+}
+
+/* Header Menu Dropdown */
+.header-menu-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: white;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.header-menu-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.header-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: right;
+}
+
+.header-menu-item:last-child {
+    border-bottom: none;
+}
+
+.header-menu-item .menu-item-icon {
+    width: 20px;
+    height: 20px;
+    color: #2c5aa0;
+    stroke: #2c5aa0;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.header-menu-item .menu-item-text {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: #333;
 }
 
 .logo {

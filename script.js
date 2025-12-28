@@ -53,6 +53,7 @@
         const scripts = [
             'script/navigation-history.js',      // Browser history management
             'script/section-navigation.js',      // Section switching
+            'script/header-menu.js',              // Header menu dropdown functionality
             'script/scrollable-container-height.js', // Dynamic scrollable container heights
             'script/scroll-on-section-open.js',  // Scroll on section open utility
             'script/floating-message.js',        // Floating message/toast notifications (must load before files that use it)
