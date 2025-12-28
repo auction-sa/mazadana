@@ -84,6 +84,29 @@
         }
     }
 
+    // Fetch current user total balance from user-data.json
+    async function fetchUserBalance() {
+        try {
+            const response = await fetch('json-data/user-data.json');
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const userData = await response.json();
+            const walletMovements = userData.userWalletMovementsDataObject;
+
+            if (!walletMovements || typeof walletMovements.currentUserTotalBalance === 'undefined') {
+                console.warn('currentUserTotalBalance not found in user data');
+                return 0;
+            }
+
+            return walletMovements.currentUserTotalBalance || 0;
+        } catch (error) {
+            console.error('Error fetching user balance:', error);
+            return 0;
+        }
+    }
+
     // Format date to Arabic format
     function formatDate(date) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -110,14 +133,54 @@
             filteredData = walletData.filter(item => item.type === 'processing');
         }
 
-        // Create container for rows
+        // Fetch user balance
+        const userBalance = await fetchUserBalance();
+
+        // Create or get balance title
+        let balanceTitle = walletContent.querySelector('.wallet-balance-title');
         let rowsContainer = walletContent.querySelector('.wallet-rows-container');
-        if (!rowsContainer) {
+
+        if (!balanceTitle || !rowsContainer) {
+            walletContent.innerHTML = '';
+
+            // Create balance title
+            balanceTitle = document.createElement('div');
+            balanceTitle.className = 'wallet-balance-title';
+
+            const balanceLabel = document.createElement('span');
+            balanceLabel.className = 'wallet-balance-label';
+            balanceLabel.textContent = 'الرصيد الحالي: ';
+
+            const balanceAmountContainer = document.createElement('span');
+            balanceAmountContainer.className = 'wallet-balance-amount-container';
+
+            const balanceAmount = document.createElement('span');
+            balanceAmount.className = 'wallet-balance-amount';
+            balanceAmount.textContent = userBalance.toLocaleString('en-US');
+
+            const balanceIcon = document.createElement('img');
+            balanceIcon.src = 'rial-icon.webp';
+            balanceIcon.alt = 'Rial';
+            balanceIcon.className = 'wallet-balance-icon';
+
+            balanceAmountContainer.appendChild(balanceAmount);
+            balanceAmountContainer.appendChild(balanceIcon);
+
+            balanceTitle.appendChild(balanceLabel);
+            balanceTitle.appendChild(balanceAmountContainer);
+
+            // Create container for rows
             rowsContainer = document.createElement('div');
             rowsContainer.className = 'wallet-rows-container';
-            walletContent.innerHTML = '';
+
+            walletContent.appendChild(balanceTitle);
             walletContent.appendChild(rowsContainer);
         } else {
+            // Update balance amount if title exists
+            const balanceAmount = balanceTitle.querySelector('.wallet-balance-amount');
+            if (balanceAmount) {
+                balanceAmount.textContent = userBalance.toLocaleString('en-US');
+            }
             rowsContainer.innerHTML = '';
         }
 
@@ -162,7 +225,7 @@
             date.className = 'wallet-row-date';
             date.textContent = formatDate(item.date);
 
-            
+
             row.appendChild(amountContainer);
             row.appendChild(date);
 
@@ -294,13 +357,19 @@
 
         filterButtons.forEach(btn => {
             btn.addEventListener('click', function () {
-                const isActive = this.classList.contains('active');
-                filterButtons.forEach(b => b.classList.remove('active'));
-                if (!isActive) {
-                    this.classList.add('active');
-                    // Save the active button ID
-                    activeFilterStates[filterFor] = this.id;
+                // If the clicked button is already active, exit early
+                if (this.classList.contains('active')) {
+                    return;
                 }
+
+                // Remove active class from all buttons
+                filterButtons.forEach(b => b.classList.remove('active'));
+
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                // Save the active button ID
+                activeFilterStates[filterFor] = this.id;
 
                 // Handle wallet cash flow filtering
                 if (filterFor === 'wallet-cash-flow') {

@@ -110,6 +110,42 @@
     margin: 0;
 }
 
+/* Wallet Balance Title */
+.wallet-balance-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid #bebebe;
+}
+
+.wallet-balance-label {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    direction: rtl;
+}
+
+.wallet-balance-amount-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.wallet-balance-amount {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: #16a34a;
+    direction: rtl;
+}
+
+.wallet-balance-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
 /* Wallet Cash Flow Rows */
 .wallet-rows-container {
     display: flex;
@@ -282,9 +318,31 @@
     .wallet-row-date {
         font-size: var(--font-size-xs);
     }
+
+    .wallet-balance-title {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .wallet-balance-label {
+        font-size: var(--font-size-base);
+    }
+
+    .wallet-balance-amount {
+        font-size: var(--font-size-lg);
+    }
+
+    .wallet-balance-icon {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 @media (max-width: 480px) {
+    .my-actions-content {
+        padding: var(--spacing-xs) var(--spacing-md) var(--spacing-lg);
+    }
+
     .my-actions-empty-text {
         font-size: var(--font-size-sm);
     }
@@ -301,5 +359,24 @@
 
     .wallet-amount {
         font-size: var(--font-size-sm);
+    }
+
+    .wallet-balance-title {
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+    }
+
+    .wallet-balance-label {
+        font-size: var(--font-size-sm);
+    }
+
+    .wallet-balance-amount {
+        font-size: var(--font-size-base);
+    }
+
+    .wallet-balance-icon {
+        width: 16px;
+        height: 16px;
     }
 }

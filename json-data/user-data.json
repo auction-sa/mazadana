@@ -26,7 +26,7 @@
     }
   ],
   "userWalletMovementsDataObject": {
-    "currentUserTotalBalance": 15000,
+    "currentUserTotalBalance": 150000,
     "entryMovements": [
       {
         "id": 1,
