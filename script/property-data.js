@@ -1368,5 +1368,11 @@
      * Other files can access this to see the configuration
      */
     window.dataConfig = dataConfig;
+
+    /**
+     * Export initializeAuctionCountdowns for use in other modules
+     * This initializes countdown timers for auction cards
+     */
+    window.initializeAuctionCountdowns = initializeAuctionCountdowns;
 })();
 

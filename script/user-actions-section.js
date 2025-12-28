@@ -489,12 +489,15 @@
             }, 100);
         }
 
-        // Initialize countdown timers if function exists
-        if (typeof window.initializeAuctionCountdowns === 'function') {
-            setTimeout(() => {
+        // Initialize countdown timers for these cards (same functionality as seller-auctions-list)
+        // Use the global initializeAuctionCountdowns function which will find and initialize all countdowns
+        setTimeout(() => {
+            if (typeof window.initializeAuctionCountdowns === 'function') {
                 window.initializeAuctionCountdowns();
-            }, 150);
-        }
+            } else {
+                console.warn('initializeAuctionCountdowns function not available');
+            }
+        }, 200);
     }
 
     // Render wallet cash flow rows
@@ -937,7 +940,7 @@
                         }, 10);
 
 
-                    }else if (targetTab === 'current-best-opportunities') {
+                    } else if (targetTab === 'current-best-opportunities') {
                         // Hide filter container when my-all-property-buying-history tab is active
                         if (finishedFilters) {
                             finishedFilters.style.display = 'none';
