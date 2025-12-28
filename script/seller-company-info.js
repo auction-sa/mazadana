@@ -652,8 +652,9 @@
         const endedCards = auctionsList.querySelectorAll('.seller-company-auction-card');
         endedCards.forEach(card => {
             const endedBadge = card.querySelector('.ended-badge-home-page');
+            const upcomingBadge = card.querySelector('.upcoming-badge-home-page');
             const ctaButton = card.querySelector('.property-cta-btn-home-page');
-            if (endedBadge && ctaButton) {
+            if ((endedBadge || upcomingBadge) && ctaButton) {
                 ctaButton.textContent = 'تصفح';
             }
         });

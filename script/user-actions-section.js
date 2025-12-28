@@ -281,7 +281,6 @@
 
         const timeRemaining = auction.auction_bidStartDate || 'غير محدد';
         const badgeStatus = getAuctionBadgeStatus(auction.auction_bidStartDate, auction.auction_bidEndDate);
-        const remainingTimeInfo = getRemainingTimeInfo(auction.auction_bidStartDate, auction.auction_bidEndDate);
 
         return `
             <div class="property-card-home-page auction-card-home-page seller-company-auction-card">
@@ -320,25 +319,6 @@
                             </div>
                             <i data-lucide="heart" class="property-card-heart-icon"></i>
                         </div>
-                        <div class="bid-section-bottom">
-                            <div class="remaining-time-label">${remainingTimeInfo.label}</div>
-                            <div class="remaining-time-counter" 
-                                ${auction.auction_bidStartDate ? `data-bid-start-date="${auction.auction_bidStartDate}"` : ''}
-                                ${auction.auction_bidEndDate ? `data-bid-end-date="${auction.auction_bidEndDate}"` : ''}></div>
-                        </div>
-                    </div>
-                    <div class="property-cta-container-home-page">
-                        <div class="property-view-count-home-page">
-                            <i data-lucide="eye" class="property-view-icon-home-page"></i>
-                            <span class="property-view-number-home-page">${auction.auction_viewCount ? auction.auction_viewCount : '0'}</span>
-                        </div>
-                        <div class="auction-property-count-home-page">
-                            <span class="property-view-number-home-page">عدد الأصول</span>
-                            <span class="property-view-number-home-page">${auction.auction_numberOfAssets ? auction.auction_numberOfAssets : '1'}</span>
-                        </div>
-                        <button class="property-cta-btn-home-page">
-                            شارك الآن
-                        </button>
                     </div>
                 </div>
             </div>
@@ -453,32 +433,6 @@
                         }
                     }
                 });
-
-                // Add button click handler
-                const ctaButton = cardElement.querySelector('.property-cta-btn-home-page');
-                if (ctaButton) {
-                    // Check if card has ended-badge-home-page and is inside seller-company-auctions-list
-                    const sellerCompanyList = cardElement.closest('.seller-company-auctions-list');
-                    const endedBadge = cardElement.querySelector('.ended-badge-home-page');
-                    if (endedBadge && sellerCompanyList) {
-                        ctaButton.textContent = 'تصفح';
-                    }
-
-                    ctaButton.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        const auctionId = auction.id;
-                        const badgeStatus = getAuctionBadgeStatus(auction.auction_bidStartDate, auction.auction_bidEndDate);
-
-                        if (auctionId && typeof window.openPropertyDetail === 'function') {
-                            window.openPropertyDetail(auctionId, badgeStatus);
-                            if (typeof window.scrollOnSectionOpen === 'function') {
-                                window.scrollOnSectionOpen('auction-property-detail-section');
-                            }
-                        }
-                    });
-                }
-
-                cardElement.style.cursor = 'pointer';
             }
         });
 
@@ -806,7 +760,7 @@
         myActionsSection.innerHTML = `
             <div class="section-content">
                 <div class="my-actions-header">
-                    <h1 class="my-actions-title">احصائياتي</h1>
+                    <h1 class="my-actions-title">مشاركاتي</h1>
                 </div>
 
                 <div class="my-actions-tabs">
@@ -815,13 +769,13 @@
                             <span>سجل المزادات</span>
                         </button>
                         <button class="my-actions-tab" data-tab="my-all-property-buying-history" id="my-all-property-buying-history-tab">
-                            <span>سجل شراء العقارات</span>
+                            <span>سجل الشراء</span>
                         </button>
                         <button class="my-actions-tab" data-tab="wallet-cash-flow" id="wallet-cash-flow-tab">
-                            <span>حركة المحفظة</span>
+                            <span>سجل المحفظة</span>
                         </button>
                         <button class="my-actions-tab" data-tab="current-best-opportunities" id="current-best-opportunities-tab">
-                            <span>أفضل الفرص الحالية</span>
+                            <span>سجل منشوراتي</span>
                         </button>
                     </div>
                 </div>

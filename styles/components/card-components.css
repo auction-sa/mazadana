@@ -65,6 +65,11 @@
     width: 100%;
 }
 
+#my-all-auctions-history-content .bid-section-top {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
 .bid-section-top .location-wrapper {
     display: flex;
     align-items: center;

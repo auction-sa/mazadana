@@ -834,7 +834,8 @@
                         // Check if card has ended-badge-home-page and is inside horizontal-scroll-container
                         const horizontalContainer = cardElement.closest('.horizontal-scroll-container');
                         const endedBadge = cardElement.querySelector('.ended-badge-home-page');
-                        if (endedBadge && horizontalContainer) {
+                        const upcomingBadge = cardElement.querySelector('.upcoming-badge-home-page');
+                        if ((endedBadge || upcomingBadge) && horizontalContainer) {
                             ctaButton.textContent = 'تصفح';
                         }
 
