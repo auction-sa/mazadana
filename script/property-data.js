@@ -831,6 +831,13 @@
                 if (renderFunction === 'renderAuctionCard' && cardElement.classList.contains('auction-card-home-page')) {
                     const ctaButton = cardElement.querySelector('.property-cta-btn-home-page');
                     if (ctaButton) {
+                        // Check if card has ended-badge-home-page and is inside horizontal-scroll-container
+                        const horizontalContainer = cardElement.closest('.horizontal-scroll-container');
+                        const endedBadge = cardElement.querySelector('.ended-badge-home-page');
+                        if (endedBadge && horizontalContainer) {
+                            ctaButton.textContent = 'تصفح';
+                        }
+
                         ctaButton.addEventListener('click', function (e) {
                             e.stopPropagation(); // Prevent card click from firing
 

@@ -513,9 +513,10 @@
         const assetCount = assets.length;
 
         // Determine status label and class for category tab based on badge status
-        let categoryStatusLabel = 'قادم قريباً';
+        let categoryStatusLabel = '';
         let categoryStatusClass = 'status-upcoming';
         const statusClassName = badgeStatus && badgeStatus.className ? badgeStatus.className : '';
+
 
         if (statusClassName.includes('live')) {
             categoryStatusLabel = 'جاري الآن';
@@ -523,6 +524,9 @@
         } else if (statusClassName.includes('upcoming')) {
             categoryStatusLabel = 'قادم قريباً';
             categoryStatusClass = 'property-detail-status-upcoming';
+        }else if (statusClassName.includes('ended')) {
+            categoryStatusLabel = 'إنتهى';
+            categoryStatusClass = 'property-detail-status-ended';
         }
 
         // Get company logo for category icon - use sellerCompanyLogo from user-data.json if available

@@ -545,16 +545,20 @@
             // Use sellerCompanyname from user-data.json if available, otherwise use a default company name
             const companyNameText = sellerCompanyName || 'شركة لمزاد العقارات';
 
-            // Determine status badge (reuse existing statusClass/text)
+            // Determine status badge using parseArabicDate function
             let statusBadgeText = '';
             let statusClass = '';
             if (auction.auction_bidStartDate && auction.auction_bidEndDate) {
-                const startDate = new Date(auction.auction_bidStartDate.replace(/[—–−]/g, '-'));
-                const endDate = new Date(auction.auction_bidEndDate.replace(/[—–−]/g, '-'));
+                const startDate = parseArabicDate(auction.auction_bidStartDate);
+                const endDate = parseArabicDate(auction.auction_bidEndDate);
                 const now = new Date();
 
-                if (now < startDate) {
-                    statusBadgeText = 'قادم قريباً';
+                // If dates can't be parsed, default to "جاري الآن"
+                if (!startDate || !endDate) {
+                    statusBadgeText = 'جاري الآن';
+                    statusClass = 'live-badge-home-page';
+                } else if (now < startDate) {
+                    statusBadgeText = 'قادم';
                     statusClass = 'upcoming-badge-home-page';
                 } else if (now > endDate) {
                     statusBadgeText = 'إنتهى';
@@ -644,6 +648,16 @@
             el._sellerCountdownInterval = interval;
         });
 
+        // Update button text for ended auctions
+        const endedCards = auctionsList.querySelectorAll('.seller-company-auction-card');
+        endedCards.forEach(card => {
+            const endedBadge = card.querySelector('.ended-badge-home-page');
+            const ctaButton = card.querySelector('.property-cta-btn-home-page');
+            if (endedBadge && ctaButton) {
+                ctaButton.textContent = 'تصفح';
+            }
+        });
+
         // Add click handlers to auction cards
         const auctionCards = auctionsList.querySelectorAll('.seller-company-auction-card');
         auctionCards.forEach(card => {
@@ -654,12 +668,33 @@
                 }
                 const auctionId = this.getAttribute('data-auction-id');
                 if (auctionId && typeof window.openPropertyDetail === 'function') {
-                    // Get badge status
-                    const badge = this.querySelector('.seller-company-auction-badge');
-                    const badgeStatus = badge ? {
-                        className: badge.classList.contains('status-live') ? 'status-live' :
-                            badge.classList.contains('status-upcoming') ? 'status-upcoming' : 'status-ended'
-                    } : null;
+                    // Get badge status from the status badge (not the electronic badge)
+                    const statusBadge = this.querySelector('.auction-status-badge-home-page:not(.electronic-badge-home-page)');
+                    let badgeStatus = null;
+
+                    if (statusBadge) {
+                        // Determine className based on which status class the badge has
+                        let className = 'live-badge-home-page'; // default
+                        if (statusBadge.classList.contains('live-badge-home-page')) {
+                            className = 'live-badge-home-page';
+                        } else if (statusBadge.classList.contains('upcoming-badge-home-page')) {
+                            className = 'upcoming-badge-home-page';
+                        } else if (statusBadge.classList.contains('ended-badge-home-page')) {
+                            className = 'ended-badge-home-page';
+                        }
+
+                        // Get text content, excluding the icon (which is in a child element)
+                        const badgeText = statusBadge.cloneNode(true);
+                        const icon = badgeText.querySelector('i');
+                        if (icon) icon.remove();
+                        const text = badgeText.textContent.trim();
+
+                        badgeStatus = {
+                            className: className,
+                            text: text
+                        };
+                    }
+
                     window.openPropertyDetail(auctionId, badgeStatus);
                 }
             });

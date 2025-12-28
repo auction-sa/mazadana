@@ -457,6 +457,13 @@
                 // Add button click handler
                 const ctaButton = cardElement.querySelector('.property-cta-btn-home-page');
                 if (ctaButton) {
+                    // Check if card has ended-badge-home-page and is inside seller-company-auctions-list
+                    const sellerCompanyList = cardElement.closest('.seller-company-auctions-list');
+                    const endedBadge = cardElement.querySelector('.ended-badge-home-page');
+                    if (endedBadge && sellerCompanyList) {
+                        ctaButton.textContent = 'تصفح';
+                    }
+
                     ctaButton.addEventListener('click', function (e) {
                         e.stopPropagation();
                         const auctionId = auction.id;
