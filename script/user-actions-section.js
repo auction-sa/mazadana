@@ -446,6 +446,7 @@
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
+                lucide.createIcons();
                 // Restore favorited states after Lucide re-initializes
                 if (typeof window.restoreFavoritedStates === 'function') {
                     window.restoreFavoritedStates(container);
@@ -526,6 +527,7 @@
             rowsContainer = walletContent.querySelector('.wallet-rows-container');
 
             // Activate Lucide icons (required after innerHTML)
+            lucide.createIcons();
         }
         else {
             // Update balance amount if title exists
@@ -602,6 +604,7 @@
         });
 
         // Activate Lucide icons ONCE after rendering all rows
+        lucide.createIcons();
     }
 
     // Create and append filter buttons to content

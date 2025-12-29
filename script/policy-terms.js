@@ -379,6 +379,13 @@
                     if (isActive) {
                         // Disable back button for 0.5 seconds when view becomes active
                         disableBackButton(500);
+
+                        // Re-initialize Lucide icons when view becomes active
+                        if (typeof lucide !== 'undefined') {
+                            setTimeout(() => {
+                                lucide.createIcons();
+                            }, 100);
+                        }
                     }
                 }
             });

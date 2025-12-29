@@ -1585,6 +1585,10 @@
                         const config = window.dataConfig ? window.dataConfig[sectionId] : null;
                         const jsonFile = config ? config.url : 'unknown';
                         window.reloadSectionData(sectionId).then(() => {
+                            // Re-initialize Lucide icons after cards are rendered
+                            if (typeof lucide !== 'undefined') {
+                                lucide.createIcons();
+                            }
 
                             // Double-check section visibility after rendering
                             if (sectionElement) {
@@ -1606,6 +1610,9 @@
 
                         if (!hasCards || isEmpty) {
                             window.reloadSectionData(sectionId).then(() => {
+                                if (typeof lucide !== 'undefined') {
+                                    lucide.createIcons();
+                                }
                             }).catch(err => {
                                 console.error(`Error loading data for ${sectionId}:`, err);
                             });
@@ -1620,6 +1627,9 @@
                     }
                     // Grid not found but section exists, try to load anyway
                     window.reloadSectionData(sectionId).then(() => {
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
                     }).catch(err => {
                         // Only log error if section exists
                         const sectionElement = document.getElementById(sectionId);

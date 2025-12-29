@@ -57,6 +57,13 @@
 
         document.body.appendChild(guideOverlay);
 
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 50);
+        }
+
         // Show with animation
         setTimeout(() => {
             guideOverlay.classList.add('show');

@@ -276,6 +276,23 @@
 
 
     <script>
+        // Initialize Lucide icons after DOM loads
+        function initLucideIcons() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucideIcons);
+        } else {
+            initLucideIcons();
+        }
+
+        // Export for use in other scripts
+        window.initLucideIcons = initLucideIcons;
+
+
 
 
         // Disable Right Click and Certain Keyboard Shortcuts
@@ -294,27 +311,6 @@
             }
         }); */
 
-
-        /* Function to automatically refresh Lucide icons when DOM changes (helps with dynamic content loaded via JS) */
-        (function initLucideAutoRefresh() {
-            let scheduled = false;
-
-            const observer = new MutationObserver(() => {
-                if (!scheduled) {
-                    scheduled = true;
-
-                    requestAnimationFrame(() => {
-                        lucide.createIcons();
-                        scheduled = false;
-                    });
-                }
-            });
-
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        })();
     </script>
 
 

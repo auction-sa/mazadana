@@ -62,8 +62,8 @@
 /* Profile Verification Badge */
 .verification-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 0px;
+    right: -10px;
     width: 16px;
     height: 16px;
     background: #28a745;

@@ -70,6 +70,11 @@
                 badge.className = 'verification-badge';
                 badge.innerHTML = '<i data-lucide="check" class="verification-badge-icon"></i>';
                 profileBtn.appendChild(badge);
+
+                // Initialize Lucide icon
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             }
 
             // Show badge with smooth transition
@@ -192,6 +197,11 @@
                 handleNotificationClick(notifications[index]);
             });
         });
+
+        // Re-initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
     /**
@@ -339,6 +349,11 @@
                 }
             });
         });
+
+        // Re-initialize Lucide icons after menu items are created
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
 
@@ -348,6 +363,13 @@
         document.addEventListener('DOMContentLoaded', initHeaderMenu);
     } else {
         initHeaderMenu();
+    }
+
+    // Re-initialize when Lucide icons are available
+    if (typeof lucide !== 'undefined') {
+        setTimeout(() => {
+            lucide.createIcons();
+        }, 100);
     }
 })();
 

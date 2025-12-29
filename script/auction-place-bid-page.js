@@ -118,6 +118,9 @@
 
         // Initialize Lucide icons
         setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             modal.classList.add('active');
         }, 10);
 

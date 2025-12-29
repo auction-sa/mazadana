@@ -360,6 +360,11 @@
                 <i data-lucide="heart" class="favorites-icon"></i>
                 <p class="favorites-empty-text">لم يتم العثور على مزادات</p>
             `;
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             return;
         }
 
@@ -414,6 +419,7 @@
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
+                lucide.createIcons();
                 // Restore favorited states after Lucide re-initializes
                 if (typeof window.restoreFavoritedStates === 'function') {
                     window.restoreFavoritedStates(container);
@@ -488,6 +494,11 @@
 
         // Always render favorite cards when view is active
         renderFavoriteCards();
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
     // Initialize when DOM is ready

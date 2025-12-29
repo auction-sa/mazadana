@@ -298,6 +298,13 @@
             if (typeof config.init === 'function') {
                 config.init();
             }
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                setTimeout(() => {
+                    lucide.createIcons();
+                }, 100);
+            }
         } else {
             console.error('[Navigation] View not found for route:', route);
         }
@@ -583,6 +590,11 @@
         // Step 2: Create HTML for all menu sections and put them in the sections container
         const sectionsHTML = menuConfig.map(section => createMenuSection(section)).join('');
         sectionsContainer.innerHTML = sectionsHTML;
+
+        // Step 3: Initialize Lucide icons (this makes the icons appear)
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
         // Step 4: Update the profile image in the account info page
         updateBasicDataProfileImage(userData);
