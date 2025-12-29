@@ -473,8 +473,8 @@
         {
             title: 'المحفظة',
             items: [
-                { icon: 'wallet', text: 'إيداع أموال', route: null, action: 'wallet' },
-                { icon: 'credit-card', text: 'سحب أموال', route: null, action: 'withdraw' }
+                { icon: 'wallet', text: 'إدارة المحفظة', route: null, action: 'wallet' },
+                { icon: 'credit-card', text: 'حسابات بنكية', route: null, action: 'withdraw' }
             ]
         },
         {
