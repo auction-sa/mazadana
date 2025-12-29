@@ -75,18 +75,21 @@
     gap: 0.1rem;
     text-decoration: none;
     color: #999;
-    transition: all 0.3s ease;
+
     padding: 0.1rem;
     flex: 1;
     max-width: 80px;
-}
+    border-radius: 5px;
 
-.nav-item:hover {
-    color: #2c5aa0;
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
 }
 
 .nav-item.active {
+    background: #e8f0f8;
     color: #2c5aa0;
+    animation: popUpClick 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .nav-icon {

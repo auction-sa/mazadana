@@ -219,28 +219,6 @@
     animation: fadeSlideDigit 0.3s ease-in-out forwards;
 }
 
-@keyframes fadeSlideDigit {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    50% {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-
-    51% {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* Arabic Label */
 .flip-label {
     font-size: 0.75rem;
@@ -345,28 +323,4 @@
 .property-view-number-home-page {
     font-weight: 500;
     line-height: 1;
-}
-
-@keyframes pulse-dot {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.8;
-    }
 }

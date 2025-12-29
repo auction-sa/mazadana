@@ -66,10 +66,12 @@
     background-color: #05762f;
     color: #ffffff;
     border-color: #22c55e;
+    animation: popUpClick 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .my-actions-tab.active:hover {
     background-color: #05762f;
+    transform: scale(1.05);
 }
 
 /* Inactive Tab Styles */

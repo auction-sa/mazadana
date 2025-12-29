@@ -383,20 +383,6 @@
     animation: flipDown 0.6s ease;
 }
 
-@keyframes flipDown {
-    0% {
-        transform: rotateX(0deg);
-    }
-
-    50% {
-        transform: rotateX(90deg);
-    }
-
-    100% {
-        transform: rotateX(0deg);
-    }
-}
-
 .countdown-separator {
     font-size: var(--font-size-xl, 1.5rem);
     font-weight: var(--font-weight-bold, 700);

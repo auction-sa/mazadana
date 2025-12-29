@@ -37,16 +37,9 @@
     position: relative;
 }
 
-.header-profile-btn:hover,
-.header-menu-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
-}
-
 .header-profile-btn:active,
 .header-menu-btn:active {
-    transform: scale(0.95);
+    animation: popUpClick 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .profile-icon,
@@ -54,9 +47,6 @@
     width: 20px;
     height: 20px;
     color: white;
-    stroke: white;
-    stroke-width: 2;
-    fill: none;
 }
 
 /* Profile Verification Badge */
