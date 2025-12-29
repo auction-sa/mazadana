@@ -1164,7 +1164,6 @@
                     <p>تم رفع الملف</p>
                     <button type="button" class="change-file-btn" data-file="proof-ownership">تغيير الملف</button>
                 `;
-                lucide.createIcons();
                 // Re-attach change file listener
                 const changeBtn = proofPlaceholder.querySelector('.change-file-btn');
                 if (changeBtn) {
@@ -1192,7 +1191,6 @@
                     <p>اضغط لرفع ملف PDF</p>
                     <small>إثبات ملكية العقار</small>
                 `;
-                lucide.createIcons();
             }
         }
 
@@ -1208,7 +1206,6 @@
                     <p>تم رفع الملف</p>
                     <button type="button" class="change-file-btn" data-file="auction-approval-pdf">تغيير الملف</button>
                 `;
-                lucide.createIcons();
                 // Re-attach change file listener
                 const changeBtn = approvalPlaceholder.querySelector('.change-file-btn');
                 if (changeBtn) {
@@ -1236,7 +1233,6 @@
                     <p>اضغط لرفع ملف PDF</p>
                     <small>ملف موافقة المزاد</small>
                 `;
-                lucide.createIcons();
             }
         }
 
@@ -1259,7 +1255,6 @@
                     icon.setAttribute('data-lucide', hasApproval ? 'check-circle' : 'circle');
                 }
             }
-            lucide.createIcons();
         }
     }
 
@@ -1426,7 +1421,6 @@
         setupStep5Listeners();
         // Re-attach scroll to top to buttons
         attachScrollToTopToButtons();
-        lucide.createIcons();
     }
 
 
@@ -2093,13 +2087,6 @@
                         }
 
                         disableBackButton(500);
-
-                        // Re-initialize Lucide icons when view becomes active
-                        if (typeof lucide !== 'undefined') {
-                            setTimeout(() => {
-                                lucide.createIcons();
-                            }, 100);
-                        }
                     }
                 }
             });

@@ -532,13 +532,6 @@
         setTimeout(() => {
             updateStickyHeaderPositions();
         }, 50);
-
-        // Reinitialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 100);
-        }
     }
 
     // Go back to tabs view (from detail view)
@@ -586,13 +579,6 @@
 
         // Update sticky header positions
         updateStickyHeaderPositions();
-
-        // Reinitialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 100);
-        }
     }
 
     // Initialize profile section headers
@@ -661,11 +647,6 @@
             </div>`;
 
         headersContainer.innerHTML = profilePageTitle + accountTabsHeader + basicDataHeader + contactInfoHeader + addressesHeader + sellerCompanyHeader;
-
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
 
         // Show profile page title by default (when on menu view)
         const profilePageTitleEl = document.querySelector('.profile-page-title');
@@ -908,11 +889,6 @@
             initAutoResize();
             initImageUploads();
             initCompanyDataSave();
-
-            // Reinitialize Lucide icons after image upload buttons are added
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
         }, 100);
 
         // Use MutationObserver to detect when view becomes active
@@ -928,11 +904,6 @@
                             initAutoResize();
                             initImageUploads();
                             initCompanyDataSave();
-
-                            // Reinitialize Lucide icons
-                            if (typeof lucide !== 'undefined') {
-                                lucide.createIcons();
-                            }
                         }, 100);
                     }
                 }
@@ -952,11 +923,6 @@
                 initAutoResize();
                 initImageUploads();
                 initCompanyDataSave();
-
-                // Reinitialize Lucide icons
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
             }, 100);
         }
     }

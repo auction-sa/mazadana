@@ -69,10 +69,6 @@
                         // Re-render when view becomes active
                         setTimeout(() => {
                             renderManagePropertiesView();
-                            // Initialize Lucide icons
-                            if (typeof lucide !== 'undefined') {
-                                lucide.createIcons();
-                            }
                         }, 100);
                     }
                 }
@@ -83,11 +79,6 @@
             attributes: true,
             attributeFilter: ['class']
         });
-
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
     }
 
     // Initialize on DOM ready

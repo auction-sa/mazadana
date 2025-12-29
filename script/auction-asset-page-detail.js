@@ -54,11 +54,6 @@
         `;
 
         section.innerHTML = html;
-
-        // Initialize Lucide icons if available
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
     }
 
     /**
@@ -307,10 +302,6 @@
                                 console.warn('updateAssetCountdownTimer not available, countdown may not update');
                             }
                         }
-                        // Re-initialize Lucide icons for any icons in the countdown
-                        if (typeof lucide !== 'undefined') {
-                            lucide.createIcons();
-                        }
                     }, 100);
                 } else {
                     // Fallback: if flip clock container doesn't exist yet, clone the entire countdown section
@@ -343,9 +334,6 @@
                                         asset._detailCountdownInterval = intervalId;
                                     }
                                 }
-                                if (typeof lucide !== 'undefined') {
-                                    lucide.createIcons();
-                                }
                             }, 100);
                         }
                     }
@@ -355,13 +343,6 @@
 
         // Initialize image gallery
         initImageGallery(images);
-
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 100);
-        }
 
         // Initialize attachments bottom sheet
         initAttachmentsBottomSheet();
@@ -569,9 +550,6 @@
             if (closeBtn) {
                 closeBtn.addEventListener('click', closeFullscreen);
             }
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
             fullscreenContainer.classList.add('active');
         }, 10);
 
@@ -744,7 +722,6 @@
         // Initialize Lucide icons
         setTimeout(() => {
             if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
 
                 // Force reset button icon to be white
                 const forceResetIconWhite = () => {
@@ -928,13 +905,6 @@
         mapWrapper.appendChild(mapControls);
         mapContainer.appendChild(mapWrapper);
 
-        // Initialize Lucide icons
-        setTimeout(() => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }, 100);
-
         // Add event listeners for buttons
         const fullscreenBtn = mapControls.querySelector('.map-fullscreen-btn');
         const resetBtn = mapControls.querySelector('.map-reset-btn');
@@ -1007,7 +977,6 @@
         // Initialize Lucide icons
         setTimeout(() => {
             if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
                 // Ensure download icons are white
                 setTimeout(() => {
                     const downloadIcons = bottomSheet.querySelectorAll('.attachment-download-btn [data-lucide="download"]');

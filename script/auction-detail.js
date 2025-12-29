@@ -672,12 +672,6 @@
             });
         });
 
-        // Initialize Lucide icons (deferred for better initial animation performance)
-        if (typeof lucide !== 'undefined') {
-            deferHeavyOperations(() => {
-                lucide.createIcons();
-            });
-        }
 
         // Add click handler for copyable approval number
         const copyableApprovalNumber = container.querySelector('.copyable-approval-number');
@@ -804,11 +798,6 @@
                 // Ensure it's clickable
                 newArrow.style.pointerEvents = 'auto';
                 newArrow.style.cursor = 'pointer';
-
-                // Re-initialize Lucide icon if needed
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
             }
         }, 300);
     }
@@ -980,11 +969,6 @@
         `;
 
         section.innerHTML = html;
-
-        // Initialize Lucide icons if available
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
     }
 
     /**

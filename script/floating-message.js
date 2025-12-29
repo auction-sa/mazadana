@@ -72,13 +72,6 @@
         // Append to body
         document.body.appendChild(floatingMessage);
 
-        // Initialize Lucide icons if available
-        if (typeof lucide !== 'undefined') {
-            setTimeout(() => {
-                lucide.createIcons();
-            }, 50);
-        }
-
         // Show message with smooth slide-in animation
         // Use requestAnimationFrame to ensure browser has painted initial state before animation
         requestAnimationFrame(() => {

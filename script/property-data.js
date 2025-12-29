@@ -868,7 +868,6 @@
         // Reinitialize Lucide icons after rendering
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
-                lucide.createIcons();
                 // Restore favorited states after Lucide re-initializes
                 if (typeof window.restoreFavoritedStates === 'function') {
                     window.restoreFavoritedStates(gridElement);

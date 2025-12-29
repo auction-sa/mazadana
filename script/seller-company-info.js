@@ -242,11 +242,6 @@
 
         container.innerHTML = html;
 
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-
         // Initialize tabs
         initTabs();
 
@@ -634,7 +629,6 @@
 
         // Initialize Lucide icons for new content
         if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
             // Restore favorited states after Lucide re-initializes
             if (typeof window.restoreFavoritedStates === 'function') {
                 window.restoreFavoritedStates(auctionsList);
@@ -857,11 +851,6 @@
         `;
 
         section.innerHTML = html;
-
-        // Initialize Lucide icons if available
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
     }
 
     /**
