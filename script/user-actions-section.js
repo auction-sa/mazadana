@@ -504,40 +504,32 @@
         let rowsContainer = walletContent.querySelector('.wallet-rows-container');
 
         if (!balanceTitle || !rowsContainer) {
-            walletContent.innerHTML = '';
+            walletContent.innerHTML = `
+                <div class="wallet-balance-title">
+                    <span class="wallet-balance-label">
+                        رصيدك الحالي:
+                    </span>
 
-            // Create balance title
-            balanceTitle = document.createElement('div');
-            balanceTitle.className = 'wallet-balance-title';
+                    <span class="wallet-balance-amount-container">
+                        <span class="wallet-balance-amount">
+                            ${userBalance.toLocaleString('en-US')}
+                        </span>
 
-            const balanceLabel = document.createElement('span');
-            balanceLabel.className = 'wallet-balance-label';
-            balanceLabel.textContent = 'رصيدك الحالي: ';
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
+                    </span>
+                </div>
 
-            const balanceAmountContainer = document.createElement('span');
-            balanceAmountContainer.className = 'wallet-balance-amount-container';
+                <div class="wallet-rows-container"></div>
+            `;
 
-            const balanceAmount = document.createElement('span');
-            balanceAmount.className = 'wallet-balance-amount';
-            balanceAmount.textContent = userBalance.toLocaleString('en-US');
+            // Re-select elements after injection
+            balanceTitle = walletContent.querySelector('.wallet-balance-title');
+            rowsContainer = walletContent.querySelector('.wallet-rows-container');
 
-            const balanceIcon = document.createElement('i');
-            balanceIcon.setAttribute('data-lucide', 'saudi-riyal');
-            balanceIcon.className = 'rial-icon';
-
-            balanceAmountContainer.appendChild(balanceAmount);
-            balanceAmountContainer.appendChild(balanceIcon);
-
-            balanceTitle.appendChild(balanceLabel);
-            balanceTitle.appendChild(balanceAmountContainer);
-
-            // Create container for rows
-            rowsContainer = document.createElement('div');
-            rowsContainer.className = 'wallet-rows-container';
-
-            walletContent.appendChild(balanceTitle);
-            walletContent.appendChild(rowsContainer);
-        } else {
+            // Activate Lucide icons (required after innerHTML)
+            lucide.createIcons();
+        }
+        else {
             // Update balance amount if title exists
             const balanceAmount = balanceTitle.querySelector('.wallet-balance-amount');
             if (balanceAmount) {
@@ -556,93 +548,63 @@
         }
 
         filteredData.forEach(item => {
-            // Create main row container
+            const hasExpandableContent = !!(item.description || item.referenceNumber);
+
             const rowWrapper = document.createElement('div');
             rowWrapper.className = 'wallet-row-wrapper';
 
-            const row = document.createElement('div');
-            row.className = `wallet-row wallet-row-${item.type}`;
-            row.style.cursor = 'pointer';
+            rowWrapper.innerHTML = `
+                <div 
+                    class="wallet-row wallet-row-${item.type}"
+                    style="cursor: ${hasExpandableContent ? 'pointer' : 'default'}"
+                    data-description="${item.description || ''}"
+                    data-reference-number="${item.referenceNumber || ''}"
+                >
+                    <div class="wallet-row-amount">
+                        <span class="wallet-amount">
+                            ${item.amount.toLocaleString('en-US')}
+                        </span>
 
-            // Store item data for access
-            row.dataset.description = item.description || '';
-            row.dataset.referenceNumber = item.referenceNumber || '';
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
+                    </div>
 
-            const amountContainer = document.createElement('div');
-            amountContainer.className = 'wallet-row-amount';
+                    <div class="wallet-row-date">
+                        ${formatDate(item.date)}
+                    </div>
+                </div>
 
-            const icon = document.createElement('i');
-            icon.setAttribute('data-lucide', 'saudi-riyal');
-            icon.className = 'rial-icon';
+                <div class="wallet-row-expandable">
+                    ${item.description ? `
+                        <div class="wallet-row-description">
+                            <span class="wallet-row-label">الوصف: </span>
+                            <span>${item.description}</span>
+                        </div>
+                    ` : ''}
 
-            const amount = document.createElement('span');
-            amount.className = 'wallet-amount';
-            amount.textContent = item.amount.toLocaleString('en-US');
+                    ${item.referenceNumber ? `
+                        <div class="wallet-row-reference">
+                            <span class="wallet-row-label">رقم المرجع: </span>
+                            <span>${item.referenceNumber}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
 
-            amountContainer.appendChild(amount);
-            amountContainer.appendChild(icon);
+            // Toggle expand only if expandable content exists
+            if (hasExpandableContent) {
+                const row = rowWrapper.querySelector('.wallet-row');
 
-            const date = document.createElement('div');
-            date.className = 'wallet-row-date';
-            date.textContent = formatDate(item.date);
-
-
-            row.appendChild(amountContainer);
-            row.appendChild(date);
-
-            console.log('Wallet item:', row);
-
-            // Create expandable content
-            const expandableContent = document.createElement('div');
-            expandableContent.className = 'wallet-row-expandable';
-
-            if (item.description) {
-                const descriptionDiv = document.createElement('div');
-                descriptionDiv.className = 'wallet-row-description';
-                const descriptionLabel = document.createElement('span');
-                descriptionLabel.className = 'wallet-row-label';
-                descriptionLabel.textContent = 'الوصف: ';
-                const descriptionText = document.createElement('span');
-                descriptionText.textContent = item.description;
-                descriptionDiv.appendChild(descriptionLabel);
-                descriptionDiv.appendChild(descriptionText);
-                expandableContent.appendChild(descriptionDiv);
-            }
-
-            if (item.referenceNumber) {
-                const referenceDiv = document.createElement('div');
-                referenceDiv.className = 'wallet-row-reference';
-                const referenceLabel = document.createElement('span');
-                referenceLabel.className = 'wallet-row-label';
-                referenceLabel.textContent = 'رقم المرجع: ';
-                const referenceText = document.createElement('span');
-                referenceText.textContent = item.referenceNumber;
-                referenceDiv.appendChild(referenceLabel);
-                referenceDiv.appendChild(referenceText);
-                expandableContent.appendChild(referenceDiv);
-            }
-
-            rowWrapper.appendChild(row);
-            rowWrapper.appendChild(expandableContent);
-
-            // Only make row clickable if there's content to expand
-            if (expandableContent.children.length > 0) {
-                // Add click handler to toggle expansion
-                row.addEventListener('click', function (e) {
+                row.addEventListener('click', e => {
                     e.stopPropagation();
-                    const wrapper = this.closest('.wallet-row-wrapper');
-
-                    if (wrapper) {
-                        wrapper.classList.toggle('expanded');
-                    }
+                    rowWrapper.classList.toggle('expanded');
                 });
-            } else {
-                // Remove cursor pointer if no expandable content
-                row.style.cursor = 'default';
             }
 
             rowsContainer.appendChild(rowWrapper);
         });
+
+        // Activate Lucide icons ONCE after rendering all rows
+        lucide.createIcons();
     }
 
     // Create and append filter buttons to content
