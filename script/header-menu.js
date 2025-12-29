@@ -6,23 +6,33 @@
     let notificationData = null;
     let notificationDropdown = null;
     let notificationOverlay = null;
+    let userData = null;
 
     /**
-     * Load notification data from user-data.json
+     * Load user data from user-data.json
      */
-    async function loadNotificationData() {
+    async function loadUserData() {
         try {
             const response = await fetch('json-data/user-data.json');
             if (!response.ok) {
                 throw new Error('Failed to fetch user data');
             }
-            const userData = await response.json();
+            userData = await response.json();
             notificationData = userData.userNotificationMessagesHistoryDataObject || null;
             updateNotificationBadge();
+            updateVerificationBadge();
         } catch (error) {
-            console.error('Error loading notification data:', error);
+            console.error('Error loading user data:', error);
+            userData = null;
             notificationData = null;
         }
+    }
+
+    /**
+     * Load notification data from user-data.json (kept for backward compatibility)
+     */
+    async function loadNotificationData() {
+        await loadUserData();
     }
 
     /**
@@ -37,6 +47,45 @@
             badge.style.display = 'flex';
         } else {
             badge.style.display = 'none';
+        }
+    }
+
+    /**
+     * Update verification badge on profile button
+     */
+    function updateVerificationBadge() {
+        const profileBtn = document.querySelector('.header-profile-btn');
+        if (!profileBtn) return;
+
+        // Check if badge already exists
+        let badge = profileBtn.querySelector('.verification-badge');
+
+        // Get verification status from user data
+        const isVerified = userData && userData.userVerificationStatus === true;
+
+        if (isVerified) {
+            // Create badge if it doesn't exist
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'verification-badge';
+                badge.innerHTML = '<i data-lucide="check" class="verification-badge-icon"></i>';
+                profileBtn.appendChild(badge);
+
+                // Initialize Lucide icon
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+
+            // Show badge with smooth transition
+            requestAnimationFrame(() => {
+                badge.classList.add('active');
+            });
+        } else {
+            // Hide badge if user is not verified
+            if (badge) {
+                badge.classList.remove('active');
+            }
         }
     }
 
