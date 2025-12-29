@@ -177,7 +177,7 @@
                                         </div>
                                         <div class="info-value">${userNationality}</div>
                                     </div>
-                                    <button class="edit-btn">
+                                    <button class="edit-btn user-main-details-profile-edit-btn">
                                         <i data-lucide="edit" class="edit-icon"></i>
                                         <span>تعديل البيانات</span>
                                     </button>
@@ -202,7 +202,7 @@
                                         </div>
                                         <div class="info-value">${userPhone}</div>
                                     </div>
-                                    <button class="edit-btn">
+                                    <button class="edit-btn user-phone-number-profile-edit-btn">
                                         <i data-lucide="edit" class="edit-icon"></i>
                                         <span>تعديل البيانات</span>
                                     </button>
