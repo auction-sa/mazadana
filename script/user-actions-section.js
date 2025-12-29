@@ -793,7 +793,7 @@
                 </div>
 
                 <div class="my-actions-tabs">
-                    <div class="my-actixons-tabs-main-buttons">
+                    <div class="my-actions-tabs-main-buttons">
                         <button class="my-actions-tab active" data-tab="my-all-auctions-history" id="my-all-auctions-history-tab">
                             <span>سجل المزادات</span>
                         </button>
