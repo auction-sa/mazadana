@@ -183,5 +183,65 @@
         "status": "processing"
       }
     ]
+  },
+
+
+
+  "userNotificationMessagesHistoryDataObject":{
+      "newNotificationNumber": 10,
+      "notificationMessagesHistory": [
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد فزت بالمزاد",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 1,
+        "notificationDate": "2025-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "profile-section",
+        "notificationDate": "2025-02-25"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد فزت بالمزاد",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 2,
+        "notificationDate": "2025-07-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 5,
+        "notificationDate": "2026-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 5,
+        "notificationDate": "2026-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 5,
+        "notificationDate": "2026-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 5,
+        "notificationDate": "2026-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد خسرت مزادك",
+        "showPageId": "auction-property-detail-section",
+        "auctionId": 5,
+        "notificationDate": "2026-01-15"
+      },
+      {
+        "notificationMessage": "عزيزي المستخدم، لقد فزت بالمزاد",
+        "showPageId": "my-actions-section",
+        "notificationDate": "2026-03-15"
+      }
+    ]
   }
 }
