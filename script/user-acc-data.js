@@ -177,10 +177,17 @@
                                         </div>
                                         <div class="info-value">${userNationality}</div>
                                     </div>
-                                    <button class="edit-btn user-main-details-profile-edit-btn">
-                                        <i data-lucide="edit" class="edit-icon"></i>
-                                        <span>تعديل البيانات</span>
-                                    </button>
+                                    ${data?.userVerificationStatus ? `
+                                        <button class="edit-btn user-main-details-profile-edit-btn" disabled>
+                                            <i data-lucide="check-circle" class="verified-icon"></i>
+                                            <span>تم توثيق معلوماتك بنجاح</span>
+                                        </button>
+                                    ` : `
+                                        <button class="edit-btn">
+                                            <i data-lucide="edit" class="edit-icon"></i>
+                                            <span>تعديل البيانات</span>
+                                        </button>
+                                    `}
                                 </div>
                             </div>
                         </div>

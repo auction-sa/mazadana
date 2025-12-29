@@ -20,16 +20,8 @@
     margin-top: 0.5rem;
 }
 
-.edit-btn:hover,
-.add-address-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.edit-btn:active,
-.add-address-btn:active {
-    transform: translateY(0);
+.user-main-details-profile-edit-btn {
+    background: var(--text-light) !important;
 }
 
 .edit-icon,
