@@ -158,7 +158,7 @@
 /* Notification Dropdown Box */
 .notification-dropdown {
     position: absolute;
-    top: calc(100% + 0.5em);
+    top: calc(100% + 1.5em);
     right: 0;
     background: white;
     border-radius: var(--radius-sm);

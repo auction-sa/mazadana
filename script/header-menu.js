@@ -221,8 +221,20 @@
         const dropdown = createNotificationDropdown();
         const overlay = createNotificationOverlay();
         renderNotifications();
-        dropdown.classList.add('active');
-        overlay.classList.add('active');
+
+        // Ensure elements are in the DOM and force a reflow
+        // This allows the browser to register the initial state
+        void dropdown.offsetHeight;
+        void overlay.offsetHeight;
+
+        // Use double requestAnimationFrame to ensure the initial state is fully painted
+        // before adding the active class, which enables smooth transitions on first show
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                dropdown.classList.add('active');
+                overlay.classList.add('active');
+            });
+        });
     }
 
 
