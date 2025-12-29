@@ -122,7 +122,6 @@
 
 .info-value {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
     color: var(--text-secondary);
     text-align: left;
     flex: 1;

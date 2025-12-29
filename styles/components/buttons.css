@@ -9,7 +9,6 @@
     background: var(--primary-color);
     color: var(--bg-white);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
     cursor: pointer;
     transition: all var(--transition-base);
     display: flex;
