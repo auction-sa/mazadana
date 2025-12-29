@@ -451,9 +451,7 @@
                         <span class="auction-property-main-page-detail-pricing-label">قيمة التزايد</span>
                         <span class="pricing-value">
                             ${asset.auctionAsset_bidAmount || '0'}
-                            <span class="currency-symbol">
-                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
-                            </span>
+                            <i data-lucide="saudi-riyal" class="rial-icon"></i>
                         </span>
 
                     </div>
@@ -461,9 +459,7 @@
                         <span class="auction-property-main-page-detail-pricing-label">السعر الافتتاحي</span>
                         <span class="pricing-value">
                             ${asset.auctionAsset_startingPrice || '0'}
-                            <span class="currency-symbol">
-                                <img src="rial-icon.webp" alt="ريال" class="rial-icon">
-                            </span>
+                            <i data-lucide="saudi-riyal" class="rial-icon"></i>
                         </span>
                     </div>
                 </div>

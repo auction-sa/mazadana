@@ -89,14 +89,14 @@
                     <div class="deposit-payment-form-row">
                         <span class="deposit-payment-form-label">قيمة التأمين</span>
                         <div class="deposit-payment-form-value">
-                            <img src="rial-icon.webp" alt="ريال" class="deposit-payment-rial-icon">
+                            <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             <span>${depositAmount}</span>
                         </div>
                     </div>
                     <div class="deposit-payment-form-row">
                         <span class="deposit-payment-form-label">رصيدك (نقدي)</span>
                         <div class="deposit-payment-form-value">
-                            <img src="rial-icon.webp" alt="ريال" class="deposit-payment-rial-icon">
+                            <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             <span>0</span>
                         </div>
                     </div>

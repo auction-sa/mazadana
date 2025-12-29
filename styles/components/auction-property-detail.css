@@ -319,6 +319,9 @@
     font-size: 0.8rem;
     font-weight: var(--font-weight-semibold, 600);
     color: var(--text-primary, #333);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .currency-symbol {

@@ -199,12 +199,6 @@
     direction: ltr;
 }
 
-.deposit-payment-rial-icon {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-}
-
 .deposit-payment-form-value span {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);

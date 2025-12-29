@@ -198,12 +198,6 @@
     font-weight: 600;
 }
 
-.wallet-rial-icon {
-    width: 15px;
-    height: 15px;
-    object-fit: contain;
-}
-
 .wallet-amount {
     font-size: var(--font-size-lg);
     direction: rtl;

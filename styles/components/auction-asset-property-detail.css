@@ -293,10 +293,9 @@
     color: var(--primary-color);
 }
 
-.rial-icon-small {
-    width: 14px;
-    height: 14px;
-    object-fit: contain;
+.rial-icon {
+    width: 16px;
+    height: 16px;
 }
 
 /* Outlined Button */

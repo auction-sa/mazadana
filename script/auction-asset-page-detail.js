@@ -146,28 +146,28 @@
                     <span class="pricing-label">قيمة التأمين</span>
                     <span class="pricing-value">
                         ${formatNumber(asset.auctionAsset_depositAmount || '0')}
-                        <img src="rial-icon.webp" alt="ريال" class="rial-icon-small">
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
                     </span>
                 </div>
                 <div class="pricing-row">
                     <span class="pricing-label">قيمة التزايد</span>
                     <span class="pricing-value">
                         ${formatNumber(asset.auctionAsset_bidAmount || '0')}
-                        <img src="rial-icon.webp" alt="ريال" class="rial-icon-small">
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
                     </span>
                 </div>
                 <div class="pricing-row">
                     <span class="pricing-label">السعر الافتتاحي</span>
                     <span class="pricing-value">
                         ${formatNumber(asset.auctionAsset_startingPrice || '0')}
-                        <img src="rial-icon.webp" alt="ريال" class="rial-icon-small">
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
                     </span>
                 </div>
                 <div class="pricing-row pricing-row-total">
                     <span class="pricing-label">القيمة الإجمالية</span>
                     <span class="pricing-value pricing-value-total">
                         ${formatNumber(totalValue.toString())}
-                        <img src="rial-icon.webp" alt="ريال" class="rial-icon-small">
+                        <i data-lucide="saudi-riyal" class="rial-icon"></i>
                     </span>
                 </div>
                 <!-- Date Counter Container -->

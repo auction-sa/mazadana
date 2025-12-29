@@ -521,10 +521,9 @@
             balanceAmount.className = 'wallet-balance-amount';
             balanceAmount.textContent = userBalance.toLocaleString('en-US');
 
-            const balanceIcon = document.createElement('img');
-            balanceIcon.src = 'rial-icon.webp';
-            balanceIcon.alt = 'Rial';
-            balanceIcon.className = 'wallet-balance-icon';
+            const balanceIcon = document.createElement('i');
+            balanceIcon.setAttribute('data-lucide', 'saudi-riyal');
+            balanceIcon.className = 'rial-icon';
 
             balanceAmountContainer.appendChild(balanceAmount);
             balanceAmountContainer.appendChild(balanceIcon);
@@ -572,10 +571,9 @@
             const amountContainer = document.createElement('div');
             amountContainer.className = 'wallet-row-amount';
 
-            const icon = document.createElement('img');
-            icon.src = 'rial-icon.webp';
-            icon.alt = 'Rial';
-            icon.className = 'wallet-rial-icon';
+            const icon = document.createElement('i');
+            icon.setAttribute('data-lucide', 'saudi-riyal');
+            icon.className = 'rial-icon';
 
             const amount = document.createElement('span');
             amount.className = 'wallet-amount';
@@ -591,6 +589,8 @@
 
             row.appendChild(amountContainer);
             row.appendChild(date);
+
+            console.log('Wallet item:', row);
 
             // Create expandable content
             const expandableContent = document.createElement('div');
