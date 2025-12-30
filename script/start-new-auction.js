@@ -238,16 +238,19 @@
 
                     <!-- Authorization Checkbox -->
                     <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="authorization-checkbox" ${data.authorizationConfirmed ? 'checked' : ''}>
-                            <span>أؤكد أن لدي الصلاحية لبيع هذه العقارات بالمزاد العلني.</span>
+                        <label class="checkbox-label" style="padding-bottom: 0;">
+                            <div class="checkbox-label-content">
+                                <input type="checkbox" id="authorization-checkbox" ${data.authorizationConfirmed ? 'checked' : ''}>
+                                <span>أؤكد أن لدي الصلاحية لبيع هذه العقارات بالمزاد العلني.</span>
+                            </div>
+                            <span class="authorization-error-message" id="authorization-error-message" style="opacity: 0;">يرجى الموافقة على البند أعلاه.</span>
                         </label>
                     </div>
 
                     <!-- Step 1 Buttons -->
                     <div class="wizard-buttons">
                         <button type="button" class="wizard-btn wizard-btn-secondary" id="step1-save-btn">حفظ المعلومات</button>
-                        <button type="button" class="wizard-btn wizard-btn-primary" id="step1-next-btn" ${!data.authorizationConfirmed ? 'disabled' : ''}>المرحلة التالية</button>
+                        <button type="button" class="wizard-btn wizard-btn-primary" id="step1-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
             </div>
@@ -1483,14 +1486,47 @@
             });
         });
 
-        // Authorization checkbox - enable/disable next button
+        // Authorization checkbox - change button background and show/hide error message
         const authCheckbox = document.getElementById('authorization-checkbox');
-        if (authCheckbox) {
-            authCheckbox.addEventListener('change', function () {
-                const nextBtn = document.getElementById('step1-next-btn');
-                if (nextBtn) {
-                    nextBtn.disabled = !this.checked;
+        const errorMessage = document.getElementById('authorization-error-message');
+        const nextBtn = document.getElementById('step1-next-btn');
+
+        // Function to update button background color smoothly
+        function updateButtonBackground(isChecked) {
+            if (nextBtn) {
+                if (isChecked) {
+                    nextBtn.style.backgroundColor = 'var(--primary-color)';
+                    nextBtn.style.color = 'white';
+                    nextBtn.style.opacity = '1';
+                    nextBtn.style.cursor = 'pointer';
+                } else {
+                    nextBtn.style.backgroundColor = '#e5e5e5';
+                    nextBtn.style.color = 'black';
+                    nextBtn.style.opacity = '0.6';
+                    nextBtn.style.cursor = 'not-allowed';
                 }
+            }
+        }
+
+        if (authCheckbox && nextBtn) {
+            // Set initial button background based on checkbox state
+            updateButtonBackground(authCheckbox.checked);
+
+            // Ensure error message is hidden initially (using opacity only)
+            if (errorMessage) {
+                errorMessage.style.opacity = '0';
+            }
+
+            authCheckbox.addEventListener('change', function () {
+                const isChecked = this.checked;
+                updateButtonBackground(isChecked);
+
+                // Smoothly hide error message when checked (using opacity only)
+                if (isChecked && errorMessage) {
+                    errorMessage.style.transition = 'opacity 0.3s ease';
+                    errorMessage.style.opacity = '0';
+                }
+
                 saveStep1();
             });
         }
@@ -1516,10 +1552,25 @@
         const nextBtn1 = document.getElementById('step1-next-btn');
         if (nextBtn1) {
             nextBtn1.addEventListener('click', () => {
-                saveStep1();
-                currentStep = 2;
-                autoSaveData();
-                showStep(2);
+                const authCheckbox = document.getElementById('authorization-checkbox');
+                const errorMessage = document.getElementById('authorization-error-message');
+
+                if (authCheckbox && authCheckbox.checked) {
+                    // Checkbox is checked, proceed normally
+                    saveStep1();
+                    currentStep = 2;
+                    autoSaveData();
+                    showStep(2);
+                } else {
+                    // Checkbox is not checked, smoothly show error message (using opacity only)
+                    if (errorMessage) {
+                        // Smoothly fade in
+                        requestAnimationFrame(() => {
+                            errorMessage.style.transition = 'opacity 0.3s ease';
+                            errorMessage.style.opacity = '1';
+                        });
+                    }
+                }
             });
         }
     }
