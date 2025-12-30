@@ -22,7 +22,8 @@
 #start-auction-header,
 #seller-company-info-page-header,
 #auction-asset-property-detail-header,
-#manage-properties-header {
+#manage-properties-header,
+#manage-wallet-header {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;

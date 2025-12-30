@@ -1,0 +1,398 @@
+/* Manage My Wallet Page Styles */
+
+.wallet-management-content {
+    padding: var(--spacing-lg) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* Wallet Section */
+.wallet-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.wallet-section-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0;
+    text-align: right;
+}
+
+/* Wallet Card */
+.wallet-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.wallet-card-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.wallet-card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.wallet-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+    stroke-width: 2;
+}
+
+.wallet-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.wallet-card-label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.wallet-card-balance-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-xs);
+    direction: rtl;
+}
+
+.wallet-card-balance-amount {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-dark);
+    text-align: right;
+}
+
+.wallet-card-balance-container .rial-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-dark);
+    stroke: var(--primary-dark);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.wallet-card-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+.wallet-withdraw-btn {
+    width: fit-content;
+    padding: 0 var(--spacing-xs);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: #e5e5e5;
+    color: #999;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: not-allowed;
+    transition: all var(--transition-base);
+    font-family: inherit;
+}
+
+.wallet-add-money-btn {
+    width: fit-content;
+    padding: 0 var(--spacing-xs);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary-dark);
+    color: var(--bg-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.wallet-add-money-btn:active {
+    transform: translateY(0);
+}
+
+.add-money-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--bg-white);
+    stroke: var(--bg-white);
+    stroke-width: 2.5;
+}
+
+/* Warning Banner */
+.wallet-warning-banner {
+    width: 100%;
+    padding: var(--spacing-xs) 0.3rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    direction: rtl;
+}
+
+.warning-icon {
+    width: 20px;
+    height: 20px;
+    color: #f59e0b;
+    stroke: #f59e0b;
+    stroke-width: 2;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.warning-text {
+    font-size: var(--font-size-sm);
+    color: #92400e;
+    text-align: right;
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* Bank Account Section */
+.bank-account-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.wallet-add-bank-btn {
+    width: 100%;
+    padding: var(--spacing-xs);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary-dark);
+    color: var(--bg-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.wallet-add-bank-btn:active {
+    transform: translateY(0);
+}
+
+.add-bank-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--bg-white);
+    stroke: var(--bg-white);
+    stroke-width: 2.5;
+}
+
+/* Add Money Bottom Sheet */
+.add-money-bottom-sheet {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.add-money-bottom-sheet.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.add-money-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+}
+
+.add-money-content {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-radius: 20px 20px 0 0;
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-2xl);
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    direction: rtl;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.add-money-bottom-sheet.active .add-money-content {
+    transform: translateY(0);
+}
+
+.add-money-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    margin: 0 auto var(--spacing-md) auto;
+    cursor: grab;
+}
+
+.add-money-handle:active {
+    cursor: grabbing;
+}
+
+.add-money-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+    text-align: right;
+    padding: 0 var(--spacing-sm);
+}
+
+.add-money-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-lg) 0;
+    text-align: right;
+    padding: 0 var(--spacing-sm);
+}
+
+.add-money-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-sm);
+}
+
+.add-money-option {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+    min-height: 56px;
+}
+
+.add-money-option:active {
+    transform: translateY(0);
+}
+
+.add-money-option-text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-align: right;
+    flex: 1;
+}
+
+.add-money-option-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--text-light);
+    stroke: var(--text-light);
+    stroke-width: 2;
+    flex-shrink: 0;
+    transform: rotate(180deg);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .wallet-management-content {
+        gap: var(--spacing-lg);
+    }
+
+    .wallet-card {
+        padding: var(--spacing-md);
+    }
+
+    .wallet-card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .wallet-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .wallet-card-balance-amount {
+        font-size: var(--font-size-lg);
+    }
+
+    .wallet-card-balance-container .rial-icon {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wallet-section-title {
+        font-size: var(--font-size-base);
+    }
+
+    .wallet-card {
+        padding: var(--spacing-sm);
+    }
+
+    .wallet-card-balance-amount {
+        font-size: var(--font-size-base);
+    }
+
+    .wallet-card-balance-container .rial-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .add-money-title {
+        font-size: var(--font-size-base);
+    }
+
+    .add-money-subtitle {
+        font-size: var(--font-size-sm);
+    }
+}

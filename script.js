@@ -73,7 +73,8 @@
             'script/help-center.js',               // Help center page
             'script/start-new-auction.js',        // Start new auction wizard page
             'script/user-settings.js',            // User settings
-            'script/manage-my-properties.js'      // Manage my properties page
+            'script/manage-my-properties.js',     // Manage my properties page
+            'script/manage-my-wallet.js'          // Manage my wallet page
         ];
 
         // Load scripts sequentially (one after another)

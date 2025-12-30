@@ -32,7 +32,8 @@
         POLICY_TERMS: 'policy-terms',  // Policy Terms / Privacy Policy page
         HELP_CENTER: 'help-center',  // Help Center page
         START_AUCTION: 'start-auction',  // Start New Auction page
-        MANAGE_PROPERTIES: 'manage-properties'  // Manage My Properties page
+        MANAGE_PROPERTIES: 'manage-properties',  // Manage My Properties page
+        MANAGE_WALLET: 'manage-wallet'  // Manage My Wallet page
     };
 
     // ============================================================================
@@ -153,6 +154,19 @@
                     }, 100);
                 }
             }
+        },
+        [ProfileRoutes.MANAGE_WALLET]: {
+            headerId: 'manage-wallet-header',
+            viewId: 'manage-my-wallet-view',
+            hash: '#/profile/manage-wallet',
+            historyDelay: 400,
+            init: () => {
+                if (typeof window.ManageWalletPage !== 'undefined' && typeof window.ManageWalletPage.init === 'function') {
+                    setTimeout(() => {
+                        window.ManageWalletPage.init();
+                    }, 100);
+                }
+            }
         }
     };
 
@@ -191,6 +205,10 @@
         const managePropertiesHeader = document.getElementById('manage-properties-header');
         if (managePropertiesHeader && !keepSet.has(managePropertiesHeader.id)) {
             managePropertiesHeader.style.display = 'none';
+        }
+        const manageWalletHeader = document.getElementById('manage-wallet-header');
+        if (manageWalletHeader && !keepSet.has(manageWalletHeader.id)) {
+            manageWalletHeader.style.display = 'none';
         }
         const favoritesHeader = document.getElementById('favorites-header');
         if (favoritesHeader && !keepSet.has(favoritesHeader.id)) {
@@ -236,6 +254,10 @@
         if (managePropertiesView && managePropertiesView.id !== exceptViewId) {
             managePropertiesView.classList.remove('active');
         }
+        const manageWalletView = document.getElementById('manage-my-wallet-view');
+        if (manageWalletView && manageWalletView.id !== exceptViewId) {
+            manageWalletView.classList.remove('active');
+        }
     }
 
     function showSingleProfilePage(route, config, { menuView, accountInfoView, profileSection }) {
@@ -272,6 +294,10 @@
         const managePropertiesView = document.getElementById('manage-my-own-property-view');
         if (managePropertiesView && managePropertiesView.id !== config.viewId) {
             managePropertiesView.classList.remove('active');
+        }
+        const manageWalletView = document.getElementById('manage-my-wallet-view');
+        if (manageWalletView && manageWalletView.id !== config.viewId) {
+            manageWalletView.classList.remove('active');
         }
 
         // Show the target view
@@ -667,9 +693,9 @@
                 // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
                 break;
 
-            // These actions are not implemented yet (TODO)
             case 'wallet':
-                // TODO: Navigate to wallet page
+                navigateActionToRoute(ProfileRoutes.MANAGE_WALLET);
+                // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
                 break;
             case 'transactions':
                 // TODO: Navigate to transactions page
@@ -916,6 +942,15 @@
             });
         }
 
+        // ROUTE 8: Navigate to Manage Wallet page (single-page helper)
+        else if (route === ProfileRoutes.MANAGE_WALLET && profileSinglePages[ProfileRoutes.MANAGE_WALLET]) {
+            showSingleProfilePage(ProfileRoutes.MANAGE_WALLET, profileSinglePages[ProfileRoutes.MANAGE_WALLET], {
+                menuView,
+                accountInfoView,
+                profileSection
+            });
+        }
+
         // ROUTE 4: Navigate back to Menu
         else if (route === ProfileRoutes.MENU) {
             // Show the profile page title
@@ -953,6 +988,10 @@
             const managePropertiesView = document.getElementById('manage-my-own-property-view');
             if (managePropertiesView) {
                 managePropertiesView.classList.remove('active');
+            }
+            const manageWalletView = document.getElementById('manage-my-wallet-view');
+            if (manageWalletView) {
+                manageWalletView.classList.remove('active');
             }
 
 
@@ -1073,6 +1112,8 @@
                 navigateToProfileRoute(ProfileRoutes.HELP_CENTER);
             } else if (hash === '#/profile/manage-properties') {
                 navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
+            } else if (hash === '#/profile/manage-wallet') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_WALLET);
             }
         });
 
@@ -1103,6 +1144,8 @@
                 navigateToProfileRoute(ProfileRoutes.HELP_CENTER);
             } else if (hash === '#/profile/manage-properties') {
                 navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
+            } else if (hash === '#/profile/manage-wallet') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_WALLET);
             }
         });
 
@@ -1115,7 +1158,8 @@
                     currentProfileRoute === ProfileRoutes.FAVORITES ||
                     currentProfileRoute === ProfileRoutes.POLICY_TERMS ||
                     currentProfileRoute === ProfileRoutes.HELP_CENTER ||
-                    currentProfileRoute === ProfileRoutes.MANAGE_PROPERTIES) {
+                    currentProfileRoute === ProfileRoutes.MANAGE_PROPERTIES ||
+                    currentProfileRoute === ProfileRoutes.MANAGE_WALLET) {
                     // Go back to menu
                     navigateToProfileRoute(ProfileRoutes.MENU);
                     if (event && event.preventDefault) {

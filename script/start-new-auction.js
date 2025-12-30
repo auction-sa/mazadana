@@ -818,29 +818,6 @@
         }
     }
 
-    /**
-     * Convert Arabic time display to 24-hour format
-     */
-    function parseTimeFromDisplay(timeDisplay) {
-        if (!timeDisplay) return '';
-        try {
-            const match = timeDisplay.match(/(\d{1,2}):(\d{2})\s+(صباحاً|مساءً)/);
-            if (!match) return '';
-            let hours = parseInt(match[1], 10);
-            const minutes = match[2];
-            const period = match[3];
-
-            if (period === 'مساءً' && hours !== 12) {
-                hours += 12;
-            } else if (period === 'صباحاً' && hours === 12) {
-                hours = 0;
-            }
-
-            return `${String(hours).padStart(2, '0')}:${minutes}`;
-        } catch (e) {
-            return '';
-        }
-    }
 
     /**
      * Convert Arabic numbers to English numbers
