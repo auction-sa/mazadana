@@ -35,5 +35,5 @@ body {
 }
 
 .hide-element {
-    position: fixed;
+    display: none;
 }

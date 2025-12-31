@@ -51,9 +51,19 @@
         const walletView = document.getElementById('manage-my-wallet-view');
         if (!walletView || walletViewRendered) return;
 
-        // Fetch user balance
-        const userBalance = await fetchUserBalance();
+        // Fetch user balance and bank accounts BEFORE rendering
+        const [userBalance, bankAccounts] = await Promise.all([
+            fetchUserBalance(),
+            fetchBankAccounts()
+        ]);
+
         const formattedBalance = userBalance.toLocaleString('en-US');
+
+        // Determine if elements should be hidden (when bank accounts exist)
+        const shouldHideElements = bankAccounts.length > 0;
+        const hideClass = shouldHideElements ? 'hide-element' : '';
+        // Use inline style for instant hiding (no CSS parsing delay)
+        const hideStyle = shouldHideElements ? 'style="display: none;"' : '';
 
         walletView.innerHTML = `
             <div class="settings-container">
@@ -96,14 +106,14 @@
                             </div>
 
                             <!-- Warning Banner -->
-                            <div class="wallet-warning-banner" id="wallet-page-warning-text">
+                            <div class="wallet-warning-banner ${hideClass}" id="wallet-page-warning-text" ${hideStyle}>
                                 <i data-lucide="alert-triangle" class="warning-icon"></i>
                                 <span class="warning-text">الرجاء إضافة حساب بنكي أولاً قبل إيداع الأموال في المحفظة.</span>
                             </div>
                         </div>
 
                         <!-- الحساب البنكي Section -->
-                        <div class="bank-account-section" id="wallet-page-add-bank-account-button">
+                        <div class="bank-account-section ${hideClass}" id="wallet-page-add-bank-account-button" ${hideStyle}>
                             <button class="wallet-add-bank-btn" id="wallet-add-bank-btn">
                                 <i data-lucide="plus" class="add-bank-icon"></i>
                                 إضافة حساب بنكي
@@ -113,27 +123,6 @@
                 </div>
             </div>
         `;
-
-        // Check if bank accounts exist and hide elements if empty
-        const bankAccounts = await fetchBankAccounts();
-        const warningText = document.getElementById('wallet-page-warning-text');
-        const addBankButton = document.getElementById('wallet-page-add-bank-account-button');
-
-        if (bankAccounts.length === 0) {
-            if (warningText) {
-                warningText.classList.remove('hide-element');
-            }
-            if (addBankButton) {
-                addBankButton.classList.remove('hide-element');
-            }
-        } else {
-            if (warningText) {
-                warningText.classList.add('hide-element');
-            }
-            if (addBankButton) {
-                addBankButton.classList.add('hide-element');
-            }
-        }
 
         // Allow listeners to attach on fresh markup
         eventListenersAttached = false;
