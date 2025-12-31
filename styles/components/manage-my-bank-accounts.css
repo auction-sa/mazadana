@@ -1,0 +1,458 @@
+/* Manage My Bank Accounts Page Styles */
+
+.bank-accounts-management-content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Bank Accounts List */
+.bank-accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Bank Account Card */
+.bank-account-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    border: 1px solid var(--border-color);
+}
+
+.bank-account-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.bank-account-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.bank-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.bank-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.bank-account-card-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.bank-account-edit-btn,
+.bank-account-delete-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background: var(--text-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.bank-account-edit-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.bank-account-delete-btn:hover {
+    background: #fee;
+    color: #dc3545;
+}
+
+.edit-icon,
+.delete-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.bank-account-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.bank-account-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xs) 0;
+}
+
+.bank-account-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.bank-account-value {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    text-align: left;
+    flex: 1;
+    word-break: break-word;
+}
+
+/* Empty State */
+.bank-accounts-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    text-align: center;
+}
+
+.bank-accounts-empty-text {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Add Bank Account Button */
+.add-bank-account-btn {
+    width: 100%;
+    padding: var(--spacing-xs) 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary-dark);
+    color: var(--bg-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+    margin-top: var(--spacing-md);
+}
+
+.add-bank-account-btn:active {
+    transform: translateY(0);
+}
+
+.add-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--bg-white);
+    stroke: var(--bg-white);
+    stroke-width: 2.5;
+}
+
+.add-bank-account-form-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    text-align: center;
+    margin: 0 0 var(--spacing-xl) 0;
+}
+
+.add-bank-account-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding-bottom: 100px; /* Space for fixed button */
+}
+
+/* Form Label */
+.form-label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    text-align: right;
+    display: block;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #dc3545;
+}
+
+/* Form Input */
+.add-bank-account-form .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    background: var(--bg-light);
+    transition: all var(--transition-base);
+    outline: none;
+    font-family: inherit;
+    text-align: right;
+    direction: rtl;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+.add-bank-account-form .form-input:focus {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.add-bank-account-form .form-input::placeholder {
+    color: var(--text-light);
+}
+
+/* Select Wrapper */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    background: var(--bg-light);
+    transition: all var(--transition-base);
+    outline: none;
+    font-family: inherit;
+    text-align: right;
+    direction: rtl;
+    min-height: 48px;
+    box-sizing: border-box;
+    appearance: none;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.select-chevron {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+    stroke: var(--text-secondary);
+    stroke-width: 2;
+    pointer-events: none;
+}
+
+/* IBAN Image Upload Area */
+.iban-image-upload-area {
+    width: 100%;
+    min-height: 200px;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--bg-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.iban-image-upload-area:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.iban-image-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--text-secondary);
+    stroke: var(--text-secondary);
+    stroke-width: 1.5;
+}
+
+.upload-caption {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.iban-image-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.iban-image-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-sm);
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--bg-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+}
+
+.remove-image-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.remove-icon {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+}
+
+/* Checkbox */
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.form-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox-text {
+    flex: 1;
+    text-align: right;
+}
+
+/* Submit Button */
+.submit-bank-account-btn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: 0;
+    background: #14b8a6;
+    color: var(--bg-white);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    min-height: 60px;
+}
+
+.submit-bank-account-btn:active {
+    background: #0d9488;
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .bank-account-card {
+        padding: var(--spacing-md);
+    }
+
+    .bank-account-card-header {
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+    }
+
+    .add-bank-account-form-title {
+        font-size: var(--font-size-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .bank-account-card {
+        padding: var(--spacing-sm);
+    }
+
+    .bank-name {
+        font-size: var(--font-size-base);
+    }
+
+    .bank-account-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+
+    .bank-account-value {
+        text-align: right;
+    }
+
+    .add-bank-account-form-title {
+        font-size: var(--font-size-base);
+    }
+}
+

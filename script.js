@@ -74,7 +74,8 @@
             'script/start-new-auction.js',        // Start new auction wizard page
             'script/user-settings.js',            // User settings
             'script/manage-my-properties.js',     // Manage my properties page
-            'script/manage-my-wallet.js'          // Manage my wallet page
+            'script/manage-my-wallet.js',          // Manage my wallet page
+            'script/manage-my-bank-accounts.js'    // Manage my bank accounts page
         ];
 
         // Load scripts sequentially (one after another)

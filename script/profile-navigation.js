@@ -33,7 +33,8 @@
         HELP_CENTER: 'help-center',  // Help Center page
         START_AUCTION: 'start-auction',  // Start New Auction page
         MANAGE_PROPERTIES: 'manage-properties',  // Manage My Properties page
-        MANAGE_WALLET: 'manage-wallet'  // Manage My Wallet page
+        MANAGE_WALLET: 'manage-wallet',  // Manage My Wallet page
+        MANAGE_BANK_ACCOUNTS: 'manage-bank-accounts'  // Manage My Bank Accounts page
     };
 
     // ============================================================================
@@ -167,6 +168,19 @@
                     }, 100);
                 }
             }
+        },
+        [ProfileRoutes.MANAGE_BANK_ACCOUNTS]: {
+            headerId: 'manage-bank-accounts-header',
+            viewId: 'manage-my-bank-Accounts-view',
+            hash: '#/profile/manage-bank-accounts',
+            historyDelay: 400,
+            init: () => {
+                if (typeof window.ManageBankAccountsPage !== 'undefined' && typeof window.ManageBankAccountsPage.init === 'function') {
+                    setTimeout(() => {
+                        window.ManageBankAccountsPage.init();
+                    }, 100);
+                }
+            }
         }
     };
 
@@ -209,6 +223,10 @@
         const manageWalletHeader = document.getElementById('manage-wallet-header');
         if (manageWalletHeader && !keepSet.has(manageWalletHeader.id)) {
             manageWalletHeader.style.display = 'none';
+        }
+        const manageBankAccountsHeader = document.getElementById('manage-bank-accounts-header');
+        if (manageBankAccountsHeader && !keepSet.has(manageBankAccountsHeader.id)) {
+            manageBankAccountsHeader.style.display = 'none';
         }
         const favoritesHeader = document.getElementById('favorites-header');
         if (favoritesHeader && !keepSet.has(favoritesHeader.id)) {
@@ -258,6 +276,10 @@
         if (manageWalletView && manageWalletView.id !== exceptViewId) {
             manageWalletView.classList.remove('active');
         }
+        const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        if (manageBankAccountsView && manageBankAccountsView.id !== exceptViewId) {
+            manageBankAccountsView.classList.remove('active');
+        }
     }
 
     function showSingleProfilePage(route, config, { menuView, accountInfoView, profileSection }) {
@@ -298,6 +320,10 @@
         const manageWalletView = document.getElementById('manage-my-wallet-view');
         if (manageWalletView && manageWalletView.id !== config.viewId) {
             manageWalletView.classList.remove('active');
+        }
+        const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        if (manageBankAccountsView && manageBankAccountsView.id !== config.viewId) {
+            manageBankAccountsView.classList.remove('active');
         }
 
         // Show the target view
@@ -697,6 +723,10 @@
                 navigateActionToRoute(ProfileRoutes.MANAGE_WALLET);
                 // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
                 break;
+            case 'withdraw':
+                navigateActionToRoute(ProfileRoutes.MANAGE_BANK_ACCOUNTS);
+                // Scroll is handled in showSingleProfilePage for immediate, invisible scroll
+                break;
             case 'transactions':
                 // TODO: Navigate to transactions page
                 break;
@@ -951,6 +981,15 @@
             });
         }
 
+        // ROUTE 9: Navigate to Manage Bank Accounts page (single-page helper)
+        else if (route === ProfileRoutes.MANAGE_BANK_ACCOUNTS && profileSinglePages[ProfileRoutes.MANAGE_BANK_ACCOUNTS]) {
+            showSingleProfilePage(ProfileRoutes.MANAGE_BANK_ACCOUNTS, profileSinglePages[ProfileRoutes.MANAGE_BANK_ACCOUNTS], {
+                menuView,
+                accountInfoView,
+                profileSection
+            });
+        }
+
         // ROUTE 4: Navigate back to Menu
         else if (route === ProfileRoutes.MENU) {
             // Show the profile page title
@@ -992,6 +1031,10 @@
             const manageWalletView = document.getElementById('manage-my-wallet-view');
             if (manageWalletView) {
                 manageWalletView.classList.remove('active');
+            }
+            const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+            if (manageBankAccountsView) {
+                manageBankAccountsView.classList.remove('active');
             }
 
 
@@ -1114,6 +1157,8 @@
                 navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
             } else if (hash === '#/profile/manage-wallet') {
                 navigateToProfileRoute(ProfileRoutes.MANAGE_WALLET);
+            } else if (hash === '#/profile/manage-bank-accounts') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_BANK_ACCOUNTS);
             }
         });
 
@@ -1146,6 +1191,8 @@
                 navigateToProfileRoute(ProfileRoutes.MANAGE_PROPERTIES);
             } else if (hash === '#/profile/manage-wallet') {
                 navigateToProfileRoute(ProfileRoutes.MANAGE_WALLET);
+            } else if (hash === '#/profile/manage-bank-accounts') {
+                navigateToProfileRoute(ProfileRoutes.MANAGE_BANK_ACCOUNTS);
             }
         });
 
@@ -1159,7 +1206,8 @@
                     currentProfileRoute === ProfileRoutes.POLICY_TERMS ||
                     currentProfileRoute === ProfileRoutes.HELP_CENTER ||
                     currentProfileRoute === ProfileRoutes.MANAGE_PROPERTIES ||
-                    currentProfileRoute === ProfileRoutes.MANAGE_WALLET) {
+                    currentProfileRoute === ProfileRoutes.MANAGE_WALLET ||
+                    currentProfileRoute === ProfileRoutes.MANAGE_BANK_ACCOUNTS) {
                     // Go back to menu
                     navigateToProfileRoute(ProfileRoutes.MENU);
                     if (event && event.preventDefault) {
