@@ -191,10 +191,10 @@
                     
                     <form class="add-bank-account-form" id="add-bank-account-form">
                         <!-- Bank Name Dropdown -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">اسم البنك</label>
                             <div class="select-wrapper">
-                                <select class="form-select" id="bank-name-select" required>
+                                <select class="my-bank-accounts-form-select" id="bank-name-select" required>
                                     <option value="">اختر البنك</option>
                                     <option value="بنك الراجحي" ${accountData?.bankName === 'بنك الراجحي' ? 'selected' : ''}>بنك الراجحي</option>
                                     <option value="بنك الأهلي" ${accountData?.bankName === 'بنك الأهلي' ? 'selected' : ''}>بنك الأهلي</option>
@@ -209,55 +209,55 @@
                         </div>
 
                         <!-- SWIFT Code -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">SWIFT Code</label>
-                            <input type="text" class="form-input" id="swift-code-input" 
+                            <input type="text" class="my-bank-accounts-form-input" id="swift-code-input" 
                                 placeholder="أدخل رمز SWIFT" 
                                 value="${accountData?.swiftCode || ''}" 
                                 required>
                         </div>
 
                         <!-- Account Number -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">رقم الحساب</label>
-                            <input type="text" class="form-input" id="account-number-input" 
+                            <input type="text" class="my-bank-accounts-form-input" id="account-number-input" 
                                 placeholder="أدخل رقم الحساب" 
                                 value="${accountData?.accountNo || ''}" 
                                 required>
                         </div>
 
                         <!-- IBAN -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">IBAN</label>
-                            <input type="text" class="form-input" id="iban-input" 
+                            <input type="text" class="my-bank-accounts-form-input" id="iban-input" 
                                 placeholder="أدخل رقم IBAN" 
                                 value="${accountData?.ibanNumber || ''}" 
                                 required>
                         </div>
 
                         <!-- Beneficiary Address -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">عنوان المستفيد</label>
-                            <input type="text" class="form-input" id="beneficiary-address-input" 
+                            <input type="text" class="my-bank-accounts-form-input" id="beneficiary-address-input" 
                                 placeholder="أدخل عنوان المستفيد" 
                                 value="${accountData?.ownerAddress || ''}" 
                                 required>
                         </div>
 
                         <!-- Account Holder Name -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">اسم صاحب الحساب</label>
-                            <input type="text" class="form-input" id="account-holder-name-input" 
+                            <input type="text" class="my-bank-accounts-form-input" id="account-holder-name-input" 
                                 placeholder="مثال: بندر زهير" 
                                 value="${accountData?.accountHolderName || ''}" 
                                 required>
                         </div>
 
                         <!-- Currency Dropdown -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">العملة</label>
                             <div class="select-wrapper">
-                                <select class="form-select" id="currency-select" required>
+                                <select class="my-bank-accounts-form-select" id="currency-select" required>
                                     <option value="الريال السعودي" ${(!accountData || accountData.accountCurrency === 'الريال السعودي' || accountData.accountCurrency === 'ريال سعودي') ? 'selected' : ''}>الريال السعودي</option>
                                     <option value="دولار أمريكي" ${accountData?.accountCurrency === 'دولار أمريكي' ? 'selected' : ''}>دولار أمريكي</option>
                                     <option value="يورو" ${accountData?.accountCurrency === 'يورو' ? 'selected' : ''}>يورو</option>
@@ -267,7 +267,7 @@
                         </div>
 
                         <!-- IBAN Image Upload -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="form-label required">صورة IBAN</label>
                             <div class="iban-image-upload-area" id="iban-image-upload-area">
                                 <input type="file" class="iban-image-input" id="iban-image-input" accept="image/*" style="display: none;">
@@ -285,7 +285,7 @@
                         </div>
 
                         <!-- Policy Checkbox -->
-                        <div class="form-group">
+                        <div class="my-bank-accounts-form-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" class="form-checkbox" id="policy-checkbox" required>
                                 <span class="checkbox-text">أوافق على الشروط والأحكام وسياسة الخصوصية</span>
