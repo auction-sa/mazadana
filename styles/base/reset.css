@@ -33,3 +33,7 @@ body {
     margin: 0;
     direction: rtl;
 }
+
+.hide-element {
+    position: fixed;
+}

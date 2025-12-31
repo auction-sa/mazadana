@@ -145,17 +145,92 @@
         }
     }
 
+    // Show confirmation dialog
+    function showConfirmationDialog(message, onConfirm, onCancel = null) {
+        // Remove existing dialog if any
+        const existingDialog = document.querySelector('.bank-account-confirmation-dialog');
+        if (existingDialog) {
+            existingDialog.remove();
+        }
+
+        // Lock background scroll
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        const dialog = document.createElement('div');
+        dialog.className = 'bank-account-confirmation-dialog';
+        dialog.innerHTML = `
+            <div class="bank-account-confirmation-overlay"></div>
+            <div class="bank-account-confirmation-content">
+                <div class="bank-account-confirmation-message">${message}</div>
+                <div class="bank-account-confirmation-buttons">
+                    <button class="bank-account-confirmation-btn bank-account-confirmation-cancel" id="bank-account-confirm-cancel-btn">
+                        إلغاء
+                    </button>
+                    <button class="bank-account-confirmation-btn bank-account-confirmation-confirm" id="bank-account-confirm-ok-btn">
+                        تأكيد
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(dialog);
+
+        // Show dialog with animation
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                dialog.classList.add('active');
+            });
+        });
+
+        // Close handlers
+        const closeDialog = (confirmed = false) => {
+            dialog.classList.remove('active');
+            document.body.style.overflow = originalOverflow;
+            setTimeout(() => {
+                if (dialog.parentNode) {
+                    dialog.parentNode.removeChild(dialog);
+                }
+                if (confirmed && onConfirm) {
+                    onConfirm();
+                } else if (!confirmed && onCancel) {
+                    onCancel();
+                }
+            }, 300);
+        };
+
+        const overlay = dialog.querySelector('.bank-account-confirmation-overlay');
+        const cancelBtn = document.getElementById('bank-account-confirm-cancel-btn');
+        const confirmBtn = document.getElementById('bank-account-confirm-ok-btn');
+
+        if (overlay) overlay.addEventListener('click', () => closeDialog(false));
+        if (cancelBtn) cancelBtn.addEventListener('click', () => closeDialog(false));
+        if (confirmBtn) confirmBtn.addEventListener('click', () => closeDialog(true));
+
+        // Close on Escape key
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && dialog.classList.contains('active')) {
+                closeDialog(false);
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+    }
+
     // Handle delete account
     async function handleDeleteAccount(index) {
         const bankAccounts = await fetchBankAccounts();
         if (index >= 0 && index < bankAccounts.length) {
             const account = bankAccounts[index];
-            if (confirm(`هل أنت متأكد من حذف حساب ${account.bankName}؟`)) {
-                // TODO: Implement actual deletion logic
-                alert('تم حذف الحساب البنكي');
-                // Update the list
-                await updateBankAccountsList();
-            }
+            showConfirmationDialog(
+                'تأكيد حذف هذا الحساب البنكي',
+                async () => {
+                    // TODO: Implement actual deletion logic
+                    alert('تم حذف الحساب البنكي');
+                    // Update the list
+                    await updateBankAccountsList();
+                }
+            );
         }
     }
 
@@ -163,8 +238,13 @@
     async function handleEditAccount(index) {
         const bankAccounts = await fetchBankAccounts();
         if (index >= 0 && index < bankAccounts.length) {
-            currentEditIndex = index;
-            showAddBankAccountForm(bankAccounts[index]);
+            showConfirmationDialog(
+                'تأكيد تعديل معلومات الحساب البنكي',
+                () => {
+                    currentEditIndex = index;
+                    showAddBankAccountForm(bankAccounts[index]);
+                }
+            );
         }
     }
 

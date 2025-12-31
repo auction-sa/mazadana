@@ -30,6 +30,22 @@
         }
     }
 
+    // Fetch bank accounts data from user-data.json
+    async function fetchBankAccounts() {
+        try {
+            const response = await fetch('json-data/user-data.json');
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const userData = await response.json();
+            return userData.userBankAccountsDataObject || [];
+        } catch (error) {
+            console.error('Error fetching bank accounts:', error);
+            return [];
+        }
+    }
+
     // Build manage wallet view markup
     async function renderManageWalletView() {
         const walletView = document.getElementById('manage-my-wallet-view');
@@ -80,14 +96,14 @@
                             </div>
 
                             <!-- Warning Banner -->
-                            <div class="wallet-warning-banner">
+                            <div class="wallet-warning-banner" id="wallet-page-warning-text">
                                 <i data-lucide="alert-triangle" class="warning-icon"></i>
                                 <span class="warning-text">الرجاء إضافة حساب بنكي أولاً قبل إيداع الأموال في المحفظة.</span>
                             </div>
                         </div>
 
                         <!-- الحساب البنكي Section -->
-                        <div class="bank-account-section">
+                        <div class="bank-account-section" id="wallet-page-add-bank-account-button">
                             <button class="wallet-add-bank-btn" id="wallet-add-bank-btn">
                                 <i data-lucide="plus" class="add-bank-icon"></i>
                                 إضافة حساب بنكي
@@ -97,6 +113,27 @@
                 </div>
             </div>
         `;
+
+        // Check if bank accounts exist and hide elements if empty
+        const bankAccounts = await fetchBankAccounts();
+        const warningText = document.getElementById('wallet-page-warning-text');
+        const addBankButton = document.getElementById('wallet-page-add-bank-account-button');
+
+        if (bankAccounts.length === 0) {
+            if (warningText) {
+                warningText.classList.remove('hide-element');
+            }
+            if (addBankButton) {
+                addBankButton.classList.remove('hide-element');
+            }
+        } else {
+            if (warningText) {
+                warningText.classList.add('hide-element');
+            }
+            if (addBankButton) {
+                addBankButton.classList.add('hide-element');
+            }
+        }
 
         // Allow listeners to attach on fresh markup
         eventListenersAttached = false;
