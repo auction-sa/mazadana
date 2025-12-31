@@ -55,7 +55,13 @@
     // Build manage bank accounts view markup
     async function renderBankAccountsView() {
         const bankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
-        if (!bankAccountsView || bankAccountsViewRendered) return;
+        if (!bankAccountsView) return;
+
+        // If already rendered, just update the list content
+        if (bankAccountsViewRendered) {
+            await updateBankAccountsList();
+            return;
+        }
 
         // Fetch bank accounts
         const bankAccounts = await fetchBankAccounts();
@@ -66,24 +72,34 @@
                     <button class="back-btn" id="manage-bank-accounts-back-btn" aria-label="رجوع">
                         <i data-lucide="arrow-right" class="back-icon"></i>
                     </button>
-                    <h2 class="account-tabs-title">إدارة حساباتي البنكية</h2>
+                    <h2 class="account-tabs-title" id="bank-accounts-header-title">إدارة حساباتي البنكية</h2>
                 </div>
 
                 <div class="settings-content scrollable-container">
-                    <div class="bank-accounts-management-content">
-                        <!-- Bank Accounts List -->
-                        <div class="bank-accounts-list" id="bank-accounts-list">
-                            ${bankAccounts.length > 0 
-                                ? bankAccounts.map((account, index) => createBankAccountCard(account, index)).join('')
-                                : '<div class="bank-accounts-empty-state"><p class="bank-accounts-empty-text">لايوجد حساب بنكي لعرضه هنا</p></div>'
-                            }
-                        </div>
+                    <!-- Bank Accounts List View -->
+                    <div class="bank-accounts-list-view active" id="bank-accounts-list-view">
+                        <div class="bank-accounts-management-content">
+                            <!-- Bank Accounts List -->
+                            <div class="bank-accounts-list" id="bank-accounts-list">
+                                ${bankAccounts.length > 0
+                ? bankAccounts.map((account, index) => createBankAccountCard(account, index)).join('')
+                : '<div class="bank-accounts-empty-state"><p class="bank-accounts-empty-text">لايوجد حساب بنكي لعرضه هنا</p></div>'
+            }
+                            </div>
 
-                        <!-- Add New Bank Account Button -->
-                        <button class="add-bank-account-btn" id="add-bank-account-btn">
-                            <i data-lucide="plus" class="add-icon"></i>
-                            إضافة حساب بنكي جديد
-                        </button>
+                            <!-- Add New Bank Account Button -->
+                            <button class="add-bank-account-btn" id="add-bank-account-btn">
+                                <i data-lucide="plus" class="add-icon"></i>
+                                إضافة حساب بنكي جديد
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bank Account Form View -->
+                    <div class="bank-accounts-form-view" id="bank-accounts-form-view">
+                        <div class="bank-accounts-form-content" id="bank-accounts-form-content">
+                            <!-- Form will be inserted here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,23 +134,8 @@
             });
         }
 
-        // Delete button handlers
-        const deleteBtns = document.querySelectorAll('.bank-account-delete-btn');
-        deleteBtns.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const index = parseInt(this.getAttribute('data-index'));
-                handleDeleteAccount(index);
-            });
-        });
-
-        // Edit button handlers
-        const editBtns = document.querySelectorAll('.bank-account-edit-btn');
-        editBtns.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const index = parseInt(this.getAttribute('data-index'));
-                handleEditAccount(index);
-            });
-        });
+        // Attach event listeners to bank account cards
+        attachBankAccountListeners();
 
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
@@ -152,9 +153,8 @@
             if (confirm(`هل أنت متأكد من حذف حساب ${account.bankName}؟`)) {
                 // TODO: Implement actual deletion logic
                 alert('تم حذف الحساب البنكي');
-                // Re-render the view
-                bankAccountsViewRendered = false;
-                await renderBankAccountsView();
+                // Update the list
+                await updateBankAccountsList();
             }
         }
     }
@@ -168,26 +168,60 @@
         }
     }
 
+    // Update bank accounts list content
+    async function updateBankAccountsList() {
+        const bankAccounts = await fetchBankAccounts();
+        const listContainer = document.getElementById('bank-accounts-list');
+        if (listContainer) {
+            listContainer.innerHTML = bankAccounts.length > 0
+                ? bankAccounts.map((account, index) => createBankAccountCard(account, index)).join('')
+                : '<div class="bank-accounts-empty-state"><p class="bank-accounts-empty-text">لايوجد حساب بنكي لعرضه هنا</p></div>';
+
+            // Re-attach event listeners
+            attachBankAccountListeners();
+        }
+    }
+
+    // Attach event listeners to bank account cards
+    function attachBankAccountListeners() {
+        // Delete button handlers
+        const deleteBtns = document.querySelectorAll('.bank-account-delete-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const index = parseInt(this.getAttribute('data-index'));
+                handleDeleteAccount(index);
+            });
+        });
+
+        // Edit button handlers
+        const editBtns = document.querySelectorAll('.bank-account-edit-btn');
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const index = parseInt(this.getAttribute('data-index'));
+                handleEditAccount(index);
+            });
+        });
+    }
+
     // Show add/edit bank account form
     async function showAddBankAccountForm(accountData = null) {
-        const bankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
-        if (!bankAccountsView) return;
+        const listView = document.getElementById('bank-accounts-list-view');
+        const formView = document.getElementById('bank-accounts-form-view');
+        const formContent = document.getElementById('bank-accounts-form-content');
+        const headerTitle = document.getElementById('bank-accounts-header-title');
 
-        // Reset render flag so we can go back to list view
-        bankAccountsViewRendered = false;
+        if (!listView || !formView || !formContent) return;
+
         const isEditMode = accountData !== null;
 
-        bankAccountsView.innerHTML = `
-            <div class="settings-container">
-                <div class="account-tabs-header" id="manage-bank-accounts-header">
-                    <button class="back-btn" id="add-bank-account-back-btn" aria-label="رجوع">
-                        <i data-lucide="arrow-right" class="back-icon"></i>
-                    </button>
-                    <h2 class="account-tabs-title">${isEditMode ? 'تعديل حساب بنكي' : 'إضافة حساب بنكي'}</h2>
-                </div>
+        // Update header title
+        if (headerTitle) {
+            headerTitle.textContent = isEditMode ? 'تعديل حساب بنكي' : 'إضافة حساب بنكي';
+        }
 
-                <div class="settings-content scrollable-container">
-                    <h3 class="add-bank-account-form-title">${isEditMode ? 'تعديل حساب بنكي' : 'إضافة حساب بنكي'}</h3>
+        // Build form HTML
+        formContent.innerHTML = `
+            <h3 class="add-bank-account-form-title">${isEditMode ? 'تعديل حساب بنكي' : 'إضافة حساب بنكي'}</h3>
                     
                     <form class="add-bank-account-form" id="add-bank-account-form">
                         <!-- Bank Name Dropdown -->
@@ -297,17 +331,24 @@
                             طلب مراجعة حسابي البنكي
                         </button>
                     </form>
-                </div>
-            </div>
         `;
 
-        // Back button handler
-        const backBtn = document.getElementById('add-bank-account-back-btn');
+        // Hide list view and show form view with transition
+        if (listView && formView) {
+            // Trigger transition
+            listView.classList.remove('active');
+
+            // Use requestAnimationFrame for smooth transition
+            requestAnimationFrame(() => {
+                formView.classList.add('active');
+            });
+        }
+
+        // Update back button to go back to list
+        const backBtn = document.getElementById('manage-bank-accounts-back-btn');
         if (backBtn) {
             backBtn.onclick = function () {
-                // Go back to bank accounts list
-                bankAccountsViewRendered = false;
-                renderBankAccountsView();
+                showBankAccountsList();
             };
         }
 
@@ -364,6 +405,44 @@
         }
     }
 
+    // Show bank accounts list view
+    function showBankAccountsList() {
+        const listView = document.getElementById('bank-accounts-list-view');
+        const formView = document.getElementById('bank-accounts-form-view');
+        const headerTitle = document.getElementById('bank-accounts-header-title');
+
+        if (!listView || !formView) return;
+
+        // Update header title
+        if (headerTitle) {
+            headerTitle.textContent = 'إدارة حساباتي البنكية';
+        }
+
+        // Hide form view and show list view with transition
+        formView.classList.remove('active');
+
+        // Use requestAnimationFrame for smooth transition
+        requestAnimationFrame(() => {
+            listView.classList.add('active');
+        });
+
+        // Update back button to go back to profile menu
+        const backBtn = document.getElementById('manage-bank-accounts-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function () {
+                // Navigate back to profile menu
+                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
+                } else {
+                    // Fallback: navigate to profile section
+                    if (typeof window.switchToSection === 'function') {
+                        window.switchToSection('profile-section');
+                    }
+                }
+            };
+        }
+    }
+
     // Handle form submission
     async function handleFormSubmit() {
         const formData = {
@@ -384,8 +463,8 @@
         }
 
         // Go back to bank accounts list
-        bankAccountsViewRendered = false;
-        await renderBankAccountsView();
+        await updateBankAccountsList();
+        showBankAccountsList();
     }
 
     // Initialize when DOM is ready
@@ -395,17 +474,13 @@
             return;
         }
 
-        // Build view markup once
-        renderBankAccountsView();
-
-        // Use MutationObserver to re-initialize when view becomes active
+        // Use MutationObserver to render when view becomes active
         const observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     const isActive = bankAccountsView.classList.contains('active');
-                    if (isActive) {
-                        // Re-render when view becomes active
-                        bankAccountsViewRendered = false; // Reset flag to allow re-rendering
+                    if (isActive && !bankAccountsViewRendered) {
+                        // Only render once when view becomes active
                         setTimeout(async () => {
                             await renderBankAccountsView();
                             // Initialize Lucide icons
@@ -423,9 +498,15 @@
             attributeFilter: ['class']
         });
 
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        // Check if view is already active on initial load
+        if (bankAccountsView.classList.contains('active') && !bankAccountsViewRendered) {
+            setTimeout(async () => {
+                await renderBankAccountsView();
+                // Initialize Lucide icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }, 100);
         }
     }
 

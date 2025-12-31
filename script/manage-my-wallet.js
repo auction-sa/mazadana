@@ -88,7 +88,6 @@
 
                         <!-- الحساب البنكي Section -->
                         <div class="bank-account-section">
-                            <h3 class="wallet-section-title">الحساب البنكي</h3>
                             <button class="wallet-add-bank-btn" id="wallet-add-bank-btn">
                                 <i data-lucide="plus" class="add-bank-icon"></i>
                                 إضافة حساب بنكي
