@@ -150,6 +150,27 @@
             addMoneyBtn.addEventListener('click', showAddMoneyBottomSheet);
         }
 
+        // Add bank account button handler - navigate to manage bank accounts page
+        const addBankBtn = document.getElementById('wallet-add-bank-btn');
+        if (addBankBtn) {
+            addBankBtn.addEventListener('click', function () {
+                // Navigate to manage bank accounts page, same as clicking "حسابات بنكية" menu item
+                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
+                } else {
+                    // Fallback: navigate to profile section first, then to bank accounts
+                    if (typeof window.switchToSection === 'function') {
+                        window.switchToSection('profile-section');
+                        setTimeout(() => {
+                            if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                                window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
+                            }
+                        }, 300);
+                    }
+                }
+            });
+        }
+
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
