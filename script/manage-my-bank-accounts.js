@@ -8,6 +8,38 @@
     let bankAccountsViewRendered = false;
     let currentEditIndex = null; // Track which account is being edited
 
+    // Bank data mapping: bank name -> SWIFT code and logo path
+    const bankData = {
+        'بنك الراجحي': {
+            swiftCode: 'RJHISARI',
+            logo: 'icons/banks/alrajhi.png' // Update with actual logo path
+        },
+        'بنك الأهلي': {
+            swiftCode: 'NCBKSARI',
+            logo: 'icons/banks/alahli.png' // Update with actual logo path
+        },
+        'البنك السعودي الفرنسي': {
+            swiftCode: 'BSFRSARI',
+            logo: 'icons/banks/sf.png' // Update with actual logo path
+        },
+        'بنك الرياض': {
+            swiftCode: 'RIBLSARI',
+            logo: 'icons/banks/riyad.png' // Update with actual logo path
+        },
+        'البنك السعودي للاستثمار': {
+            swiftCode: 'SIBCSAJE',
+            logo: 'icons/banks/sabic.png' // Update with actual logo path
+        },
+        'بنك ساب': {
+            swiftCode: 'SAUBSARI',
+            logo: 'icons/banks/sabb.png' // Update with actual logo path
+        },
+        'البنك الأهلي التجاري': {
+            swiftCode: 'NCBKSARI',
+            logo: 'icons/banks/alahli-commercial.png' // Update with actual logo path
+        }
+    };
+
     // Fetch bank accounts data from user-data.json
     async function fetchBankAccounts() {
         try {
@@ -307,27 +339,29 @@
                         <!-- Bank Name Dropdown -->
                         <div class="my-bank-accounts-form-group">
                             <label class="form-label required">اسم البنك</label>
-                            <div class="select-wrapper">
+                            <div class="select-wrapper" id="bank-select-wrapper">
                                 <select class="my-bank-accounts-form-select" id="bank-name-select" required>
                                     <option value="">اختر البنك</option>
-                                    <option value="بنك الراجحي" ${accountData?.bankName === 'بنك الراجحي' ? 'selected' : ''}>بنك الراجحي</option>
-                                    <option value="بنك الأهلي" ${accountData?.bankName === 'بنك الأهلي' ? 'selected' : ''}>بنك الأهلي</option>
-                                    <option value="البنك السعودي الفرنسي" ${accountData?.bankName === 'البنك السعودي الفرنسي' ? 'selected' : ''}>البنك السعودي الفرنسي</option>
-                                    <option value="بنك الرياض" ${accountData?.bankName === 'بنك الرياض' ? 'selected' : ''}>بنك الرياض</option>
-                                    <option value="البنك السعودي للاستثمار" ${accountData?.bankName === 'البنك السعودي للاستثمار' ? 'selected' : ''}>البنك السعودي للاستثمار</option>
-                                    <option value="بنك ساب" ${accountData?.bankName === 'بنك ساب' ? 'selected' : ''}>بنك ساب</option>
-                                    <option value="البنك الأهلي التجاري" ${accountData?.bankName === 'البنك الأهلي التجاري' ? 'selected' : ''}>البنك الأهلي التجاري</option>
+                                    ${Object.keys(bankData).map(bankName => {
+            const bank = bankData[bankName];
+            const isSelected = accountData?.bankName === bankName ? 'selected' : '';
+            return `<option value="${bankName}" data-swift="${bank.swiftCode}" data-logo="${bank.logo}" ${isSelected}>
+                                            ${bankName}
+                                        </option>`;
+        }).join('')}
                                 </select>
+                                <img class="bank-logo-preview" id="bank-logo-preview" src="" alt="" style="display: none;">
                                 <i data-lucide="chevron-down" class="select-chevron"></i>
                             </div>
                         </div>
 
                         <!-- SWIFT Code -->
                         <div class="my-bank-accounts-form-group">
-                            <label class="form-label required">SWIFT Code</label>
+                            <label class="form-label required">رمز السويفت</label>
                             <input type="text" class="my-bank-accounts-form-input" id="swift-code-input" 
-                                placeholder="أدخل رمز SWIFT" 
+                                placeholder="سيتم تعبئته تلقائياً" 
                                 value="${accountData?.swiftCode || ''}" 
+                                disabled
                                 required>
                         </div>
 
@@ -371,10 +405,8 @@
                         <div class="my-bank-accounts-form-group">
                             <label class="form-label required">العملة</label>
                             <div class="select-wrapper">
-                                <select class="my-bank-accounts-form-select" id="currency-select" required>
-                                    <option value="الريال السعودي" ${(!accountData || accountData.accountCurrency === 'الريال السعودي' || accountData.accountCurrency === 'ريال سعودي') ? 'selected' : ''}>الريال السعودي</option>
-                                    <option value="دولار أمريكي" ${accountData?.accountCurrency === 'دولار أمريكي' ? 'selected' : ''}>دولار أمريكي</option>
-                                    <option value="يورو" ${accountData?.accountCurrency === 'يورو' ? 'selected' : ''}>يورو</option>
+                                <select class="my-bank-accounts-form-select" id="currency-select" disabled required>
+                                    <option value="الريال السعودي" selected>الريال السعودي</option>
                                 </select>
                                 <i data-lucide="chevron-down" class="select-chevron"></i>
                             </div>
@@ -400,9 +432,9 @@
 
                         <!-- Policy Checkbox -->
                         <div class="my-bank-accounts-form-group">
-                            <label class="checkbox-label">
+                            <label class="my-bank-accounts-checkbox-label">
                                 <input type="checkbox" class="form-checkbox" id="policy-checkbox" required>
-                                <span class="checkbox-text">أوافق على الشروط والأحكام وسياسة الخصوصية</span>
+                                <span class="checkbox-text">عند تسجيل الحساب البنكي فإن سياسة شركة مباشر تقتضي بتطابق اسم صاحب الحساب مع الاسم المسجل في المنصة، وفي حالة إضافة حساب بنكي لطرف آخر فلن تستطيع إتمام عملياتك المالية على المنصة.</span>
                             </label>
                         </div>
 
@@ -466,6 +498,55 @@
                     uploadArea.querySelector('.iban-image-upload-content').style.display = 'flex';
                 });
             }
+        }
+
+        // Bank name change handler - auto-populate SWIFT code and show bank logo
+        const bankNameSelect = document.getElementById('bank-name-select');
+        const swiftCodeInput = document.getElementById('swift-code-input');
+        const bankLogoPreview = document.getElementById('bank-logo-preview');
+        const bankSelectWrapper = document.getElementById('bank-select-wrapper');
+
+        function updateBankLogo() {
+            const selectedOption = bankNameSelect.options[bankNameSelect.selectedIndex];
+            if (selectedOption && selectedOption.value && bankData[selectedOption.value]) {
+                const logoPath = bankData[selectedOption.value].logo;
+                if (bankLogoPreview) {
+                    bankLogoPreview.src = logoPath;
+                    bankLogoPreview.style.display = 'block';
+                    bankLogoPreview.onerror = function () {
+                        // Hide logo if image fails to load
+                        this.style.display = 'none';
+                    };
+                }
+                if (bankSelectWrapper) {
+                    bankSelectWrapper.classList.add('has-bank-logo');
+                }
+            } else {
+                if (bankLogoPreview) {
+                    bankLogoPreview.style.display = 'none';
+                }
+                if (bankSelectWrapper) {
+                    bankSelectWrapper.classList.remove('has-bank-logo');
+                }
+            }
+        }
+
+        if (bankNameSelect && swiftCodeInput) {
+            // Set initial SWIFT code and logo if bank is already selected
+            if (accountData?.bankName && bankData[accountData.bankName]) {
+                swiftCodeInput.value = bankData[accountData.bankName].swiftCode;
+                updateBankLogo();
+            }
+
+            bankNameSelect.addEventListener('change', function () {
+                const selectedBank = this.value;
+                if (selectedBank && bankData[selectedBank]) {
+                    swiftCodeInput.value = bankData[selectedBank].swiftCode;
+                } else {
+                    swiftCodeInput.value = '';
+                }
+                updateBankLogo();
+            });
         }
 
         // Form submission handler

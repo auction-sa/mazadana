@@ -65,6 +65,10 @@
         // Use inline style for instant hiding (no CSS parsing delay)
         const hideStyle = shouldHideElements ? 'style="display: none;"' : '';
 
+        // Determine if withdraw button should be enabled (when balance is not 0)
+        const isWithdrawEnabled = userBalance !== 0;
+        const withdrawDisabledAttr = isWithdrawEnabled ? '' : 'disabled';
+
         walletView.innerHTML = `
             <div class="settings-container">
                 <div class="account-tabs-header" id="manage-wallet-header">
@@ -99,7 +103,7 @@
                                         <i data-lucide="plus" class="add-money-icon"></i>
                                         إضافة أموال
                                     </button>
-                                    <button class="wallet-withdraw-btn" disabled>
+                                    <button class="wallet-withdraw-btn" id="wallet-withdraw-btn" ${withdrawDisabledAttr}>
                                         طلب سحب
                                     </button>
                                 </div>
@@ -155,6 +159,27 @@
         if (addBankBtn) {
             addBankBtn.addEventListener('click', function () {
                 // Navigate to manage bank accounts page, same as clicking "حسابات بنكية" menu item
+                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
+                } else {
+                    // Fallback: navigate to profile section first, then to bank accounts
+                    if (typeof window.switchToSection === 'function') {
+                        window.switchToSection('profile-section');
+                        setTimeout(() => {
+                            if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                                window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
+                            }
+                        }, 300);
+                    }
+                }
+            });
+        }
+
+        // Withdraw button handler - navigate to manage bank accounts page when enabled
+        const withdrawBtn = document.getElementById('wallet-withdraw-btn');
+        if (withdrawBtn && !withdrawBtn.disabled) {
+            withdrawBtn.addEventListener('click', function () {
+                // Navigate to manage bank accounts page for withdrawal
                 if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
                     window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
                 } else {
