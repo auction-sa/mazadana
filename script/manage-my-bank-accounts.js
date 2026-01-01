@@ -10,33 +10,89 @@
 
     // Bank data mapping: bank name -> SWIFT code and logo path
     const bankData = {
-        'بنك الراجحي': {
-            swiftCode: 'RJHISARI',
-            logo: 'icons/banks/alrajhi.png' // Update with actual logo path
-        },
-        'بنك الأهلي': {
+        'البنك الأهلي التجاري': {
             swiftCode: 'NCBKSARI',
-            logo: 'icons/banks/alahli.png' // Update with actual logo path
+            logo: 'icons/banks/alahli-commercial.webp'
         },
-        'البنك السعودي الفرنسي': {
-            swiftCode: 'BSFRSARI',
-            logo: 'icons/banks/sf.png' // Update with actual logo path
+        'مصرف الراجحي': {
+            swiftCode: 'RJHISARI',
+            logo: 'icons/banks/alrajhi.webp'
+        },
+        'بنك الانماء': {
+            swiftCode: 'INMASARI',
+            logo: 'icons/banks/alinma.webp'
+        },
+        'بنك البلاد': {
+            swiftCode: 'ALBISARI',
+            logo: 'icons/banks/albilad.webp'
+        },
+        'بنك الجزيرة': {
+            swiftCode: 'BJAZSAJE',
+            logo: 'icons/banks/aljazira.webp'
+        },
+        'البنك الأول': {
+            swiftCode: 'FRSTSAJE',
+            logo: 'icons/banks/first.webp'
+        },
+        'البنك العربي الوطني': {
+            swiftCode: 'UJNBSARI',
+            logo: 'icons/banks/anb.webp'
+        },
+        'بنك مسقط': {
+            swiftCode: 'BMUSOMRX',
+            logo: 'icons/banks/muscat.webp'
+        },
+        'بنك باريس الوطني': {
+            swiftCode: 'BNPAFRPP',
+            logo: 'icons/banks/bnp.webp'
+        },
+        'دويتشه بنك اي جي الألمناني': {
+            swiftCode: 'DEUTDEFF',
+            logo: 'icons/banks/deutsche.webp'
+        },
+        'بنك الامارات الدولي': {
+            swiftCode: 'EBILAEAD',
+            logo: 'icons/banks/emirates.webp'
+        },
+        'بنك الخليج الدولي': {
+            swiftCode: 'GULBSARI',
+            logo: 'icons/banks/gib.webp'
+        },
+        'جي بي مورجان تشيز بنك أن أيه': {
+            swiftCode: 'CHASUS33',
+            logo: 'icons/banks/jpmorgan.webp'
+        },
+        'بنك باكستان الوطني': {
+            swiftCode: 'NBPAPKKA',
+            logo: 'icons/banks/nbp-pakistan.webp'
+        },
+        'بنك البحرين الوطني': {
+            swiftCode: 'NBBABHBM',
+            logo: 'icons/banks/nbb-bahrain.webp'
+        },
+        'بنك الكويت الوطني': {
+            swiftCode: 'NBKWKWKW',
+            logo: 'icons/banks/nbk-kuwait.webp'
         },
         'بنك الرياض': {
             swiftCode: 'RIBLSARI',
-            logo: 'icons/banks/riyad.png' // Update with actual logo path
+            logo: 'icons/banks/riyad.webp'
         },
-        'البنك السعودي للاستثمار': {
-            swiftCode: 'SIBCSAJE',
-            logo: 'icons/banks/sabic.png' // Update with actual logo path
-        },
-        'بنك ساب': {
+        'ساب': {
             swiftCode: 'SAUBSARI',
-            logo: 'icons/banks/sabb.png' // Update with actual logo path
+            logo: 'icons/banks/sabb.webp'
         },
-        'البنك الأهلي التجاري': {
-            swiftCode: 'NCBKSARI',
-            logo: 'icons/banks/alahli-commercial.png' // Update with actual logo path
+        'سامبا': {
+            swiftCode: 'SAMBSARI',
+            logo: 'icons/banks/samba.webp'
+        },
+        'البنك السعودي الفرنسي': {
+            swiftCode: 'BSFRSARI',
+            logo: 'icons/banks/sf.webp'
+        },
+        'البنك السعودي للإستثمار': {
+            swiftCode: 'SIBCSAJE',
+            logo: 'icons/banks/sabic.webp'
         }
     };
 
