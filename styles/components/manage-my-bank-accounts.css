@@ -175,7 +175,7 @@
 }
 
 .bank-accounts-empty-text {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     color: var(--text-secondary);
     margin: 0;
@@ -373,14 +373,13 @@
     left: 0;
     right: 0;
     background: var(--bg-white);
-    border-radius: 20px 20px 0 0;
-    padding: var(--spacing-md) var(--spacing-md) var(--spacing-xs);
+    border-radius: 5px 5px 0 0;
+    padding: var(--spacing-md) 0 var(--spacing-xs);
     max-height: 80vh;
     min-height: 80vh;
-    overflow-y: auto;
+    justify-self: center;
     transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-    direction: rtl;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
 }
 

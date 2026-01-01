@@ -741,6 +741,9 @@
             });
         }
 
+        // Re-initialize mobile back button handler when form is shown
+        initMobileBackButton();
+
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
@@ -798,13 +801,9 @@
             headerTitle.textContent = 'إدارة حساباتي البنكية';
         }
 
-        // Hide form view and show list view with transition
+        // Hide form view and show list view synchronously (before browser paint)
         formView.classList.remove('active');
-
-        // Use requestAnimationFrame for smooth transition
-        requestAnimationFrame(() => {
-            listView.classList.add('active');
-        });
+        listView.classList.add('active');
 
         // Update back button to go back to profile menu
         const backBtn = document.getElementById('manage-bank-accounts-back-btn');
@@ -849,18 +848,46 @@
 
     // Initialize mobile back button handler
     function initMobileBackButton() {
-        // Handle Android back button (for mobile apps)
+        // Handle Android back button (for mobile apps - Cordova/PhoneGap)
         if (typeof document.addEventListener !== 'undefined') {
-            document.addEventListener('backbutton', function (event) {
+            // Use a named function so we can remove it if needed
+            const handleBackButton = function (event) {
                 const formView = document.getElementById('bank-accounts-form-view');
                 const listView = document.getElementById('bank-accounts-list-view');
 
-                // If form view is active, switch to list view
-                if (formView && formView.classList.contains('active')) {
-                    event.preventDefault();
-                    showBankAccountsList();
+                // Check if elements exist
+                if (!formView || !listView) {
+                    return;
                 }
-            }, false);
+
+                // If form view is active, switch to list view
+                if (formView.classList.contains('active')) {
+                    // Prevent default behavior
+                    if (event) {
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                        if (event.stopPropagation) {
+                            event.stopPropagation();
+                        }
+                        if (event.stopImmediatePropagation) {
+                            event.stopImmediatePropagation();
+                        }
+                    }
+
+                    // Call showBankAccountsList synchronously to switch views
+                    showBankAccountsList();
+
+                    // Return false to prevent further propagation
+                    return false;
+                }
+            };
+
+            // Remove any existing listener first
+            document.removeEventListener('backbutton', handleBackButton, false);
+
+            // Add the listener
+            document.addEventListener('backbutton', handleBackButton, false);
         }
     }
 
