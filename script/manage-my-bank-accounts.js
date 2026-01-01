@@ -7,6 +7,7 @@
     let eventListenersAttached = false;
     let bankAccountsViewRendered = false;
     let currentEditIndex = null; // Track which account is being edited
+    let isUpdatingFromHash = false; // Flag to prevent URL update loops
 
     // Bank data mapping: bank name -> SWIFT code and logo path
     const bankData = {
@@ -513,14 +514,21 @@
             // Use requestAnimationFrame for smooth transition
             requestAnimationFrame(() => {
                 formView.classList.add('active');
+                // Update URL hash when form view becomes active (only if not updating from hash)
+                if (!isUpdatingFromHash &&
+                    (window.location.hash === '#/profile/manage-bank-accounts' ||
+                        window.location.hash === '#/profile/manage-bank-accounts/')) {
+                    window.location.hash = '#/profile/manage-bank-accounts/add-new-bank-account';
+                }
             });
         }
 
-        // Update back button to go back to list
+        // Update back button to go back to list using URL navigation
         const backBtn = document.getElementById('manage-bank-accounts-back-btn');
         if (backBtn) {
             backBtn.onclick = function () {
-                showBankAccountsList();
+                // Navigate back using URL hash to trigger hashchange event
+                window.location.hash = '#/profile/manage-bank-accounts';
             };
         }
 
@@ -741,9 +749,6 @@
             });
         }
 
-        // Re-initialize mobile back button handler when form is shown
-        initMobileBackButton();
-
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             setTimeout(() => {
@@ -801,9 +806,18 @@
             headerTitle.textContent = 'إدارة حساباتي البنكية';
         }
 
-        // Hide form view and show list view synchronously (before browser paint)
+        // Hide form view and show list view with transition
         formView.classList.remove('active');
-        listView.classList.add('active');
+
+        // Use requestAnimationFrame for smooth transition
+        requestAnimationFrame(() => {
+            listView.classList.add('active');
+            // Update URL hash back to list view when form view is hidden (only if not updating from hash)
+            if (!isUpdatingFromHash &&
+                window.location.hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                window.location.hash = '#/profile/manage-bank-accounts';
+            }
+        });
 
         // Update back button to go back to profile menu
         const backBtn = document.getElementById('manage-bank-accounts-back-btn');
@@ -848,47 +862,74 @@
 
     // Initialize mobile back button handler
     function initMobileBackButton() {
-        // Handle Android back button (for mobile apps - Cordova/PhoneGap)
+        // Handle Android back button (for mobile apps)
         if (typeof document.addEventListener !== 'undefined') {
-            // Use a named function so we can remove it if needed
-            const handleBackButton = function (event) {
+            document.addEventListener('backbutton', function (event) {
                 const formView = document.getElementById('bank-accounts-form-view');
-                const listView = document.getElementById('bank-accounts-list-view');
+                const hash = window.location.hash;
 
-                // Check if elements exist
-                if (!formView || !listView) {
-                    return;
+                // If form view is active or hash indicates form view, navigate back to list view
+                if ((formView && formView.classList.contains('active')) ||
+                    hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                    event.preventDefault();
+                    // Navigate back to list view using URL hash
+                    window.location.hash = '#/profile/manage-bank-accounts';
                 }
-
-                // If form view is active, switch to list view
-                if (formView.classList.contains('active')) {
-                    // Prevent default behavior
-                    if (event) {
-                        if (event.preventDefault) {
-                            event.preventDefault();
-                        }
-                        if (event.stopPropagation) {
-                            event.stopPropagation();
-                        }
-                        if (event.stopImmediatePropagation) {
-                            event.stopImmediatePropagation();
-                        }
-                    }
-
-                    // Call showBankAccountsList synchronously to switch views
-                    showBankAccountsList();
-
-                    // Return false to prevent further propagation
-                    return false;
-                }
-            };
-
-            // Remove any existing listener first
-            document.removeEventListener('backbutton', handleBackButton, false);
-
-            // Add the listener
-            document.addEventListener('backbutton', handleBackButton, false);
+            }, false);
         }
+    }
+
+    // Handle URL hash changes to show correct view
+    function handleHashChange() {
+        const hash = window.location.hash;
+        const formView = document.getElementById('bank-accounts-form-view');
+        const listView = document.getElementById('bank-accounts-list-view');
+        const bankAccountsView = document.getElementById('manage-my-bank-accounts-view');
+
+        // Only handle if we're on the bank accounts page
+        if (!bankAccountsView || !bankAccountsView.classList.contains('active')) {
+            return;
+        }
+
+        // Set flag to prevent URL update loops
+        isUpdatingFromHash = true;
+
+        if (hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+            // Show form view
+            if (formView && listView) {
+                listView.classList.remove('active');
+                formView.classList.add('active');
+                // If form is not rendered yet, render it
+                if (!formView.querySelector('.add-bank-account-form')) {
+                    showAddBankAccountForm();
+                }
+            }
+        } else if (hash === '#/profile/manage-bank-accounts' || hash === '#/profile/manage-bank-accounts/') {
+            // Show list view
+            if (formView && listView) {
+                formView.classList.remove('active');
+                listView.classList.add('active');
+            }
+        }
+
+        // Reset flag after a short delay
+        setTimeout(() => {
+            isUpdatingFromHash = false;
+        }, 100);
+    }
+
+    // Initialize hash change listeners
+    function initHashChangeListeners() {
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Listen for popstate (browser back/forward)
+        window.addEventListener('popstate', handleHashChange);
+
+        // Handle initial hash on load
+        setTimeout(() => {
+            handleHashChange();
+        }, 100);
     }
 
     // Initialize when DOM is ready
@@ -900,6 +941,9 @@
 
         // Initialize mobile back button handler
         initMobileBackButton();
+
+        // Initialize hash change listeners
+        initHashChangeListeners();
 
         // Use MutationObserver to render when view becomes active
         const observer = new MutationObserver(function (mutations) {
@@ -914,11 +958,28 @@
                             if (typeof lucide !== 'undefined') {
                                 lucide.createIcons();
                             }
+                            // Check if hash is for form view and show form
+                            if (window.location.hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                                setTimeout(() => {
+                                    showAddBankAccountForm();
+                                }, 100);
+                            }
                         }, 100);
                     } else if (isActive && bankAccountsViewRendered) {
-                        // View is already rendered, ensure list view is active immediately (synchronously)
-                        // This happens before browser paint, making it instant and unnoticeable
-                        ensureListViewActive();
+                        // View is already rendered, check hash to determine which view to show
+                        if (window.location.hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                            // Show form view if hash indicates form
+                            const formView = document.getElementById('bank-accounts-form-view');
+                            const listView = document.getElementById('bank-accounts-list-view');
+                            if (formView && listView) {
+                                listView.classList.remove('active');
+                                formView.classList.add('active');
+                            }
+                        } else {
+                            // Ensure list view is active immediately (synchronously)
+                            // This happens before browser paint, making it instant and unnoticeable
+                            ensureListViewActive();
+                        }
                     }
                 }
             });
@@ -937,11 +998,28 @@
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
+                // Check if hash is for form view and show form
+                if (window.location.hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                    setTimeout(() => {
+                        showAddBankAccountForm();
+                    }, 100);
+                }
             }, 100);
         } else if (bankAccountsView.classList.contains('active') && bankAccountsViewRendered) {
-            // View is already rendered, ensure list view is active immediately (synchronously)
-            // This happens before browser paint, making it instant and unnoticeable
-            ensureListViewActive();
+            // View is already rendered, check hash to determine which view to show
+            if (window.location.hash === '#/profile/manage-bank-accounts/add-new-bank-account') {
+                // Show form view if hash indicates form
+                const formView = document.getElementById('bank-accounts-form-view');
+                const listView = document.getElementById('bank-accounts-list-view');
+                if (formView && listView) {
+                    listView.classList.remove('active');
+                    formView.classList.add('active');
+                }
+            } else {
+                // Ensure list view is active immediately (synchronously)
+                // This happens before browser paint, making it instant and unnoticeable
+                ensureListViewActive();
+            }
         }
     }
 
