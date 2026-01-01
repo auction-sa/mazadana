@@ -57,22 +57,6 @@
 
 
   "userBankAccountsDataObject":[
-    {
-      "bankName": "بنك الراجحي",
-      "swiftCode": "EXMPUS33ABC",
-      "accountNo": "1234567890",
-      "accountCurrency": "ريال سعودي",
-      "ibanNumber": "SA1234567890",
-      "ownerAddress": "الرياض - حي اليرموك - المملكة العربية السعودية"
-    },
-    {
-      "bankName": "بنك الأهلي",
-      "swiftCode": "EXMPUS33ABC",
-      "accountNo": "1234567890",
-      "accountCurrency": "ريال سعودي",
-      "ibanNumber": "SA1234567890",
-      "ownerAddress": "مكة - شارع الملك فهد - المملكة العربية السعودية"
-    }
   ],
 
 

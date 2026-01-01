@@ -54,7 +54,7 @@
 
     // Build manage bank accounts view markup
     async function renderBankAccountsView() {
-        const bankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        const bankAccountsView = document.getElementById('manage-my-bank-accounts-view');
         if (!bankAccountsView) return;
 
         // If already rendered, just update the list content
@@ -485,6 +485,42 @@
         }
     }
 
+    // Ensure list view is active and form view is not active
+    function ensureListViewActive() {
+        const listView = document.getElementById('bank-accounts-list-view');
+        const formView = document.getElementById('bank-accounts-form-view');
+        const headerTitle = document.getElementById('bank-accounts-header-title');
+
+        if (!listView || !formView) return;
+
+        // Update header title
+        if (headerTitle) {
+            headerTitle.textContent = 'إدارة حساباتي البنكية';
+        }
+
+        // Ensure form view is not active
+        formView.classList.remove('active');
+
+        // Ensure list view is active
+        listView.classList.add('active');
+
+        // Update back button to go back to profile menu
+        const backBtn = document.getElementById('manage-bank-accounts-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function () {
+                // Navigate back to profile menu
+                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
+                } else {
+                    // Fallback: navigate to profile section
+                    if (typeof window.switchToSection === 'function') {
+                        window.switchToSection('profile-section');
+                    }
+                }
+            };
+        }
+    }
+
     // Show bank accounts list view
     function showBankAccountsList() {
         const listView = document.getElementById('bank-accounts-list-view');
@@ -549,7 +585,7 @@
 
     // Initialize when DOM is ready
     function init() {
-        const bankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        const bankAccountsView = document.getElementById('manage-my-bank-accounts-view');
         if (!bankAccountsView) {
             return;
         }
@@ -568,6 +604,10 @@
                                 lucide.createIcons();
                             }
                         }, 100);
+                    } else if (isActive && bankAccountsViewRendered) {
+                        // View is already rendered, ensure list view is active immediately (synchronously)
+                        // This happens before browser paint, making it instant and unnoticeable
+                        ensureListViewActive();
                     }
                 }
             });
@@ -587,6 +627,10 @@
                     lucide.createIcons();
                 }
             }, 100);
+        } else if (bankAccountsView.classList.contains('active') && bankAccountsViewRendered) {
+            // View is already rendered, ensure list view is active immediately (synchronously)
+            // This happens before browser paint, making it instant and unnoticeable
+            ensureListViewActive();
         }
     }
 
@@ -599,7 +643,8 @@
 
     // Export for external use
     window.ManageBankAccountsPage = {
-        init: init
+        init: init,
+        ensureListViewActive: ensureListViewActive
     };
 })();
 

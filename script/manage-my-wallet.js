@@ -115,8 +115,8 @@
                         <!-- الحساب البنكي Section -->
                         <div class="bank-account-section ${hideClass}" id="wallet-page-add-bank-account-button" ${hideStyle}>
                             <button class="wallet-add-bank-btn" id="wallet-add-bank-btn">
-                                <i data-lucide="plus" class="add-bank-icon"></i>
-                                إضافة حساب بنكي
+                                <i data-lucide="credit-card" class="add-bank-icon"></i>
+                                إدارة حساباتي البنكية
                             </button>
                         </div>
                     </div>

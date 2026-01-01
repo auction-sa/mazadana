@@ -171,7 +171,7 @@
         },
         [ProfileRoutes.MANAGE_BANK_ACCOUNTS]: {
             headerId: 'manage-bank-accounts-header',
-            viewId: 'manage-my-bank-Accounts-view',
+            viewId: 'manage-my-bank-accounts-view',
             hash: '#/profile/manage-bank-accounts',
             historyDelay: 400,
             init: () => {
@@ -276,7 +276,7 @@
         if (manageWalletView && manageWalletView.id !== exceptViewId) {
             manageWalletView.classList.remove('active');
         }
-        const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        const manageBankAccountsView = document.getElementById('manage-my-bank-accounts-view');
         if (manageBankAccountsView && manageBankAccountsView.id !== exceptViewId) {
             manageBankAccountsView.classList.remove('active');
         }
@@ -321,7 +321,7 @@
         if (manageWalletView && manageWalletView.id !== config.viewId) {
             manageWalletView.classList.remove('active');
         }
-        const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+        const manageBankAccountsView = document.getElementById('manage-my-bank-accounts-view');
         if (manageBankAccountsView && manageBankAccountsView.id !== config.viewId) {
             manageBankAccountsView.classList.remove('active');
         }
@@ -332,6 +332,15 @@
             targetView.classList.add('active');
             currentProfileRoute = route;
             window.location.hash = config.hash;
+
+            // For bank accounts page, ensure list view is active and form view is not active
+            // This must happen synchronously before browser paint to be unnoticeable
+            if (route === ProfileRoutes.MANAGE_BANK_ACCOUNTS) {
+                if (typeof window.ManageBankAccountsPage !== 'undefined' &&
+                    typeof window.ManageBankAccountsPage.ensureListViewActive === 'function') {
+                    window.ManageBankAccountsPage.ensureListViewActive();
+                }
+            }
 
             // Scroll scrollable containers to top immediately (synchronously, before any rendering)
             // This ensures the scroll happens before the browser paints, making it invisible
@@ -1032,7 +1041,7 @@
             if (manageWalletView) {
                 manageWalletView.classList.remove('active');
             }
-            const manageBankAccountsView = document.getElementById('manage-my-bank-Accounts-view');
+            const manageBankAccountsView = document.getElementById('manage-my-bank-accounts-view');
             if (manageBankAccountsView) {
                 manageBankAccountsView.classList.remove('active');
             }
