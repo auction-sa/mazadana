@@ -209,6 +209,10 @@
     .seller-company-auctions-list {
         justify-content: flex-start;
     }
+
+    .bank-select-content {
+        width: 50%;
+    }
 }
 
 

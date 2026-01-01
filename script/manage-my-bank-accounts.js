@@ -412,17 +412,6 @@
                                     <span class="custom-select-text" id="custom-bank-select-text">اختر البنك</span>
                                     <i data-lucide="chevron-down" class="select-chevron"></i>
                                 </div>
-                                <!-- Custom dropdown menu -->
-                                <div class="custom-select-dropdown" id="custom-bank-select-dropdown" style="display: none;">
-                                    ${Object.keys(bankData).map(bankName => {
-            const bank = bankData[bankName];
-            const isSelected = accountData?.bankName === bankName ? 'selected' : '';
-            return `<div class="custom-select-option ${isSelected ? 'selected' : ''}" data-value="${bankName}" data-swift="${bank.swiftCode}" data-logo="${bank.logo}">
-                                        <img class="custom-select-option-logo" src="${bank.logo}" alt="${bankName}" onerror="this.style.display='none'">
-                                        <span class="custom-select-option-text">${bankName}</span>
-                                    </div>`;
-        }).join('')}
-                                </div>
                             </div>
                         </div>
 
@@ -571,14 +560,12 @@
             }
         }
 
-        // Custom bank dropdown handler
+        // Custom bank dropdown handler with bottom sheet
         const bankNameSelect = document.getElementById('bank-name-select');
         const swiftCodeInput = document.getElementById('swift-code-input');
         const customSelectButton = document.getElementById('custom-bank-select-button');
         const customSelectText = document.getElementById('custom-bank-select-text');
         const customSelectLogo = document.getElementById('custom-bank-select-logo');
-        const customSelectDropdown = document.getElementById('custom-bank-select-dropdown');
-        const customSelectOptions = customSelectDropdown ? customSelectDropdown.querySelectorAll('.custom-select-option') : [];
 
         function updateCustomSelect(bankName) {
             if (bankName && bankData[bankName]) {
@@ -604,14 +591,6 @@
                         this.style.display = 'none';
                     };
                 }
-                // Update selected state in dropdown
-                customSelectOptions.forEach(option => {
-                    if (option.getAttribute('data-value') === bankName) {
-                        option.classList.add('selected');
-                    } else {
-                        option.classList.remove('selected');
-                    }
-                });
             } else {
                 // Reset to default
                 if (customSelectText) {
@@ -623,10 +602,121 @@
                 if (swiftCodeInput) {
                     swiftCodeInput.value = '';
                 }
-                customSelectOptions.forEach(option => {
-                    option.classList.remove('selected');
+            }
+        }
+
+        // Show bank selection bottom sheet
+        function showBankSelectBottomSheet() {
+            // Remove existing sheet if any
+            const existingSheet = document.querySelector('.bank-select-bottom-sheet');
+            if (existingSheet) {
+                existingSheet.remove();
+            }
+
+            // Lock background scroll
+            const originalOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+
+            const bottomSheet = document.createElement('div');
+            bottomSheet.className = 'bank-select-bottom-sheet';
+            bottomSheet.innerHTML = `
+                <div class="bank-select-overlay"></div>
+                <div class="bank-select-content">
+                    <div class="bank-select-handle"></div>
+                    <h3 class="bank-select-title">اختر البنك</h3>
+                    <div class="bank-select-options scrollable-container">
+                        ${Object.keys(bankData).map(bankName => {
+                const bank = bankData[bankName];
+                const isSelected = bankNameSelect && bankNameSelect.value === bankName;
+                return `<div class="bank-select-option ${isSelected ? 'selected' : ''}" data-value="${bankName}" data-swift="${bank.swiftCode}" data-logo="${bank.logo}">
+                                <img class="bank-select-option-logo" src="${bank.logo}" alt="${bankName}" onerror="this.style.display='none'">
+                                <span class="bank-select-option-text">${bankName}</span>
+                            </div>`;
+            }).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(bottomSheet);
+
+            // Initialize Lucide icons
+            setTimeout(() => {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                bottomSheet.classList.add('active');
+            }, 10);
+
+            // Close handlers
+            const overlay = bottomSheet.querySelector('.bank-select-overlay');
+            const handle = bottomSheet.querySelector('.bank-select-handle');
+            const options = bottomSheet.querySelectorAll('.bank-select-option');
+
+            const closeSheet = () => {
+                bottomSheet.classList.remove('active');
+                document.body.style.overflow = originalOverflow;
+                setTimeout(() => {
+                    if (bottomSheet.parentNode) {
+                        bottomSheet.parentNode.removeChild(bottomSheet);
+                    }
+                }, 300);
+            };
+
+            if (overlay) overlay.addEventListener('click', closeSheet);
+
+            // Handle drag to close
+            if (handle) {
+                let startY = 0;
+                let currentY = 0;
+                let isDragging = false;
+
+                handle.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    isDragging = true;
+                });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    currentY = e.touches[0].clientY;
+                    const deltaY = currentY - startY;
+                    if (deltaY > 0) {
+                        const sheetContent = bottomSheet.querySelector('.bank-select-content');
+                        if (sheetContent) {
+                            sheetContent.style.transform = `translateY(${deltaY}px)`;
+                        }
+                    }
+                });
+
+                handle.addEventListener('touchend', () => {
+                    if (isDragging && currentY - startY > 50) {
+                        closeSheet();
+                    } else {
+                        const sheetContent = bottomSheet.querySelector('.bank-select-content');
+                        if (sheetContent) {
+                            sheetContent.style.transform = '';
+                        }
+                    }
+                    isDragging = false;
                 });
             }
+
+            // Handle option selection
+            options.forEach(option => {
+                option.addEventListener('click', function () {
+                    const bankName = this.getAttribute('data-value');
+                    updateCustomSelect(bankName);
+                    closeSheet();
+                });
+            });
+
+            // Close on Escape key
+            const handleEscape = (e) => {
+                if (e.key === 'Escape' && bottomSheet.classList.contains('active')) {
+                    closeSheet();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
         }
 
         // Initialize with selected bank if editing
@@ -634,36 +724,11 @@
             updateCustomSelect(accountData.bankName);
         }
 
-        // Toggle dropdown on button click
-        if (customSelectButton && customSelectDropdown) {
+        // Open bottom sheet on button click
+        if (customSelectButton) {
             customSelectButton.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const isOpen = customSelectDropdown.style.display === 'block';
-                customSelectDropdown.style.display = isOpen ? 'none' : 'block';
-                if (!isOpen) {
-                    customSelectButton.classList.add('active');
-                } else {
-                    customSelectButton.classList.remove('active');
-                }
-            });
-
-            // Handle option selection
-            customSelectOptions.forEach(option => {
-                option.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const bankName = this.getAttribute('data-value');
-                    updateCustomSelect(bankName);
-                    customSelectDropdown.style.display = 'none';
-                    customSelectButton.classList.remove('active');
-                });
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!customSelectButton.contains(e.target) && !customSelectDropdown.contains(e.target)) {
-                    customSelectDropdown.style.display = 'none';
-                    customSelectButton.classList.remove('active');
-                }
+                showBankSelectBottomSheet();
             });
         }
 
@@ -782,12 +847,32 @@
         showBankAccountsList();
     }
 
+    // Initialize mobile back button handler
+    function initMobileBackButton() {
+        // Handle Android back button (for mobile apps)
+        if (typeof document.addEventListener !== 'undefined') {
+            document.addEventListener('backbutton', function (event) {
+                const formView = document.getElementById('bank-accounts-form-view');
+                const listView = document.getElementById('bank-accounts-list-view');
+
+                // If form view is active, switch to list view
+                if (formView && formView.classList.contains('active')) {
+                    event.preventDefault();
+                    showBankAccountsList();
+                }
+            }, false);
+        }
+    }
+
     // Initialize when DOM is ready
     function init() {
         const bankAccountsView = document.getElementById('manage-my-bank-accounts-view');
         if (!bankAccountsView) {
             return;
         }
+
+        // Initialize mobile back button handler
+        initMobileBackButton();
 
         // Use MutationObserver to render when view becomes active
         const observer = new MutationObserver(function (mutations) {

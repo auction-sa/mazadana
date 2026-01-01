@@ -338,6 +338,119 @@
     flex-shrink: 0;
 }
 
+/* Bank Select Bottom Sheet */
+.bank-select-bottom-sheet {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.bank-select-bottom-sheet.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.bank-select-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.bank-select-content {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-radius: 20px 20px 0 0;
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-xs);
+    max-height: 80vh;
+    min-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    direction: rtl;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.bank-select-bottom-sheet.active .bank-select-content {
+    transform: translateY(0);
+}
+
+.bank-select-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    margin: 0 auto var(--spacing-md) auto;
+    cursor: grab;
+}
+
+.bank-select-handle:active {
+    cursor: grabbing;
+}
+
+.bank-select-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.bank-select-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.bank-select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+}
+
+.bank-select-option:hover {
+    background: var(--bg-light);
+}
+
+.bank-select-option-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.bank-select-option-text {
+    flex: 1;
+    text-align: right;
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+}
+
+.bank-select-option.selected .bank-select-option-text {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Legacy dropdown styles - keeping for compatibility but not used */
 .custom-select-dropdown {
     position: absolute;
     top: calc(100% + 4px);
