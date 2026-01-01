@@ -284,6 +284,108 @@
     width: 100%;
 }
 
+/* Custom Select Wrapper */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select-button {
+    width: 100%;
+    padding: 0.2rem 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    background: var(--bg-light);
+    transition: all var(--transition-base);
+    outline: none;
+    font-family: inherit;
+    text-align: right;
+    direction: rtl;
+    min-height: 48px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.custom-select-button:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+}
+
+.custom-select-button.active {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.custom-select-text {
+    flex: 1;
+    text-align: right;
+    color: var(--text-primary);
+}
+
+.custom-select-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    direction: rtl;
+    margin-top: var(--spacing-xs);
+}
+
+.custom-select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.custom-select-option:last-child {
+    border-bottom: none;
+}
+
+.custom-select-option-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.custom-select-option-text {
+    flex: 1;
+    text-align: right;
+    color: var(--text-primary);
+}
+
+.custom-select-option.selected .custom-select-option-text {
+    color: var(--primary-color);
+}
+
 .my-bank-accounts-form-select {
     width: 100%;
     padding: 0.2rem 0.5rem;
@@ -357,6 +459,18 @@
     stroke: var(--text-secondary);
     stroke-width: 2;
     pointer-events: none;
+    flex-shrink: 0;
+}
+
+.custom-select-button .select-chevron {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    transition: transform var(--transition-base);
+}
+
+.custom-select-button.active .select-chevron {
+    transform: rotate(180deg);
 }
 
 .bank-logo-preview {

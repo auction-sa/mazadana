@@ -339,9 +339,9 @@
                         <!-- Bank Name Dropdown -->
                         <div class="my-bank-accounts-form-group">
                             <label class="form-label required">اسم البنك</label>
-                            <div class="select-wrapper" id="bank-select-wrapper">
-                                <select class="my-bank-accounts-form-select" id="bank-name-select" required>
-                                    <option value="">اختر البنك</option>
+                            <div class="custom-select-wrapper" id="bank-select-wrapper">
+                                <!-- Hidden native select for form submission -->
+                                <select class="my-bank-accounts-form-select" id="bank-name-select" required style="display: none;">
                                     ${Object.keys(bankData).map(bankName => {
             const bank = bankData[bankName];
             const isSelected = accountData?.bankName === bankName ? 'selected' : '';
@@ -350,8 +350,23 @@
                                         </option>`;
         }).join('')}
                                 </select>
-                                <img class="bank-logo-preview" id="bank-logo-preview" src="" alt="" style="display: none;">
-                                <i data-lucide="chevron-down" class="select-chevron"></i>
+                                <!-- Custom dropdown button -->
+                                <div class="custom-select-button" id="custom-bank-select-button">
+                                    <img class="custom-select-logo" id="custom-bank-select-logo" src="" alt="" style="display: none;">
+                                    <span class="custom-select-text" id="custom-bank-select-text">اختر البنك</span>
+                                    <i data-lucide="chevron-down" class="select-chevron"></i>
+                                </div>
+                                <!-- Custom dropdown menu -->
+                                <div class="custom-select-dropdown" id="custom-bank-select-dropdown" style="display: none;">
+                                    ${Object.keys(bankData).map(bankName => {
+            const bank = bankData[bankName];
+            const isSelected = accountData?.bankName === bankName ? 'selected' : '';
+            return `<div class="custom-select-option ${isSelected ? 'selected' : ''}" data-value="${bankName}" data-swift="${bank.swiftCode}" data-logo="${bank.logo}">
+                                        <img class="custom-select-option-logo" src="${bank.logo}" alt="${bankName}" onerror="this.style.display='none'">
+                                        <span class="custom-select-option-text">${bankName}</span>
+                                    </div>`;
+        }).join('')}
+                                </div>
                             </div>
                         </div>
 
@@ -500,52 +515,99 @@
             }
         }
 
-        // Bank name change handler - auto-populate SWIFT code and show bank logo
+        // Custom bank dropdown handler
         const bankNameSelect = document.getElementById('bank-name-select');
         const swiftCodeInput = document.getElementById('swift-code-input');
-        const bankLogoPreview = document.getElementById('bank-logo-preview');
-        const bankSelectWrapper = document.getElementById('bank-select-wrapper');
+        const customSelectButton = document.getElementById('custom-bank-select-button');
+        const customSelectText = document.getElementById('custom-bank-select-text');
+        const customSelectLogo = document.getElementById('custom-bank-select-logo');
+        const customSelectDropdown = document.getElementById('custom-bank-select-dropdown');
+        const customSelectOptions = customSelectDropdown ? customSelectDropdown.querySelectorAll('.custom-select-option') : [];
 
-        function updateBankLogo() {
-            const selectedOption = bankNameSelect.options[bankNameSelect.selectedIndex];
-            if (selectedOption && selectedOption.value && bankData[selectedOption.value]) {
-                const logoPath = bankData[selectedOption.value].logo;
-                if (bankLogoPreview) {
-                    bankLogoPreview.src = logoPath;
-                    bankLogoPreview.style.display = 'block';
-                    bankLogoPreview.onerror = function () {
-                        // Hide logo if image fails to load
+        function updateCustomSelect(bankName) {
+            if (bankName && bankData[bankName]) {
+                const bank = bankData[bankName];
+                // Update hidden select
+                if (bankNameSelect) {
+                    bankNameSelect.value = bankName;
+                    // Trigger change event for form validation
+                    bankNameSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                // Update SWIFT code
+                if (swiftCodeInput) {
+                    swiftCodeInput.value = bank.swiftCode;
+                }
+                // Update custom select display
+                if (customSelectText) {
+                    customSelectText.textContent = bankName;
+                }
+                if (customSelectLogo) {
+                    customSelectLogo.src = bank.logo;
+                    customSelectLogo.style.display = 'block';
+                    customSelectLogo.onerror = function () {
                         this.style.display = 'none';
                     };
                 }
-                if (bankSelectWrapper) {
-                    bankSelectWrapper.classList.add('has-bank-logo');
-                }
+                // Update selected state in dropdown
+                customSelectOptions.forEach(option => {
+                    if (option.getAttribute('data-value') === bankName) {
+                        option.classList.add('selected');
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
             } else {
-                if (bankLogoPreview) {
-                    bankLogoPreview.style.display = 'none';
+                // Reset to default
+                if (customSelectText) {
+                    customSelectText.textContent = 'اختر البنك';
                 }
-                if (bankSelectWrapper) {
-                    bankSelectWrapper.classList.remove('has-bank-logo');
+                if (customSelectLogo) {
+                    customSelectLogo.style.display = 'none';
                 }
+                if (swiftCodeInput) {
+                    swiftCodeInput.value = '';
+                }
+                customSelectOptions.forEach(option => {
+                    option.classList.remove('selected');
+                });
             }
         }
 
-        if (bankNameSelect && swiftCodeInput) {
-            // Set initial SWIFT code and logo if bank is already selected
-            if (accountData?.bankName && bankData[accountData.bankName]) {
-                swiftCodeInput.value = bankData[accountData.bankName].swiftCode;
-                updateBankLogo();
-            }
+        // Initialize with selected bank if editing
+        if (accountData?.bankName && bankData[accountData.bankName]) {
+            updateCustomSelect(accountData.bankName);
+        }
 
-            bankNameSelect.addEventListener('change', function () {
-                const selectedBank = this.value;
-                if (selectedBank && bankData[selectedBank]) {
-                    swiftCodeInput.value = bankData[selectedBank].swiftCode;
+        // Toggle dropdown on button click
+        if (customSelectButton && customSelectDropdown) {
+            customSelectButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isOpen = customSelectDropdown.style.display === 'block';
+                customSelectDropdown.style.display = isOpen ? 'none' : 'block';
+                if (!isOpen) {
+                    customSelectButton.classList.add('active');
                 } else {
-                    swiftCodeInput.value = '';
+                    customSelectButton.classList.remove('active');
                 }
-                updateBankLogo();
+            });
+
+            // Handle option selection
+            customSelectOptions.forEach(option => {
+                option.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const bankName = this.getAttribute('data-value');
+                    updateCustomSelect(bankName);
+                    customSelectDropdown.style.display = 'none';
+                    customSelectButton.classList.remove('active');
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!customSelectButton.contains(e.target) && !customSelectDropdown.contains(e.target)) {
+                    customSelectDropdown.style.display = 'none';
+                    customSelectButton.classList.remove('active');
+                }
             });
         }
 
