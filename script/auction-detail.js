@@ -934,6 +934,22 @@
             // Navigate to property detail section
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-property-detail-section');
+                
+                // Ensure URL is set correctly after section is active
+                setTimeout(() => {
+                    const section = document.getElementById('auction-property-detail-section');
+                    if (section && section.classList.contains('active')) {
+                        const correctUrl = '#/auction-section/main-auction-page';
+                        const currentUrl = window.location.hash;
+                        
+                        // Only update if URL is incorrect
+                        if (currentUrl !== correctUrl) {
+                            const state = { section: 'auction-property-detail-section' };
+                            // Push a new state to ensure the URL is correct
+                            history.pushState(state, '', correctUrl);
+                        }
+                    }
+                }, 600); // Wait for section-navigation.js to complete (it calls pushNavigationState at 500ms)
             } else {
                 console.error('switchToSection function not available');
             }
@@ -1004,7 +1020,7 @@
                 }
 
 
-                // Navigate back to previous section (use stored previous section, or home-section by default)
+                // Navigate back to previous section and update URL
                 if (typeof window.switchToSection === 'function') {
                     // Get the section we came from (could be auction-section, home-section, etc.)
                     const previousSection = (typeof window.getPreviousSectionBeforePropertyDetail === 'function')
@@ -1012,6 +1028,16 @@
                         : 'home-section';
 
                     window.switchToSection(previousSection);
+
+                    // Update URL to match the previous section
+                    setTimeout(() => {
+                        let targetUrl = '#';
+                        if (previousSection === 'auction-section') {
+                            targetUrl = '#/auction-section';
+                        }
+                        const state = { section: previousSection };
+                        history.replaceState(state, '', targetUrl);
+                    }, 100);
 
                     // Scroll scrollable containers within the target section to top
                     if (typeof window.scrollScrollableContainersToTop === 'function') {

@@ -115,6 +115,10 @@
             } else {
                 return '#/profile';
             }
+        } else if (state.section === 'auction-property-detail-section') {
+            return '#/auction-section/main-auction-page';
+        } else if (state.section === 'auction-asset-property-detail-section') {
+            return '#/auction-section/main-auction-page/auction-asset-page';
         } else if (state.section === 'auction-section' || state.section === 'buy-section' || state.section === 'rent-section') {
             return `#/${state.section}`;
         } else if (state.section === 'my-actions-section') {
@@ -233,6 +237,13 @@
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-property-detail-section');
 
+                // Update URL to match the property detail section
+                setTimeout(() => {
+                    const state = { section: 'auction-property-detail-section' };
+                    const url = getUrlFromState(state);
+                    history.replaceState(state, '', url);
+                }, 100);
+
                 // Scroll scrollable containers to top
                 if (typeof window.scrollScrollableContainersToTop === 'function') {
                     setTimeout(() => {
@@ -247,7 +258,6 @@
                 }
             }
             setTimeout(() => {
-                pushHistoryState(null, false);
                 isHandlingBackNavigation = false;
             }, 100);
             return;
@@ -300,13 +310,38 @@
                 header.style.display = 'none';
             }
 
-            // Navigate back to home-section
+            // Get the previous section to determine the correct URL
+            let targetSection = 'home-section';
+            let targetUrl = '#';
+
+            // Check if we came from auction-section
+            if (typeof window.getPreviousSectionBeforePropertyDetail === 'function') {
+                const previousSection = window.getPreviousSectionBeforePropertyDetail();
+                if (previousSection === 'auction-section') {
+                    targetSection = 'auction-section';
+                    targetUrl = '#/auction-section';
+                }
+            }
+
+            // Navigate back to the appropriate section
             if (typeof window.switchToSection === 'function') {
-                window.switchToSection('home-section');
-                // Scroll scrollable containers within home-section to top
+                window.switchToSection(targetSection);
+
+                // Update URL to match the target section
+                setTimeout(() => {
+                    const state = { section: targetSection };
+                    history.replaceState(state, '', targetUrl);
+                }, 100);
+
+                // Scroll scrollable containers within the target section to top
                 if (typeof window.scrollScrollableContainersToTop === 'function') {
                     setTimeout(() => {
-                        window.scrollScrollableContainersToTop('home-section');
+                        const scrollTarget = (targetSection === 'auction-section' ||
+                            targetSection === 'buy-section' ||
+                            targetSection === 'rent-section')
+                            ? 'home-section'
+                            : targetSection;
+                        window.scrollScrollableContainersToTop(scrollTarget);
                     }, 50);
                 }
             } else {
@@ -317,7 +352,6 @@
                 }
             }
             setTimeout(() => {
-                pushHistoryState(null, false);
                 isHandlingBackNavigation = false;
             }, 100);
             return;
@@ -327,6 +361,12 @@
         if (currentState.section === 'auction-section' || currentState.section === 'buy-section' || currentState.section === 'rent-section') {
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('home-section');
+
+                // Update URL to home
+                setTimeout(() => {
+                    const state = { section: 'home-section' };
+                    history.replaceState(state, '', '#');
+                }, 100);
             } else {
                 // Fallback: trigger navigation click
                 const homeNavItem = document.querySelector('[data-section="home-section"]');
@@ -335,7 +375,6 @@
                 }
             }
             setTimeout(() => {
-                pushHistoryState(null, false);
                 isHandlingBackNavigation = false;
             }, 100);
             return;

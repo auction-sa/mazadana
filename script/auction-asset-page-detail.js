@@ -1102,10 +1102,20 @@
                     header.style.display = 'none';
                 }
 
-                // Navigate back to previous section
+                // Navigate back to previous section and update URL
                 if (typeof window.switchToSection === 'function') {
                     const previousSection = previousSectionBeforeAssetDetail || 'auction-property-detail-section';
                     window.switchToSection(previousSection);
+
+                    // Update URL to match the previous section
+                    setTimeout(() => {
+                        let targetUrl = '#';
+                        if (previousSection === 'auction-property-detail-section') {
+                            targetUrl = '#/auction-section/main-auction-page';
+                        }
+                        const state = { section: previousSection };
+                        history.replaceState(state, '', targetUrl);
+                    }, 100);
 
                     // Scroll scrollable containers to top
                     if (typeof window.scrollScrollableContainersToTop === 'function') {
@@ -1219,12 +1229,21 @@
             if (typeof window.switchToSection === 'function') {
                 window.switchToSection('auction-asset-property-detail-section');
 
-                // Push navigation state to history after section is opened
+                // Ensure URL is set correctly after section is active
                 setTimeout(() => {
-                    if (typeof window.pushNavigationState === 'function') {
-                        window.pushNavigationState(false);
+                    const section = document.getElementById('auction-asset-property-detail-section');
+                    if (section && section.classList.contains('active')) {
+                        const correctUrl = '#/auction-section/main-auction-page/auction-asset-page';
+                        const currentUrl = window.location.hash;
+                        
+                        // Only update if URL is incorrect
+                        if (currentUrl !== correctUrl) {
+                            const state = { section: 'auction-asset-property-detail-section' };
+                            // Push a new state to ensure the URL is correct
+                            history.pushState(state, '', correctUrl);
+                        }
                     }
-                }, 400); // Wait for animation to complete
+                }, 600); // Wait for section-navigation.js to complete (it calls pushNavigationState at 500ms)
 
                 // Scroll scrollable containers within auction-asset-property-detail-section to top once section opens
                 if (typeof window.scrollOnSectionOpen === 'function') {
