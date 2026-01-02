@@ -511,6 +511,13 @@
         currentTab = tabId;
         isInDetailView = true;
 
+        // Update URL hash to reflect the current tab
+        const tabUrl = `#/profile/account-info/${tabId}`;
+        setTimeout(() => {
+            const state = { section: 'profile-section', profileRoute: 'account-info', accountTab: tabId };
+            history.pushState(state, '', tabUrl);
+        }, 50);
+
         // Scroll scrollable containers within profile-account-info-view to top
         if (typeof window.scrollScrollableContainersToTop === 'function') {
             // Scroll immediately (synchronously) - this happens before browser paint
@@ -576,6 +583,22 @@
         }
 
         isInDetailView = false;
+
+        // Update URL hash back to account-info (without tab)
+        // Use replaceState if URL is already correct (e.g., when called from back button), otherwise use pushState
+        setTimeout(() => {
+            const state = { section: 'profile-section', profileRoute: 'account-info' };
+            const targetUrl = '#/profile/account-info';
+            const currentUrl = window.location.hash;
+            
+            if (currentUrl === targetUrl) {
+                // URL is already correct (likely called from back button), just replace state
+                history.replaceState(state, '', targetUrl);
+            } else {
+                // URL needs to be updated, push new state
+                history.pushState(state, '', targetUrl);
+            }
+        }, 50);
 
         // Push navigation state to history
         setTimeout(() => {

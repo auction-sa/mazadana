@@ -1152,8 +1152,28 @@
             // Navigate to the correct route based on the hash
             if (hash === '#/profile' || hash === '#/profile/' || !hash.includes('/profile')) {
                 navigateToProfileRoute(ProfileRoutes.MENU);
-            } else if (hash === '#/profile/account-info') {
+            } else if (hash.startsWith('#/profile/account-info/')) {
+                // Handle tab-specific URLs (e.g., #/profile/account-info/basic-data)
+                const tabId = hash.replace('#/profile/account-info/', '');
                 navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
+                // Switch to the specific tab after navigation
+                setTimeout(() => {
+                    if (typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.switchTab === 'function') {
+                        window.AccountInfoTabs.switchTab(tabId);
+                    }
+                }, 200);
+            } else if (hash === '#/profile/account-info') {
+                // Check if we're currently in a tab detail view
+                const accountTabs = document.querySelector('.account-tabs');
+                const isInDetailView = accountTabs && accountTabs.classList.contains('hidden');
+
+                if (isInDetailView && typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.goBack === 'function') {
+                    // We're in a detail view, go back to tabs
+                    window.AccountInfoTabs.goBack();
+                } else {
+                    // We're not in a detail view, just navigate normally
+                    navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
+                }
             } else if (hash === '#/profile/settings') {
                 navigateToProfileRoute(ProfileRoutes.SETTINGS);
             } else if (hash === '#/profile/favorites') {
@@ -1178,6 +1198,18 @@
             setTimeout(() => {
                 navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
             }, 100);
+        } else if (hash.startsWith('#/profile/account-info/')) {
+            // If page loads with tab-specific hash (e.g., #/profile/account-info/basic-data), show account info and switch to tab
+            const tabId = hash.replace('#/profile/account-info/', '');
+            setTimeout(() => {
+                navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
+                // Switch to the specific tab after navigation
+                setTimeout(() => {
+                    if (typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.switchTab === 'function') {
+                        window.AccountInfoTabs.switchTab(tabId);
+                    }
+                }, 200);
+            }, 100);
         }
 
         // Listen for browser back/forward button (popstate event)
@@ -1186,8 +1218,28 @@
             // Navigate based on the hash
             if (hash === '#/profile' || hash === '#/profile/' || !hash.includes('/profile')) {
                 navigateToProfileRoute(ProfileRoutes.MENU);
-            } else if (hash === '#/profile/account-info') {
+            } else if (hash.startsWith('#/profile/account-info/')) {
+                // Handle tab-specific URLs (e.g., #/profile/account-info/basic-data)
+                const tabId = hash.replace('#/profile/account-info/', '');
                 navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
+                // Switch to the specific tab after navigation
+                setTimeout(() => {
+                    if (typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.switchTab === 'function') {
+                        window.AccountInfoTabs.switchTab(tabId);
+                    }
+                }, 200);
+            } else if (hash === '#/profile/account-info') {
+                // Check if we're currently in a tab detail view
+                const accountTabs = document.querySelector('.account-tabs');
+                const isInDetailView = accountTabs && accountTabs.classList.contains('hidden');
+
+                if (isInDetailView && typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.goBack === 'function') {
+                    // We're in a detail view, go back to tabs
+                    window.AccountInfoTabs.goBack();
+                } else {
+                    // We're not in a detail view, just navigate normally
+                    navigateToProfileRoute(ProfileRoutes.ACCOUNT_INFO);
+                }
             } else if (hash === '#/profile/settings') {
                 navigateToProfileRoute(ProfileRoutes.SETTINGS);
             } else if (hash === '#/profile/favorites') {

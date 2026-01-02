@@ -168,10 +168,13 @@
         if (currentState.accountTab) {
             if (typeof window.AccountInfoTabs !== 'undefined' && typeof window.AccountInfoTabs.goBack === 'function') {
                 window.AccountInfoTabs.goBack();
+                // Update URL to account-info (without tab)
                 setTimeout(() => {
-                    pushHistoryState(null, false);
+                    const state = { section: 'profile-section', profileRoute: 'account-info' };
+                    const url = '#/profile/account-info';
+                    history.replaceState(state, '', url);
                     isHandlingBackNavigation = false;
-                }, 100);
+                }, 150);
                 return;
             }
         }
