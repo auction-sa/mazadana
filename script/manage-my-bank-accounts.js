@@ -909,6 +909,28 @@
             if (formView && listView) {
                 formView.classList.remove('active');
                 listView.classList.add('active');
+
+                // Update header title to "إدارة حساباتي البنكية"
+                const headerTitle = document.getElementById('bank-accounts-header-title');
+                if (headerTitle) {
+                    headerTitle.textContent = 'إدارة حساباتي البنكية';
+                }
+
+                // Update back button to go back to profile menu
+                const backBtn = document.getElementById('manage-bank-accounts-back-btn');
+                if (backBtn) {
+                    backBtn.onclick = function () {
+                        // Navigate back to profile menu
+                        if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                            window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
+                        } else {
+                            // Fallback: navigate to profile section
+                            if (typeof window.switchToSection === 'function') {
+                                window.switchToSection('profile-section');
+                            }
+                        }
+                    };
+                }
             }
         }
 
