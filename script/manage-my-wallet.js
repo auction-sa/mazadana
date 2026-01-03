@@ -50,7 +50,12 @@
     // Build manage wallet view markup
     async function renderManageWalletView() {
         const walletView = document.getElementById('manage-my-wallet-view');
-        if (!walletView || walletViewRendered) return;
+        if (!walletView) return;
+
+        // If already rendered, just update the list content
+        if (walletViewRendered) {
+            return;
+        }
 
         // Fetch user balance and bank accounts BEFORE rendering
         const [userBalance, bankAccounts] = await Promise.all([
@@ -925,6 +930,45 @@
         }
     }
 
+    // Ensure wallet management content is active
+    function ensureWalletManagementContentActive() {
+        const walletManagementContent = document.getElementById('wallet-management-content');
+        const transferMoneyContent = document.getElementById('transfer-money-content');
+        const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+        const headerTitle = document.querySelector('#manage-wallet-header h2');
+
+        if (!walletManagementContent) return;
+
+        // Update header title
+        if (headerTitle) {
+            headerTitle.textContent = 'إدارة محفظتي';
+        }
+
+        // Ensure other content views are not active
+        if (transferMoneyContent) transferMoneyContent.classList.remove('active');
+        if (withdrawMoneyContent) withdrawMoneyContent.classList.remove('active');
+
+        // Ensure wallet management content is active immediately (synchronously)
+        // This happens before browser paint, making it instant and unnoticeable
+        walletManagementContent.classList.add('active');
+
+        // Update back button to go back to profile menu
+        const backBtn = document.getElementById('manage-wallet-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function () {
+                // Navigate back to profile menu
+                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
+                } else {
+                    // Fallback: navigate to profile section
+                    if (typeof window.switchToSection === 'function') {
+                        window.switchToSection('profile-section');
+                    }
+                }
+            };
+        }
+    }
+
     // Initialize when DOM is ready
     function init() {
         const walletView = document.getElementById('manage-my-wallet-view');
@@ -932,17 +976,16 @@
             return;
         }
 
-        // Build view markup once
-        renderManageWalletView();
+        // Initialize hash change listeners
+        initHashChangeListeners();
 
-        // Use MutationObserver to re-initialize when view becomes active
+        // Use MutationObserver to render when view becomes active
         const observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     const isActive = walletView.classList.contains('active');
-                    if (isActive) {
-                        // Re-render when view becomes active
-                        walletViewRendered = false; // Reset flag to allow re-rendering
+                    if (isActive && !walletViewRendered) {
+                        // Only render once when view becomes active
                         setTimeout(async () => {
                             await renderManageWalletView();
                             // Initialize Lucide icons
@@ -952,6 +995,54 @@
                             // Check hash to show correct view
                             handleHashChange();
                         }, 100);
+                    } else if (isActive && walletViewRendered) {
+                        // View is already rendered, check hash to determine which view to show
+                        const hash = window.location.hash;
+                        if (hash === '#/profile/manage-wallet/transfer-money') {
+                            // Show transfer money content if hash indicates transfer
+                            const transferMoneyContent = document.getElementById('transfer-money-content');
+                            const walletManagementContent = document.getElementById('wallet-management-content');
+                            if (transferMoneyContent && walletManagementContent) {
+                                walletManagementContent.classList.remove('active');
+                                requestAnimationFrame(() => {
+                                    transferMoneyContent.classList.add('active');
+                                    const headerTitle = document.querySelector('#manage-wallet-header h2');
+                                    if (headerTitle) {
+                                        headerTitle.textContent = 'الحوالة البنكية';
+                                    }
+                                    // Update current balance
+                                    updateTransferMoneyCurrentBalance();
+                                    // Initialize components
+                                    initTransferMoneyCopyButton();
+                                    initTransferMoneyFileUpload();
+                                    // Update back button
+                                    updateBackButtonForTransferMoney();
+                                });
+                            }
+                        } else if (hash === '#/profile/manage-wallet/withdraw-money') {
+                            // Show withdraw money content if hash indicates withdraw
+                            const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+                            const walletManagementContent = document.getElementById('wallet-management-content');
+                            if (withdrawMoneyContent && walletManagementContent) {
+                                walletManagementContent.classList.remove('active');
+                                // Render and show withdraw money content
+                                renderWithdrawMoneyContent().then(() => {
+                                    requestAnimationFrame(() => {
+                                        withdrawMoneyContent.classList.add('active');
+                                        const headerTitle = document.querySelector('#manage-wallet-header h2');
+                                        if (headerTitle) {
+                                            headerTitle.textContent = 'طلب سحب الأموال';
+                                        }
+                                        // Update back button
+                                        updateBackButtonForWithdrawMoney();
+                                    });
+                                });
+                            }
+                        } else {
+                            // Ensure wallet management content is active immediately (synchronously)
+                            // This happens before browser paint, making it instant and unnoticeable
+                            ensureWalletManagementContentActive();
+                        }
                     }
                 }
             });
@@ -962,12 +1053,65 @@
             attributeFilter: ['class']
         });
 
-        // Initialize hash change listeners
-        initHashChangeListeners();
-
-        // Initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        // Check if view is already active on initial load
+        if (walletView.classList.contains('active') && !walletViewRendered) {
+            setTimeout(async () => {
+                await renderManageWalletView();
+                // Initialize Lucide icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                // Check hash to show correct view
+                handleHashChange();
+            }, 100);
+        } else if (walletView.classList.contains('active') && walletViewRendered) {
+            // View is already rendered, check hash to determine which view to show
+            const hash = window.location.hash;
+            if (hash === '#/profile/manage-wallet/transfer-money') {
+                // Show transfer money content if hash indicates transfer
+                const transferMoneyContent = document.getElementById('transfer-money-content');
+                const walletManagementContent = document.getElementById('wallet-management-content');
+                if (transferMoneyContent && walletManagementContent) {
+                    walletManagementContent.classList.remove('active');
+                    requestAnimationFrame(() => {
+                        transferMoneyContent.classList.add('active');
+                        const headerTitle = document.querySelector('#manage-wallet-header h2');
+                        if (headerTitle) {
+                            headerTitle.textContent = 'الحوالة البنكية';
+                        }
+                        // Update current balance
+                        updateTransferMoneyCurrentBalance();
+                        // Initialize components
+                        initTransferMoneyCopyButton();
+                        initTransferMoneyFileUpload();
+                        // Update back button
+                        updateBackButtonForTransferMoney();
+                    });
+                }
+            } else if (hash === '#/profile/manage-wallet/withdraw-money') {
+                // Show withdraw money content if hash indicates withdraw
+                const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+                const walletManagementContent = document.getElementById('wallet-management-content');
+                if (withdrawMoneyContent && walletManagementContent) {
+                    walletManagementContent.classList.remove('active');
+                    // Render and show withdraw money content
+                    renderWithdrawMoneyContent().then(() => {
+                        requestAnimationFrame(() => {
+                            withdrawMoneyContent.classList.add('active');
+                            const headerTitle = document.querySelector('#manage-wallet-header h2');
+                            if (headerTitle) {
+                                headerTitle.textContent = 'طلب سحب الأموال';
+                            }
+                            // Update back button
+                            updateBackButtonForWithdrawMoney();
+                        });
+                    });
+                }
+            } else {
+                // Ensure wallet management content is active immediately (synchronously)
+                // This happens before browser paint, making it instant and unnoticeable
+                ensureWalletManagementContentActive();
+            }
         }
     }
 
@@ -980,7 +1124,8 @@
 
     // Export for external use
     window.ManageWalletPage = {
-        init: init
+        init: init,
+        ensureWalletManagementContentActive: ensureWalletManagementContentActive
     };
 })();
 
