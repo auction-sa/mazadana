@@ -1,10 +1,452 @@
 /* Manage My Wallet Page Styles */
 
+.settings-content {
+    position: relative;
+}
+
 .wallet-management-content {
     padding: var(--spacing-xs) 0 var(--spacing-lg);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+}
+
+.wallet-management-content:not(.active) {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.wallet-management-content.active {
+    display: flex;
+    opacity: 1;
+    transform: translateX(0);
+    animation: fadeInSlide 0.3s ease;
+}
+
+/* Transfer Money Content */
+.transfer-money-content {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-white);
+    padding: var(--spacing-xs) 0 var(--spacing-lg);
+}
+
+.transfer-money-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    animation: fadeInSlide 0.3s ease;
+}
+
+/* Withdraw Money Content */
+.withdraw-money-content {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-white);
+    padding: var(--spacing-xs) 0 var(--spacing-lg);
+}
+
+.withdraw-money-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    animation: fadeInSlide 0.3s ease;
+}
+
+/* Transfer Money Content Styles */
+.transfer-money-content-wrapper {
+    padding: 0 var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.transfer-money-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+    text-align: right;
+}
+
+.transfer-money-current-balance {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: var(--spacing-xs) 0 0 0;
+    text-align: right;
+}
+
+.transfer-money-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: right;
+}
+
+.transfer-money-alert {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: #fef3c7;
+    border-radius: var(--radius-sm);
+    ;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    direction: rtl;
+}
+
+.alert-icon {
+    width: 20px;
+    height: 20px;
+    color: #f97316;
+    stroke: #f97316;
+    stroke-width: 2;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.alert-text {
+    font-size: var(--font-size-sm);
+    color: #f97316;
+    text-align: right;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.transfer-money-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    ;
+    padding: var(--spacing-md) var(--spacing-xs);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.transfer-money-info-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    direction: rtl;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.transfer-money-info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.transfer-money-label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.transfer-money-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.transfer-money-iban-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    direction: rtl;
+}
+
+.transfer-money-copy-btn {
+    background: none;
+    border: none;
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    ;
+    transition: background var(--transition-fast);
+}
+
+.transfer-money-copy-btn:hover {
+    background: var(--bg-hover);
+}
+
+.transfer-money-copy-btn:active {
+    background: var(--border-color);
+}
+
+.copy-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+    stroke-width: 2;
+}
+
+.transfer-money-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.transfer-money-form-label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.transfer-money-form-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    ;
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    direction: rtl;
+    text-align: right;
+    transition: border-color var(--transition-fast);
+}
+
+.transfer-money-form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.transfer-money-upload-area {
+    width: 100%;
+    min-height: 120px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    ;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+    position: relative;
+}
+
+.transfer-money-upload-area:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-light);
+}
+
+.transfer-money-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+}
+
+.upload-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--text-light);
+    stroke: var(--text-light);
+    stroke-width: 2;
+}
+
+.upload-caption {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.transfer-money-file-preview {
+    width: 100%;
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    direction: rtl;
+}
+
+.file-name {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    text-align: right;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-file-btn {
+    background: none;
+    border: none;
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    ;
+    transition: background var(--transition-fast);
+}
+
+.remove-file-btn:hover {
+    background: var(--bg-hover);
+}
+
+.remove-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+    stroke: var(--text-secondary);
+    stroke-width: 2;
+}
+
+.transfer-money-helper-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    text-align: right;
+    margin: 0;
+}
+
+.transfer-money-submit-btn {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    ;
+    background: var(--primary-dark);
+    color: var(--bg-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    box-shadow: var(--shadow-sm);
+}
+
+.transfer-money-submit-btn:disabled {
+    background: #e5e5e5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.transfer-money-submit-btn:not(:disabled):active {
+    transform: translateY(0);
+}
+
+/* Withdraw Money Content Styles */
+.withdraw-money-content-wrapper {
+    padding: 0 var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.withdraw-bank-accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.withdraw-bank-account-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.withdraw-bank-account-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.withdraw-bank-account-card.active {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    box-shadow: var(--shadow-md);
+}
+
+.withdraw-empty-state {
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.withdraw-empty-text {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 0;
+}
+
+.withdraw-percentage-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+.withdraw-percentage-box {
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-white);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+    text-align: center;
+}
+
+.withdraw-percentage-box:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.withdraw-percentage-box.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.withdraw-percentage-box:active {
+    transform: translateY(0);
 }
 
 /* Wallet Section */
@@ -168,6 +610,7 @@
     background: #fef3c7;
     border: 1px solid #f59e0b;
     border-radius: var(--radius-sm);
+    ;
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-sm);
@@ -204,6 +647,7 @@
     padding: var(--spacing-xs);
     border: none;
     border-radius: var(--radius-sm);
+    ;
     background: var(--primary-dark);
     color: var(--bg-white);
     font-size: var(--font-size-base);
@@ -268,7 +712,6 @@
     border-radius: 20px 20px 0 0;
     padding: var(--spacing-md) var(--spacing-md) var(--spacing-2xl);
     max-height: 80vh;
-    overflow-y: auto;
     transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     direction: rtl;
@@ -322,6 +765,7 @@
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
+    ;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -406,6 +850,66 @@
     }
 
     .add-money-subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    /* Transfer and Withdraw Money Content - Mobile Responsive */
+    .transfer-money-title {
+        font-size: var(--font-size-lg);
+    }
+
+    .transfer-money-current-balance {
+        font-size: var(--font-size-xs);
+    }
+
+    .transfer-money-subtitle {
+        font-size: var(--font-size-sm);
+    }
+
+    .transfer-money-form-label {
+        font-size: var(--font-size-sm);
+    }
+
+    .transfer-money-form-input {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .transfer-money-label {
+        font-size: var(--font-size-sm);
+    }
+
+    .transfer-money-value {
+        font-size: var(--font-size-sm);
+    }
+
+    .alert-text {
+        font-size: var(--font-size-xs);
+    }
+
+    .transfer-money-helper-text {
+        font-size: var(--font-size-xs);
+    }
+
+    .transfer-money-submit-btn {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    .withdraw-percentage-box {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .bank-name {
+        font-size: var(--font-size-base);
+    }
+
+    .bank-account-label {
+        font-size: var(--font-size-xs);
+    }
+
+    .bank-account-value {
         font-size: var(--font-size-sm);
     }
 }

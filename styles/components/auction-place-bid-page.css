@@ -34,7 +34,7 @@
     left: 0;
     right: 0;
     background: var(--bg-white);
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-radius: 5px var(--radius-sm) 0 0;
     padding: var(--spacing-md);
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
     max-height: 100vh;
@@ -42,7 +42,6 @@
     transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     direction: rtl;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
 }
 
 .deposit-payment-modal.active .deposit-payment-content {

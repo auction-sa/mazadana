@@ -218,6 +218,11 @@
         width: 50%;
         justify-self: center;
     }
+
+    .add-money-content {
+        width: 50%;
+        justify-self: center;
+    }
 }
 
 

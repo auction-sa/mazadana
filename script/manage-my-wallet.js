@@ -6,6 +6,7 @@
     // Track if event listeners are already attached to prevent duplicates
     let eventListenersAttached = false;
     let walletViewRendered = false;
+    let isUpdatingFromHash = false; // Flag to prevent URL update loops
 
     // Fetch current user total balance from user-data.json
     async function fetchUserBalance() {
@@ -79,9 +80,11 @@
                 </div>
 
                 <div class="settings-content scrollable-container">
-                    <div class="wallet-management-content">
+
+
+                    <div class="wallet-management-content active" id="wallet-management-content">
                         <!-- المحافظ Section -->
-                        <div class="wallet-section">
+                        <div class="wallet-section" id="wallet-section">
                             <h3 class="wallet-section-title">المحافظ</h3>
                             
                             <!-- Wallet Card -->
@@ -124,6 +127,85 @@
                             </button>
                         </div>
                     </div>
+
+                    
+
+                    <div class="transfer-money-content" id="transfer-money-content">
+                        <div class="transfer-money-content-wrapper">
+                            <h3 class="transfer-money-title">الحوالة البنكية</h3>
+                            <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+                            <p class="transfer-money-subtitle">للمشاركة يجب إرفاق الحوالة البنكية.</p>
+                            
+                            <div class="transfer-money-alert">
+                                <i data-lucide="info" class="alert-icon"></i>
+                                <span class="alert-text">سيتم شحن محفظتك خلال 72 ساعة من استلام معلومات الحوالة.</span>
+                            </div>
+                            
+                            <div class="transfer-money-card">
+                                <div class="transfer-money-info-row">
+                                    <span class="transfer-money-label">اسم المستفيد:</span>
+                                    <span class="transfer-money-value">MUBASHER CO</span>
+                                </div>
+                                <div class="transfer-money-info-row">
+                                    <span class="transfer-money-label">البلد:</span>
+                                    <span class="transfer-money-value">السعودية</span>
+                                </div>
+                                <div class="transfer-money-info-row">
+                                    <span class="transfer-money-label">المدينة:</span>
+                                    <span class="transfer-money-value">الرياض</span>
+                                </div>
+                                <div class="transfer-money-info-row">
+                                    <span class="transfer-money-label">البنك:</span>
+                                    <span class="transfer-money-value">الراجحي</span>
+                                </div>
+                                <div class="transfer-money-info-row">
+                                    <span class="transfer-money-label">IBAN:</span>
+                                    <div class="transfer-money-iban-container">
+                                        <span class="transfer-money-value" id="transfer-iban-value">SA1480000204608015120029</span>
+                                        <button class="transfer-money-copy-btn" id="transfer-iban-copy-btn" aria-label="نسخ">
+                                            <i data-lucide="copy" class="copy-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="transfer-money-form-group">
+                                <label class="transfer-money-form-label">الرقم المرجعي</label>
+                                <input type="text" class="transfer-money-form-input" id="transfer-reference-input" placeholder="الرقم المرجعي للحوالة البنكية">
+                            </div>
+                            
+                            <div class="transfer-money-form-group">
+                                <label class="transfer-money-form-label">صورة الحوالة بنكية</label>
+                                <div class="transfer-money-upload-area" id="transfer-receipt-upload-area">
+                                    <input type="file" class="transfer-money-file-input" id="transfer-receipt-file-input" accept=".pdf,.png,.jpg,.jpeg" style="display: none;">
+                                    <div class="transfer-money-upload-content">
+                                        <i data-lucide="upload" class="upload-icon"></i>
+                                        <span class="upload-caption">صورة الحوالة بنكية</span>
+                                    </div>
+                                    <div class="transfer-money-file-preview" id="transfer-receipt-preview" style="display: none;">
+                                        <span class="file-name" id="transfer-receipt-file-name"></span>
+                                        <button type="button" class="remove-file-btn" id="transfer-receipt-remove-btn" aria-label="إزالة">
+                                            <i data-lucide="x" class="remove-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="transfer-money-helper-text">الملفات المسموح بها: PDF, PNG, JPG</p>
+                            </div>
+                            
+                            <button class="transfer-money-submit-btn" id="transfer-money-submit-btn" disabled>
+                                إرسال معلومات الحوالة
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                    <div class="withdraw-money-content" id="withdraw-money-content">
+                        <div class="withdraw-money-content-wrapper" id="withdraw-money-content-wrapper">
+                            <!-- Content will be rendered dynamically -->
+                        </div>
+                    </div>
+
                 </div>
             </div>
         `;
@@ -136,6 +218,22 @@
         const walletBackBtn = document.getElementById('manage-wallet-back-btn');
         if (walletBackBtn) {
             walletBackBtn.onclick = function () {
+                // Check if we're in transfer or withdraw view
+                const transferMoneyContent = document.getElementById('transfer-money-content');
+                const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+
+                if (transferMoneyContent && transferMoneyContent.classList.contains('active')) {
+                    // Navigate back to wallet management using URL hash
+                    window.location.hash = '#/profile/manage-wallet';
+                    return;
+                }
+
+                if (withdrawMoneyContent && withdrawMoneyContent.classList.contains('active')) {
+                    // Navigate back to wallet management using URL hash
+                    window.location.hash = '#/profile/manage-wallet';
+                    return;
+                }
+
                 // Navigate back to profile menu
                 if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
                     window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
@@ -175,24 +273,11 @@
             });
         }
 
-        // Withdraw button handler - navigate to manage bank accounts page when enabled
+        // Withdraw button handler - show withdraw money content when enabled
         const withdrawBtn = document.getElementById('wallet-withdraw-btn');
         if (withdrawBtn && !withdrawBtn.disabled) {
             withdrawBtn.addEventListener('click', function () {
-                // Navigate to manage bank accounts page for withdrawal
-                if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
-                    window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
-                } else {
-                    // Fallback: navigate to profile section first, then to bank accounts
-                    if (typeof window.switchToSection === 'function') {
-                        window.switchToSection('profile-section');
-                        setTimeout(() => {
-                            if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
-                                window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MANAGE_BANK_ACCOUNTS);
-                            }
-                        }, 300);
-                    }
-                }
+                showWithdrawMoneyContent();
             });
         }
 
@@ -300,9 +385,13 @@
         options.forEach(option => {
             option.addEventListener('click', function () {
                 const method = this.getAttribute('data-method');
-                // TODO: Handle method selection
-                console.log('Selected method:', method);
-                closeSheet();
+                if (method === 'bank-transfer') {
+                    closeSheet();
+                    showTransferMoneyContent();
+                } else {
+                    console.log('Selected method:', method);
+                    closeSheet();
+                }
             });
         });
 
@@ -314,6 +403,526 @@
             }
         };
         document.addEventListener('keydown', handleEscape);
+    }
+
+    // Render withdraw money content
+    async function renderWithdrawMoneyContent() {
+        const withdrawContentWrapper = document.getElementById('withdraw-money-content-wrapper');
+        if (!withdrawContentWrapper) return;
+
+        // Fetch bank accounts and balance
+        const [bankAccounts, userBalance] = await Promise.all([
+            fetchBankAccounts(),
+            fetchUserBalance()
+        ]);
+
+        const formattedBalance = userBalance.toLocaleString('en-US');
+
+        // Build bank account cards HTML
+        const bankAccountsHTML = bankAccounts.length > 0
+            ? bankAccounts.map((account, index) => `
+                <div class="withdraw-bank-account-card" data-index="${index}">
+                    <div class="bank-account-card-header">
+                        <div class="bank-account-card-title">
+                            <i data-lucide="building-2" class="bank-icon"></i>
+                            <span class="bank-name">${account.bankName}</span>
+                        </div>
+                    </div>
+                    <div class="bank-account-card-body">
+                        <div class="bank-account-info-row">
+                            <span class="bank-account-label">رقم الحساب:</span>
+                            <span class="bank-account-value">${account.accountNo}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')
+            : '<div class="withdraw-empty-state"><p class="withdraw-empty-text">لا يوجد حساب بنكي لعرضه هنا</p></div>';
+
+        withdrawContentWrapper.innerHTML = `
+            <h3 class="transfer-money-title">اختر البنك المستلم</h3>
+            
+            <div class="transfer-money-alert">
+                <i data-lucide="info" class="alert-icon"></i>
+                <span class="alert-text">سيتم سحب نقودك إلى البنك الخاص بك خلال 72 ساعة من استلام الطلب.</span>
+            </div>
+            
+            <div class="withdraw-bank-accounts-list" id="withdraw-bank-accounts-list">
+                ${bankAccountsHTML}
+            </div>
+            
+            <h3 class="transfer-money-title">تحديد المبلغ المراد سحبه</h3>
+            
+            <div class="withdraw-percentage-boxes">
+                <button class="withdraw-percentage-box" data-percentage="25" id="withdraw-percentage-25">
+                    25%
+                </button>
+                <button class="withdraw-percentage-box" data-percentage="50" id="withdraw-percentage-50">
+                    50%
+                </button>
+                <button class="withdraw-percentage-box" data-percentage="75" id="withdraw-percentage-75">
+                    75%
+                </button>
+                <button class="withdraw-percentage-box" data-percentage="100" id="withdraw-percentage-100">
+                    100%
+                </button>
+            </div>
+            
+            <div class="transfer-money-form-group">
+                <label class="transfer-money-form-label">المبلغ المراد سحبه</label>
+                <input type="number" class="transfer-money-form-input" id="withdraw-amount-input" 
+                    placeholder="أدخل المبلغ المراد سحبه" min="0" step="0.01">
+            </div>
+            
+            <button class="transfer-money-submit-btn" id="withdraw-money-submit-btn" disabled>
+                تأكيد طلب سحب
+            </button>
+        `;
+
+        // Initialize percentage boxes
+        initWithdrawPercentageBoxes(userBalance);
+
+        // Initialize bank account selection
+        initWithdrawBankAccountSelection();
+
+        // Initialize form validation
+        initWithdrawFormValidation();
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+        }
+    }
+
+    // Initialize withdraw percentage boxes
+    function initWithdrawPercentageBoxes(totalBalance) {
+        const percentageBoxes = document.querySelectorAll('.withdraw-percentage-box');
+        const amountInput = document.getElementById('withdraw-amount-input');
+
+        percentageBoxes.forEach(box => {
+            box.addEventListener('click', function () {
+                const percentage = parseFloat(this.getAttribute('data-percentage'));
+                let amount = (totalBalance * percentage) / 100;
+
+                // Round up to nearest tens
+                amount = Math.ceil(amount / 10) * 10;
+
+                // Ensure it doesn't exceed total balance
+                if (amount > totalBalance) {
+                    amount = totalBalance;
+                }
+
+                // Update input value
+                if (amountInput) {
+                    amountInput.value = amount.toFixed(2);
+                    // Trigger input event to validate form
+                    amountInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+
+                // Update active state
+                percentageBoxes.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    }
+
+    // Initialize withdraw bank account selection
+    function initWithdrawBankAccountSelection() {
+        const bankAccountCards = document.querySelectorAll('.withdraw-bank-account-card');
+
+        bankAccountCards.forEach(card => {
+            card.addEventListener('click', function () {
+                // Remove active state from all cards
+                bankAccountCards.forEach(c => c.classList.remove('active'));
+                // Add active state to clicked card
+                this.classList.add('active');
+                // Validate form (async)
+                validateWithdrawForm();
+            });
+        });
+    }
+
+    // Initialize withdraw form validation
+    function initWithdrawFormValidation() {
+        const amountInput = document.getElementById('withdraw-amount-input');
+        const submitBtn = document.getElementById('withdraw-money-submit-btn');
+        const percentageBoxes = document.querySelectorAll('.withdraw-percentage-box');
+
+        if (amountInput) {
+            amountInput.addEventListener('input', function () {
+                // Clear active state from percentage boxes when user manually types
+                percentageBoxes.forEach(box => box.classList.remove('active'));
+                validateWithdrawForm();
+            });
+        }
+
+        // Initial validation (async)
+        validateWithdrawForm();
+    }
+
+    // Validate withdraw form
+    async function validateWithdrawForm() {
+        const amountInput = document.getElementById('withdraw-amount-input');
+        const submitBtn = document.getElementById('withdraw-money-submit-btn');
+        const selectedBankAccount = document.querySelector('.withdraw-bank-account-card.active');
+
+        if (submitBtn && amountInput) {
+            const amount = parseFloat(amountInput.value);
+            const userBalance = await fetchUserBalance();
+            const hasValidAmount = amount > 0 && !isNaN(amount) && amount <= userBalance;
+            const hasSelectedBank = selectedBankAccount !== null;
+
+            submitBtn.disabled = !(hasValidAmount && hasSelectedBank);
+        }
+    }
+
+    // Show withdraw money content
+    async function showWithdrawMoneyContent() {
+        const walletManagementContent = document.getElementById('wallet-management-content');
+        const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+        const headerTitle = document.querySelector('#manage-wallet-header h2');
+
+        if (!walletManagementContent || !withdrawMoneyContent) return;
+
+        // Hide wallet management content
+        walletManagementContent.classList.remove('active');
+
+        // Render and show withdraw money content
+        await renderWithdrawMoneyContent();
+
+        requestAnimationFrame(() => {
+            withdrawMoneyContent.classList.add('active');
+
+            // Update header title
+            if (headerTitle) {
+                headerTitle.textContent = 'طلب سحب الأموال';
+            }
+
+            // Update URL hash (only if not updating from hash)
+            if (!isUpdatingFromHash &&
+                (window.location.hash === '#/profile/manage-wallet' ||
+                    window.location.hash === '#/profile/manage-wallet/')) {
+                window.location.hash = '#/profile/manage-wallet/withdraw-money';
+            }
+
+            // Update back button
+            updateBackButtonForWithdrawMoney();
+        });
+    }
+
+    // Update back button handler for withdraw money view
+    function updateBackButtonForWithdrawMoney() {
+        const backBtn = document.getElementById('manage-wallet-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function () {
+                // Navigate back using URL hash to trigger hashchange event
+                window.location.hash = '#/profile/manage-wallet';
+            };
+        }
+    }
+
+    // Show transfer money content
+    async function showTransferMoneyContent() {
+        const walletManagementContent = document.getElementById('wallet-management-content');
+        const transferMoneyContent = document.getElementById('transfer-money-content');
+        const headerTitle = document.querySelector('#manage-wallet-header h2');
+
+        if (!walletManagementContent || !transferMoneyContent) return;
+
+        // Hide wallet management content
+        walletManagementContent.classList.remove('active');
+
+        // Show transfer money content
+        requestAnimationFrame(() => {
+            transferMoneyContent.classList.add('active');
+
+            // Update header title
+            if (headerTitle) {
+                headerTitle.textContent = 'الحوالة البنكية';
+            }
+
+            // Update URL hash (only if not updating from hash)
+            if (!isUpdatingFromHash &&
+                (window.location.hash === '#/profile/manage-wallet' ||
+                    window.location.hash === '#/profile/manage-wallet/')) {
+                window.location.hash = '#/profile/manage-wallet/transfer-money';
+            }
+
+            // Update back button
+            updateBackButtonForTransferMoney();
+
+            // Update current balance
+            updateTransferMoneyCurrentBalance();
+
+            // Initialize copy button
+            initTransferMoneyCopyButton();
+
+            // Initialize file upload
+            initTransferMoneyFileUpload();
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                setTimeout(() => {
+                    lucide.createIcons();
+                }, 100);
+            }
+        });
+    }
+
+    // Show wallet management content
+    function showWalletManagementContent() {
+        const walletManagementContent = document.getElementById('wallet-management-content');
+        const transferMoneyContent = document.getElementById('transfer-money-content');
+        const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+        const headerTitle = document.querySelector('#manage-wallet-header h2');
+
+        if (!walletManagementContent) return;
+
+        // Hide other content views
+        if (transferMoneyContent) transferMoneyContent.classList.remove('active');
+        if (withdrawMoneyContent) withdrawMoneyContent.classList.remove('active');
+
+        // Show wallet management content
+        requestAnimationFrame(() => {
+            walletManagementContent.classList.add('active');
+
+            // Update header title
+            if (headerTitle) {
+                headerTitle.textContent = 'إدارة محفظتي';
+            }
+
+            // Update URL hash (only if not updating from hash)
+            if (!isUpdatingFromHash &&
+                (window.location.hash === '#/profile/manage-wallet/transfer-money' ||
+                    window.location.hash === '#/profile/manage-wallet/withdraw-money')) {
+                window.location.hash = '#/profile/manage-wallet';
+            }
+
+            // Update back button to go back to profile menu
+            const backBtn = document.getElementById('manage-wallet-back-btn');
+            if (backBtn) {
+                backBtn.onclick = function () {
+                    // Navigate back to profile menu
+                    if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
+                        window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
+                    } else {
+                        // Fallback: navigate to profile section
+                        if (typeof window.switchToSection === 'function') {
+                            window.switchToSection('profile-section');
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    // Initialize transfer money copy button
+    function initTransferMoneyCopyButton() {
+        const copyBtn = document.getElementById('transfer-iban-copy-btn');
+        const ibanValue = document.getElementById('transfer-iban-value');
+
+        if (copyBtn && ibanValue) {
+            copyBtn.addEventListener('click', async function () {
+                const iban = ibanValue.textContent.trim();
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(iban);
+                    } else {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = iban;
+                        textArea.style.position = 'fixed';
+                        textArea.style.opacity = '0';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                    }
+                    // Show feedback (you can add a toast notification here)
+                    console.log('IBAN copied to clipboard');
+                } catch (err) {
+                    console.error('Failed to copy IBAN:', err);
+                }
+            });
+        }
+    }
+
+    // Update transfer money current balance
+    async function updateTransferMoneyCurrentBalance() {
+        const balanceElement = document.getElementById('transfer-money-current-balance');
+        if (balanceElement) {
+            const userBalance = await fetchUserBalance();
+            const formattedBalance = userBalance.toLocaleString('en-US');
+            balanceElement.textContent = `الرصيد الحالي: ${formattedBalance} ر.س`;
+        }
+    }
+
+    // Initialize transfer money file upload
+    function initTransferMoneyFileUpload() {
+        const uploadArea = document.getElementById('transfer-receipt-upload-area');
+        const fileInput = document.getElementById('transfer-receipt-file-input');
+        const filePreview = document.getElementById('transfer-receipt-preview');
+        const fileName = document.getElementById('transfer-receipt-file-name');
+        const removeBtn = document.getElementById('transfer-receipt-remove-btn');
+        const submitBtn = document.getElementById('transfer-money-submit-btn');
+
+        if (uploadArea && fileInput) {
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file type
+                    const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('الملفات المسموح بها: PDF, PNG, JPG');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    // Show file name
+                    if (fileName) {
+                        fileName.textContent = file.name;
+                    }
+                    if (uploadArea.querySelector('.transfer-money-upload-content')) {
+                        uploadArea.querySelector('.transfer-money-upload-content').style.display = 'none';
+                    }
+                    if (filePreview) {
+                        filePreview.style.display = 'flex';
+                    }
+
+                    // Enable submit button if reference number is filled
+                    checkTransferFormValidity();
+                }
+            });
+
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    fileInput.value = '';
+                    if (fileName) fileName.textContent = '';
+                    if (filePreview) filePreview.style.display = 'none';
+                    if (uploadArea.querySelector('.transfer-money-upload-content')) {
+                        uploadArea.querySelector('.transfer-money-upload-content').style.display = 'flex';
+                    }
+                    // Disable submit button
+                    if (submitBtn) submitBtn.disabled = true;
+                });
+            }
+        }
+
+        // Check form validity when reference number changes
+        const referenceInput = document.getElementById('transfer-reference-input');
+        if (referenceInput) {
+            referenceInput.addEventListener('input', checkTransferFormValidity);
+        }
+    }
+
+    // Check transfer form validity
+    function checkTransferFormValidity() {
+        const referenceInput = document.getElementById('transfer-reference-input');
+        const fileInput = document.getElementById('transfer-receipt-file-input');
+        const submitBtn = document.getElementById('transfer-money-submit-btn');
+
+        if (submitBtn && referenceInput && fileInput) {
+            const hasReference = referenceInput.value.trim().length > 0;
+            const hasFile = fileInput.files.length > 0;
+
+            submitBtn.disabled = !(hasReference && hasFile);
+        }
+    }
+
+    // Handle URL hash changes to show correct view
+    function handleHashChange() {
+        const hash = window.location.hash;
+        const walletManagementContent = document.getElementById('wallet-management-content');
+        const transferMoneyContent = document.getElementById('transfer-money-content');
+        const withdrawMoneyContent = document.getElementById('withdraw-money-content');
+        const walletView = document.getElementById('manage-my-wallet-view');
+
+        // Only handle if we're on the wallet page
+        if (!walletView || !walletView.classList.contains('active')) {
+            return;
+        }
+
+        // Set flag to prevent URL update loops
+        isUpdatingFromHash = true;
+
+        if (hash === '#/profile/manage-wallet/transfer-money') {
+            // Show transfer money content
+            if (transferMoneyContent && walletManagementContent) {
+                walletManagementContent.classList.remove('active');
+                if (withdrawMoneyContent) withdrawMoneyContent.classList.remove('active');
+                requestAnimationFrame(() => {
+                    transferMoneyContent.classList.add('active');
+                    const headerTitle = document.querySelector('#manage-wallet-header h2');
+                    if (headerTitle) {
+                        headerTitle.textContent = 'الحوالة البنكية';
+                    }
+                    // Update current balance
+                    updateTransferMoneyCurrentBalance();
+                    // Initialize components
+                    initTransferMoneyCopyButton();
+                    initTransferMoneyFileUpload();
+                    // Update back button
+                    updateBackButtonForTransferMoney();
+                });
+            }
+        } else if (hash === '#/profile/manage-wallet/withdraw-money') {
+            // Show withdraw money content
+            if (withdrawMoneyContent && walletManagementContent) {
+                walletManagementContent.classList.remove('active');
+                if (transferMoneyContent) transferMoneyContent.classList.remove('active');
+                // Render and show withdraw money content
+                renderWithdrawMoneyContent().then(() => {
+                    requestAnimationFrame(() => {
+                        withdrawMoneyContent.classList.add('active');
+                        const headerTitle = document.querySelector('#manage-wallet-header h2');
+                        if (headerTitle) {
+                            headerTitle.textContent = 'طلب سحب الأموال';
+                        }
+                        // Update back button
+                        updateBackButtonForWithdrawMoney();
+                    });
+                });
+            }
+        } else if (hash === '#/profile/manage-wallet' || hash === '#/profile/manage-wallet/') {
+            // Show wallet management content
+            showWalletManagementContent();
+        }
+
+        // Reset flag after a short delay
+        setTimeout(() => {
+            isUpdatingFromHash = false;
+        }, 100);
+    }
+
+    // Initialize hash change listeners
+    function initHashChangeListeners() {
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Listen for popstate (browser back/forward)
+        window.addEventListener('popstate', handleHashChange);
+
+        // Handle initial hash on load
+        setTimeout(() => {
+            handleHashChange();
+        }, 100);
+    }
+
+    // Update back button handler for transfer money view
+    function updateBackButtonForTransferMoney() {
+        const backBtn = document.getElementById('manage-wallet-back-btn');
+        if (backBtn) {
+            backBtn.onclick = function () {
+                // Navigate back using URL hash to trigger hashchange event
+                window.location.hash = '#/profile/manage-wallet';
+            };
+        }
     }
 
     // Initialize when DOM is ready
@@ -340,6 +949,8 @@
                             if (typeof lucide !== 'undefined') {
                                 lucide.createIcons();
                             }
+                            // Check hash to show correct view
+                            handleHashChange();
                         }, 100);
                     }
                 }
@@ -350,6 +961,9 @@
             attributes: true,
             attributeFilter: ['class']
         });
+
+        // Initialize hash change listeners
+        initHashChangeListeners();
 
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {

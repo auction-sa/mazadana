@@ -25,7 +25,6 @@
     opacity: 1;
     box-sizing: border-box;
     position: relative;
-    overflow-y: auto;
     overflow-x: hidden;
     height: calc(100vh - 60px);
     padding: 0 var(--spacing-sm);

@@ -29,7 +29,6 @@
     right: 0;
     bottom: 0;
     background: var(--bg-white);
-    overflow-y: auto;
     padding: var(--spacing-xs) 0 var(--spacing-lg);
 }
 
@@ -116,7 +115,7 @@
     width: 30px;
     height: 30px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--text-secondary);
     color: var(--text-secondary);
     cursor: pointer;
@@ -248,7 +247,7 @@
     width: 100%;
     padding: 0.2rem 0.5rem;
     border: 2px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-base);
     color: var(--text-primary);
     background: var(--bg-light);
@@ -461,7 +460,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     max-height: 300px;
-    overflow-y: auto;
     direction: rtl;
     margin-top: var(--spacing-xs);
 }
@@ -722,7 +720,7 @@
 /* Submit Button */
 .submit-bank-account-btn {
     width: 100%;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     padding: var(--spacing-xs) 0;
     border: none;
     background: var(--primary-dark);
@@ -843,7 +841,7 @@
     flex: 1;
     padding: var(--spacing-xs) 0;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     cursor: pointer;

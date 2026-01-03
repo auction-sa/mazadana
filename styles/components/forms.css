@@ -92,7 +92,7 @@
     color: #666;
     transition: all 0.3s ease;
     z-index: 2;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     min-width: 36px;
     min-height: 36px;
     /* Consistent sizing with other input elements */

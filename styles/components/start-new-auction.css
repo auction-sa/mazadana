@@ -38,7 +38,7 @@
     color: var(--primary-color);
     white-space: nowrap;
     padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     transition: opacity 0.3s ease;
     pointer-events: none;
     z-index: 2;
@@ -136,7 +136,7 @@
 
 .wizard-step {
     background: var(--bg-white);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     padding: 1.5rem 1rem;
     box-shadow: var(--shadow-sm);
 }
@@ -179,7 +179,7 @@
     width: 100%;
     padding: 0 1rem;
     border: 2px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-sm);
     color: var(--text-primary);
     background: var(--bg-white);
@@ -254,7 +254,7 @@
     gap: 0.5rem;
     cursor: pointer;
     padding: 0.75rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     transition: background var(--transition-base);
 }
 
@@ -331,7 +331,7 @@
 .timezone-display {
     padding: 0.75rem;
     background: var(--primary-light);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     text-align: center;
 }
 
@@ -342,7 +342,7 @@
 /* Image Upload */
 .image-upload-area {
     border: 2px dashed var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     transition: all var(--transition-base);
 }
 
@@ -381,7 +381,7 @@
 .image-preview-item {
     position: relative;
     aspect-ratio: 1;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
     border: 2px solid var(--border-color);
 }
@@ -420,7 +420,7 @@
 
 .file-upload-placeholder {
     border: 2px dashed var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     padding: 1rem 0;
     text-align: center;
     cursor: pointer;
@@ -487,7 +487,7 @@
 .change-file-btn {
     padding: 0.5rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--bg-white);
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
@@ -500,7 +500,7 @@
 .documents-checklist {
     padding: 1rem 1rem 0;
     background: var(--bg-light);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     margin-top: 1rem;
 }
 
@@ -545,7 +545,7 @@
     width: fit-content;
     padding: 0.3rem 0.5rem;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-base);
     cursor: pointer;
     transition: background-color 0.3s ease, opacity 0.3s ease, cursor 0.3s ease;
@@ -579,7 +579,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     align-self: flex-start;
 }
 
@@ -602,7 +602,7 @@
     padding: 1rem;
     background: #f8d7da;
     border: 1px solid #f5c6cb;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     color: #721c24;
 }
 
@@ -618,7 +618,7 @@
 
 .review-section {
     padding: 1.25rem 0;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 
 .review-section-title {

@@ -74,7 +74,7 @@
 #company-banner-preview {
     width: 8rem;
     height: 4rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 
 .company-image-preview img {

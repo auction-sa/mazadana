@@ -245,7 +245,7 @@
 .asset-detail-section .empty-state {
     padding: var(--spacing-xl) var(--spacing-md);
     background: var(--bg-white);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: 0.5rem;
     width: 100%;
 }
@@ -303,7 +303,7 @@
     width: fit-content;
     padding: 0.2rem 0;
     border: 2px solid var(--primary-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--primary-color);
     font-size: var(--font-size-sm);
@@ -318,7 +318,7 @@
     padding: 0.3rem;
     margin-top: var(--spacing-md);
     background: #e3f2fd;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-sm);
     color: #1976d2;
     text-align: right;
@@ -333,7 +333,7 @@
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     padding: var(--spacing-xs);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 
 .product-detail-row {
@@ -371,7 +371,7 @@
     width: fit-content;
     padding: 0.5rem 1rem;
     border: 2px solid var(--primary-color);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--primary-color);
     font-size: var(--font-size-sm);
@@ -416,7 +416,7 @@
     left: 0;
     right: 0;
     background: var(--bg-white);
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-radius: 5px var(--radius-sm) 0 0;
     padding: var(--spacing-md);
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
     max-height: 80vh;
@@ -659,7 +659,7 @@
     width: 41px;
     height: 41px;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: rgb(192, 35, 35);
     color: white;
     cursor: pointer;

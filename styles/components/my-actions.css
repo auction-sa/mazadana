@@ -159,7 +159,7 @@
 
 .wallet-row-wrapper {
     overflow: hidden;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 
 .wallet-row-wrapper.expanded .wallet-row {
@@ -173,7 +173,7 @@
     align-items: center;
     padding: var(--spacing-md);
     border-left: 4px solid;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background-color: var(--bg-white);
     transition: all var(--transition-base);
 }

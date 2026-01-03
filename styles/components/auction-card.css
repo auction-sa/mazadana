@@ -295,7 +295,7 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.4rem 0.75rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     color: #666;
     min-width: 50px;
@@ -307,7 +307,7 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.4rem 0.75rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     color: #666;
     min-width: 50px;
