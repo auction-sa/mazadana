@@ -225,11 +225,7 @@
                 <h3 class="add-money-title">طريقة إيداع الأموال</h3>
                 <p class="add-money-subtitle">اختر إحدى الطرق التالية للإيداع</p>
                 <div class="add-money-options">
-                    <div class="add-money-option" data-method="sadad">
-                        <div class="add-money-option-text">سداد</div>
-                        <i data-lucide="arrow-right" class="add-money-option-arrow"></i>
-                    </div>
-                    <div class="add-money-option" data-method="bank-transfer">
+                    <div class="add-money-option"  data-method="bank-transfer">
                         <div class="add-money-option-text">حوالات بنكية</div>
                         <i data-lucide="arrow-right" class="add-money-option-arrow"></i>
                     </div>

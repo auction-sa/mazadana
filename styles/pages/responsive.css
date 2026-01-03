@@ -213,6 +213,11 @@
     .bank-select-content {
         width: 50%;
     }
+
+    .bank-account-confirmation-content {
+        width: 50%;
+        justify-self: center;
+    }
 }
 
 
