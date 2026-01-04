@@ -8,6 +8,14 @@
     let walletViewRendered = false;
     let isUpdatingFromHash = false; // Flag to prevent URL update loops
 
+    // Store file upload event handler references to allow removal
+    let fileUploadHandlers = {
+        uploadAreaClick: null,
+        fileInputChange: null,
+        removeBtnClick: null,
+        referenceInputInput: null
+    };
+
     // Fetch current user total balance from user-data.json
     async function fetchUserBalance() {
         try {
@@ -139,7 +147,7 @@
                         <div class="transfer-money-content-wrapper">
 
                             <h3 class="transfer-money-title">الحوالة البنكية
-                                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+                                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} <i data-lucide="saudi-riyal" class="rial-icon"></i></p>
                             </h3>
 
                             <p class="transfer-money-subtitle">للمشاركة يجب إرفاق الحوالة البنكية.</p>
@@ -459,7 +467,7 @@
             </div>
             
             <h3 class="transfer-money-title">تحديد المبلغ المراد سحبه
-                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} <i data-lucide="saudi-riyal" class="rial-icon"></i></p>
             </h3>
 
             <div class="withdraw-percentage-boxes">
@@ -764,7 +772,11 @@
         if (balanceElement) {
             const userBalance = await fetchUserBalance();
             const formattedBalance = userBalance.toLocaleString('en-US');
-            balanceElement.textContent = `الرصيد الحالي: ${formattedBalance} ر.س`;
+            balanceElement.innerHTML = `الرصيد الحالي: ${formattedBalance} <i data-lucide="saudi-riyal" class="rial-icon"></i>`;
+            // Reinitialize Lucide icons to render the new icon
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
     }
 
@@ -777,12 +789,26 @@
         const removeBtn = document.getElementById('transfer-receipt-remove-btn');
         const submitBtn = document.getElementById('transfer-money-submit-btn');
 
-        if (uploadArea && fileInput) {
-            uploadArea.addEventListener('click', () => {
-                fileInput.click();
-            });
+        // Remove old event listeners if they exist
+        if (uploadArea && fileUploadHandlers.uploadAreaClick) {
+            uploadArea.removeEventListener('click', fileUploadHandlers.uploadAreaClick);
+        }
+        if (fileInput && fileUploadHandlers.fileInputChange) {
+            fileInput.removeEventListener('change', fileUploadHandlers.fileInputChange);
+        }
+        if (removeBtn && fileUploadHandlers.removeBtnClick) {
+            removeBtn.removeEventListener('click', fileUploadHandlers.removeBtnClick);
+        }
 
-            fileInput.addEventListener('change', function (e) {
+        if (uploadArea && fileInput) {
+            // Create and store the upload area click handler
+            fileUploadHandlers.uploadAreaClick = () => {
+                fileInput.click();
+            };
+            uploadArea.addEventListener('click', fileUploadHandlers.uploadAreaClick);
+
+            // Create and store the file input change handler
+            fileUploadHandlers.fileInputChange = function (e) {
                 const file = e.target.files[0];
                 if (file) {
                     // Validate file type
@@ -804,13 +830,15 @@
                         filePreview.style.display = 'flex';
                     }
 
-                    // Enable submit button if reference number is filled
+                    // Enable submit button when file is uploaded
                     checkTransferFormValidity();
                 }
-            });
+            };
+            fileInput.addEventListener('change', fileUploadHandlers.fileInputChange);
 
+            // Create and store the remove button click handler
             if (removeBtn) {
-                removeBtn.addEventListener('click', function (e) {
+                fileUploadHandlers.removeBtnClick = function (e) {
                     e.stopPropagation();
                     fileInput.value = '';
                     if (fileName) fileName.textContent = '';
@@ -820,15 +848,25 @@
                     }
                     // Disable submit button
                     if (submitBtn) submitBtn.disabled = true;
-                });
+                };
+                removeBtn.addEventListener('click', fileUploadHandlers.removeBtnClick);
             }
         }
 
         // Check form validity when reference number changes
         const referenceInput = document.getElementById('transfer-reference-input');
         if (referenceInput) {
-            referenceInput.addEventListener('input', checkTransferFormValidity);
+            // Remove old listener if it exists
+            if (fileUploadHandlers.referenceInputInput) {
+                referenceInput.removeEventListener('input', fileUploadHandlers.referenceInputInput);
+            }
+            // Create and store the reference input handler
+            fileUploadHandlers.referenceInputInput = checkTransferFormValidity;
+            referenceInput.addEventListener('input', fileUploadHandlers.referenceInputInput);
         }
+
+        // Check form validity on initialization to enable button if both fields are already filled
+        checkTransferFormValidity();
     }
 
     // Check transfer form validity
@@ -838,10 +876,10 @@
         const submitBtn = document.getElementById('transfer-money-submit-btn');
 
         if (submitBtn && referenceInput && fileInput) {
-            const hasReference = referenceInput.value.trim().length > 0;
             const hasFile = fileInput.files.length > 0;
 
-            submitBtn.disabled = !(hasReference && hasFile);
+            // Enable submit button when a file is uploaded
+            submitBtn.disabled = !hasFile;
         }
     }
 

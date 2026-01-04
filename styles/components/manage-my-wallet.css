@@ -93,7 +93,10 @@
     color: var(--text-secondary);
     margin: var(--spacing-xs) 0 0 0;
     text-align: right;
+    display: flex;
+    align-items: center;
 }
+
 
 .transfer-money-subtitle {
     font-size: var(--font-size-base);
