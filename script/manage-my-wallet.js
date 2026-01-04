@@ -137,8 +137,11 @@
 
                     <div class="transfer-money-content" id="transfer-money-content">
                         <div class="transfer-money-content-wrapper">
-                            <h3 class="transfer-money-title">الحوالة البنكية</h3>
-                            <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+
+                            <h3 class="transfer-money-title">الحوالة البنكية
+                                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+                            </h3>
+
                             <p class="transfer-money-subtitle">للمشاركة يجب إرفاق الحوالة البنكية.</p>
                             
                             <div class="transfer-money-alert">
@@ -455,8 +458,10 @@
                 ${bankAccountsHTML}
             </div>
             
-            <h3 class="transfer-money-title">تحديد المبلغ المراد سحبه</h3>
-            
+            <h3 class="transfer-money-title">تحديد المبلغ المراد سحبه
+                <p class="transfer-money-current-balance" id="transfer-money-current-balance">الرصيد الحالي: ${formattedBalance} ر.س</p>
+            </h3>
+
             <div class="withdraw-percentage-boxes">
                 <button class="withdraw-percentage-box" data-percentage="25" id="withdraw-percentage-25">
                     25%
