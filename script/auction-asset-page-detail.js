@@ -1235,7 +1235,7 @@
                     if (section && section.classList.contains('active')) {
                         const correctUrl = '#/auction-section/main-auction-page/auction-asset-page';
                         const currentUrl = window.location.hash;
-                        
+
                         // Only update if URL is incorrect
                         if (currentUrl !== correctUrl) {
                             const state = { section: 'auction-asset-property-detail-section' };
