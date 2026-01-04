@@ -250,7 +250,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xs);
 }
 
 .upload-icon {
@@ -742,18 +742,15 @@
 
 .add-money-option {
     width: 100%;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-xs);
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    ;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
     transition: all var(--transition-base);
-    box-shadow: var(--shadow-sm);
-    min-height: 56px;
 }
 
 .add-money-option:active {

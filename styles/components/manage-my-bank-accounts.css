@@ -634,9 +634,9 @@
     padding: var(--spacing-xl);
 }
 
-.upload-icon {
-    width: 48px;
-    height: 48px;
+.transfer-receipt-upload-icon {
+    width: 28px;
+    height: 28px;
     color: var(--text-secondary);
     stroke: var(--text-secondary);
     stroke-width: 1.5;

@@ -183,12 +183,12 @@
                             </div>
                             
                             <div class="transfer-money-form-group">
-                                <label class="transfer-money-form-label">صورة الحوالة بنكية</label>
+                                <label class="transfer-money-form-label">صورة الحوالة البنكية</label>
                                 <div class="transfer-money-upload-area" id="transfer-receipt-upload-area">
                                     <input type="file" class="transfer-money-file-input" id="transfer-receipt-file-input" accept=".pdf,.png,.jpg,.jpeg" style="display: none;">
                                     <div class="transfer-money-upload-content">
-                                        <i data-lucide="upload" class="upload-icon"></i>
-                                        <span class="upload-caption">صورة الحوالة بنكية</span>
+                                        <i data-lucide="upload" class="transfer-receipt-upload-icon"></i>
+                                        <span class="upload-caption">صورة الحوالة البنكية</span>
                                     </div>
                                     <div class="transfer-money-file-preview" id="transfer-receipt-preview" style="display: none;">
                                         <span class="file-name" id="transfer-receipt-file-name"></span>
