@@ -451,8 +451,8 @@
                          <label class="add-new-auction-form-label">تاريخ ووقت بدء المزاد</label>
                          <div class="datetime-group">
                              <input type="text" class="add-new-auction-form-input" id="auction-start-date" value="${data.auctionStartDate ? formatDateForDisplay(data.auctionStartDate) : ''}" placeholder="اختر التاريخ" readonly>
-                             <input type="time" class="add-new-auction-form-input" id="auction-start-time" value="${data.auctionStartTime}" style="display: none;">
-                             <input type="text" class="add-new-auction-form-input" id="auction-start-time-display" value="${data.auctionStartTime ? formatTimeForDisplay(data.auctionStartTime) : ''}" placeholder="اختر الوقت" readonly>
+                             <input type="time" class="add-new-auction-form-input" id="auction-start-time" value="12:00" style="display: none;">
+                             <input type="text" class="add-new-auction-form-input" id="auction-start-time-display" value="12:00 مساءً" readonly style="pointer-events: none; cursor: default;">
                          </div>
                          <small class="form-helper">متى يبدأ المزاد</small>
                      </div>
@@ -472,9 +472,9 @@
                          <label class="add-new-auction-form-label">تاريخ ووقت إنتهاء المزاد</label>
                          <div class="datetime-group">
                              <input type="text" class="add-new-auction-form-input" id="auction-end-date" placeholder="تاريخ انتهاء المزاد" readonly>
-                             <input type="text" class="add-new-auction-form-input" id="auction-end-time-display" value="${data.auctionEndTime ? formatTimeForDisplay(data.auctionEndTime) : ''}" placeholder="وقت انهاء المزاد" readonly>
+                             <input type="text" class="add-new-auction-form-input" id="auction-end-time-display" value="12:00 مساءً" readonly style="pointer-events: none; cursor: default;">
                          </div>
-                         <small class="form-helper">متى ينتهي المزاد</small>
+                         <small class="form-helper">هذا هو تاريخ انتهاء المزاد</small>
                      </div>
 
                     <!-- Timezone Display -->
@@ -1041,8 +1041,6 @@
         const startDateInput = document.getElementById('auction-start-date');
         const endDateInput = document.getElementById('auction-end-date');
         const daysAmountInput = document.getElementById('auction-days-amount');
-        const startTimeDisplay = document.getElementById('auction-start-time-display');
-        const endTimeDisplay = document.getElementById('auction-end-time-display');
 
         if (!startDateInput || !endDateInput || !daysAmountInput) return;
 
@@ -1072,10 +1070,7 @@
             endDateInput.removeAttribute('data-date-value');
         }
 
-        // Always sync end time with start time
-        if (startTimeDisplay && endTimeDisplay) {
-            endTimeDisplay.value = startTimeDisplay.value;
-        }
+        // Time is fixed at 12:00 PM - no syncing needed
     }
 
     /**
@@ -1098,10 +1093,10 @@
             bidIncrement: bidIncrementValue.replace(/,/g, ''),
             minimumSalePrice: minimumSalePriceValue.replace(/,/g, ''),
             auctionStartDate: startDateInput?.getAttribute('data-date-value') || '',
-            auctionStartTime: startTimeInput?.value || '',
+            auctionStartTime: '12:00', // Fixed time: 12:00 PM
             auctionDaysAmount: document.getElementById('auction-days-amount')?.value || '',
             auctionEndDate: endDateInput?.getAttribute('data-date-value') || '',
-            auctionEndTime: startTimeInput?.value || '' // End time same as start time
+            auctionEndTime: '12:00' // Fixed time: 12:00 PM
         };
         autoSaveData();
     }
@@ -1859,48 +1854,22 @@
     }
 
     /**
-     * Initialize time pickers (sync display with native time input)
+     * Initialize time displays (fixed at 12:00 PM)
      */
     function initializeTimePickers() {
         const startTimeInput = document.getElementById('auction-start-time');
         const startTimeDisplay = document.getElementById('auction-start-time-display');
         const endTimeDisplay = document.getElementById('auction-end-time-display');
 
-        // Initialize start time picker
-        if (startTimeInput && startTimeDisplay) {
-            // Update display when native input changes
-            startTimeInput.addEventListener('change', function () {
-                const endTimeDisplay = document.getElementById('auction-end-time-display');
-                if (this.value) {
-                    const formattedTime = formatTimeForDisplay(this.value);
-                    startTimeDisplay.value = formattedTime;
-                    // Sync end time display with start time
-                    if (endTimeDisplay) {
-                        endTimeDisplay.value = formattedTime;
-                    }
-                } else {
-                    startTimeDisplay.value = '';
-                    if (endTimeDisplay) {
-                        endTimeDisplay.value = '';
-                    }
-                }
-                saveStep3();
-            });
-
-            // Click display input to trigger native time picker
-            startTimeDisplay.addEventListener('click', function () {
-                startTimeInput.showPicker ? startTimeInput.showPicker() : startTimeInput.click();
-            });
-
-            // Set initial display value and sync end time
-            const endTimeDisplay = document.getElementById('auction-end-time-display');
-            if (startTimeInput.value) {
-                const formattedTime = formatTimeForDisplay(startTimeInput.value);
-                startTimeDisplay.value = formattedTime;
-                if (endTimeDisplay) {
-                    endTimeDisplay.value = formattedTime;
-                }
-            }
+        // Set fixed time value (12:00 PM) - no picker needed
+        if (startTimeInput) {
+            startTimeInput.value = '12:00';
+        }
+        if (startTimeDisplay) {
+            startTimeDisplay.value = '12:00 مساءً';
+        }
+        if (endTimeDisplay) {
+            endTimeDisplay.value = '12:00 مساءً';
         }
     }
 
@@ -2037,20 +2006,7 @@
             });
         }
 
-        // Listen to start time display changes to sync end time
-        const startTimeDisplay = document.getElementById('auction-start-time-display');
-        const endTimeDisplay = document.getElementById('auction-end-time-display');
-        if (startTimeDisplay && endTimeDisplay) {
-            // Sync end time when start time display changes
-            startTimeDisplay.addEventListener('input', () => {
-                endTimeDisplay.value = startTimeDisplay.value;
-                calculateEndDate();
-            });
-            startTimeDisplay.addEventListener('change', () => {
-                endTimeDisplay.value = startTimeDisplay.value;
-                calculateEndDate();
-            });
-        }
+        // Time displays are fixed at 12:00 PM - no sync needed
 
         // Setup comma formatting for step 3 price inputs
         setupCommaFormattedInput('start-price', saveStep3);
