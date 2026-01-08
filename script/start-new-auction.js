@@ -391,8 +391,8 @@
                     <div class="form-group">
                         <label class="add-new-auction-form-label">سعر البداية</label>
                         <div class="input-with-currency">
-                            <input type="number" class="add-new-auction-form-input" id="start-price" value="${data.startPrice}" 
-                                   placeholder="0" min="0" step="100" dir="ltr">
+                            <input type="text" class="add-new-auction-form-input" id="start-price" value="${data.startPrice ? data.startPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}" 
+                                   placeholder="0" dir="ltr">
                             <span class="input-currency">
                                 <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             </span>
@@ -404,8 +404,8 @@
                     <div class="form-group">
                         <label class="add-new-auction-form-label">قيمة التأمين</label>
                         <div class="input-with-currency">
-                            <input type="number" class="add-new-auction-form-input" id="deposit-amount" value="${data.depositPrice}" 
-                                   placeholder="0" min="0" step="100" dir="ltr">
+                            <input type="text" class="add-new-auction-form-input" id="deposit-amount" value="${data.depositPrice ? data.depositPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}" 
+                                   placeholder="0" dir="ltr">
                             <span class="input-currency">
                                 <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             </span>
@@ -417,8 +417,8 @@
                     <div class="form-group">
                         <label class="add-new-auction-form-label">قيمة الزيادة</label>
                         <div class="input-with-currency">
-                            <input type="number" class="add-new-auction-form-input" id="bid-increment" value="${data.bidIncrement}" 
-                                   placeholder="0" min="0" step="100" dir="ltr">
+                            <input type="text" class="add-new-auction-form-input" id="bid-increment" value="${data.bidIncrement ? data.bidIncrement.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}" 
+                                   placeholder="0" dir="ltr">
                             <span class="input-currency">
                                 <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             </span>
@@ -430,8 +430,8 @@
                     <div class="form-group">
                         <label class="add-new-auction-form-label">السعر الأدنى لبيع العقار (إختياري)</label>
                         <div class="input-with-currency">
-                            <input type="number" class="add-new-auction-form-input" id="minimum-sale-price" value="${data.minimumSalePrice}" 
-                                   placeholder="0" min="0" step="100" dir="ltr">
+                            <input type="text" class="add-new-auction-form-input" id="minimum-sale-price" value="${data.minimumSalePrice ? data.minimumSalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}" 
+                                   placeholder="0" dir="ltr">
                             <span class="input-currency">
                                 <i data-lucide="saudi-riyal" class="rial-icon"></i>
                             </span>
@@ -1076,11 +1076,17 @@
         const startTimeInput = document.getElementById('auction-start-time');
         const endDateInput = document.getElementById('auction-end-date');
 
+        // Get values and remove commas for storage
+        const startPriceValue = document.getElementById('start-price')?.value || '';
+        const depositPriceValue = document.getElementById('deposit-amount')?.value || '';
+        const bidIncrementValue = document.getElementById('bid-increment')?.value || '';
+        const minimumSalePriceValue = document.getElementById('minimum-sale-price')?.value || '';
+
         formData.step3 = {
-            startPrice: document.getElementById('start-price')?.value || '',
-            depositPrice: document.getElementById('deposit-amount')?.value || '',
-            bidIncrement: document.getElementById('bid-increment')?.value || '',
-            minimumSalePrice: document.getElementById('minimum-sale-price')?.value || '',
+            startPrice: startPriceValue.replace(/,/g, ''),
+            depositPrice: depositPriceValue.replace(/,/g, ''),
+            bidIncrement: bidIncrementValue.replace(/,/g, ''),
+            minimumSalePrice: minimumSalePriceValue.replace(/,/g, ''),
             auctionStartDate: startDateInput?.getAttribute('data-date-value') || '',
             auctionStartTime: startTimeInput?.value || '',
             auctionDaysAmount: document.getElementById('auction-days-amount')?.value || '',
@@ -1628,6 +1634,82 @@
     }
 
     /**
+     * Setup comma formatting for number inputs with cursor position preservation
+     * This is a reusable function that can be used for any input field
+     * @param {string|HTMLElement} inputIdOrElement - The input element ID or the element itself
+     * @param {Function} [saveCallback] - Optional callback function to call on blur/change
+     */
+    function setupCommaFormattedInput(inputIdOrElement, saveCallback) {
+        const input = typeof inputIdOrElement === 'string'
+            ? document.getElementById(inputIdOrElement)
+            : inputIdOrElement;
+
+        if (!input) return;
+
+        input.addEventListener('input', function (e) {
+            // Save cursor position and original value
+            const cursorPosition = this.selectionStart;
+            const originalValue = this.value;
+
+            // Count digits before cursor position (excluding commas)
+            const textBeforeCursor = originalValue.substring(0, cursorPosition);
+            const digitsBeforeCursor = (textBeforeCursor.replace(/,/g, '').match(/\d/g) || []).length;
+
+            // Remove all non-digit characters except decimal point
+            let value = this.value.replace(/[^\d.]/g, '');
+
+            // Split by decimal point
+            const parts = value.split('.');
+
+            // Format the integer part with commas
+            if (parts[0]) {
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            // Rejoin with decimal point (limit to 2 decimal places)
+            let formattedValue = parts[0];
+            if (parts.length > 1) {
+                formattedValue += '.' + parts[1].substring(0, 2);
+            }
+
+            // Calculate new cursor position
+            // Find the position in formatted string where we have the same number of digits before cursor
+            let digitCount = 0;
+            let newCursorPosition = formattedValue.length;
+
+            for (let i = 0; i < formattedValue.length; i++) {
+                if (/\d/.test(formattedValue[i])) {
+                    digitCount++;
+                }
+                // If we've reached the same number of digits as before cursor, set position after this digit
+                if (digitCount === digitsBeforeCursor) {
+                    newCursorPosition = i + 1;
+                    break;
+                }
+            }
+
+            // Ensure cursor position is within bounds
+            newCursorPosition = Math.min(newCursorPosition, formattedValue.length);
+
+            // Update the input value
+            this.value = formattedValue;
+
+            // Restore cursor position after a short delay to ensure DOM is updated
+            setTimeout(() => {
+                this.setSelectionRange(newCursorPosition, newCursorPosition);
+            }, 0);
+        });
+
+        input.addEventListener('blur', function () {
+            if (saveCallback) saveCallback();
+        });
+
+        input.addEventListener('change', function () {
+            if (saveCallback) saveCallback();
+        });
+    }
+
+    /**
      * Setup Step 2 listeners
      */
     function setupStep2Listeners() {
@@ -1672,38 +1754,7 @@
         });
 
         // Property size input with comma formatting
-        const propertySizeInput = document.getElementById('property-size');
-        if (propertySizeInput) {
-            propertySizeInput.addEventListener('input', function (e) {
-                // Remove all non-digit characters except decimal point
-                let value = this.value.replace(/[^\d.]/g, '');
-
-                // Split by decimal point
-                const parts = value.split('.');
-
-                // Format the integer part with commas
-                if (parts[0]) {
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                }
-
-                // Rejoin with decimal point (limit to 2 decimal places)
-                let formattedValue = parts[0];
-                if (parts.length > 1) {
-                    formattedValue += '.' + parts[1].substring(0, 2);
-                }
-
-                // Update the input value
-                this.value = formattedValue;
-            });
-
-            propertySizeInput.addEventListener('blur', function () {
-                saveStep2();
-            });
-
-            propertySizeInput.addEventListener('change', function () {
-                saveStep2();
-            });
-        }
+        setupCommaFormattedInput('property-size', saveStep2);
 
         // Save step 2 inputs (excluding property-size as it has its own listener)
         ['property-title', 'property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
@@ -1938,26 +1989,34 @@
             });
         }
 
+        // Setup comma formatting for step 3 price inputs
+        setupCommaFormattedInput('start-price', saveStep3);
+        setupCommaFormattedInput('deposit-amount', saveStep3);
+        setupCommaFormattedInput('bid-increment', saveStep3);
+        setupCommaFormattedInput('minimum-sale-price', saveStep3);
+
         // Auto-suggest bid increment based on start price
         const startPriceInput = document.getElementById('start-price');
         const bidIncrementInput = document.getElementById('bid-increment');
 
         if (startPriceInput && bidIncrementInput) {
             startPriceInput.addEventListener('blur', function () {
-                const startPrice = parseFloat(this.value);
+                const startPriceValue = this.value.replace(/,/g, '');
+                const startPrice = parseFloat(startPriceValue);
                 if (startPrice && !bidIncrementInput.value) {
                     // Suggest 1% of start price, rounded to nearest 100
                     const suggested = Math.round(startPrice * 0.01 / 100) * 100;
                     if (suggested >= 100) {
-                        bidIncrementInput.value = suggested;
+                        // Format with commas
+                        bidIncrementInput.value = suggested.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                     }
                 }
                 saveStep3();
             });
         }
 
-        // Save step 3 inputs (excluding date inputs as they're handled by Pikaday)
-        ['start-price', 'deposit-amount', 'bid-increment', 'minimum-sale-price', 'auction-start-time'].forEach(id => {
+        // Save step 3 inputs (excluding price inputs and date inputs as they're handled separately)
+        ['auction-start-time'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', saveStep3);
@@ -2242,5 +2301,8 @@
         init: initAuctionWizardView,
         renderView: renderAuctionWizardViewPublic
     };
+
+    // Export comma formatting function globally for use in other parts of the website
+    window.setupCommaFormattedInput = setupCommaFormattedInput;
 })();
 
