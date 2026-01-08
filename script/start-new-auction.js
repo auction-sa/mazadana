@@ -1960,10 +1960,7 @@
                 }
 
                 // Clamp value between 5 and 90
-                if (value < 3) {
-                    value = 3;
-                    this.value = value;
-                } else if (value > 30) {
+                if (value > 30) {
                     value = 30;
                     this.value = value;
                 }
@@ -1982,8 +1979,8 @@
                 }
 
                 // Clamp value between 5 and 90
-                if (value < 5) {
-                    value = 5;
+                if (value < 3) {
+                    value = 3;
                     this.value = value;
                 } else if (value > 90) {
                     value = 90;
@@ -1997,7 +1994,7 @@
             // Handle arrow/spinner clicks to ensure step of 1
             daysAmountInput.addEventListener('wheel', function (e) {
                 e.preventDefault();
-                const currentValue = parseInt(this.value, 10) || 5;
+                const currentValue = parseInt(this.value, 10) || 3;
                 const delta = e.deltaY > 0 ? -1 : 1;
                 const newValue = Math.max(5, Math.min(90, currentValue + delta));
                 this.value = newValue;
