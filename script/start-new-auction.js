@@ -19,6 +19,7 @@
             contactPhone: '',
             propertyCity: '',
             propertyType: '',
+            propertyTypeOther: '',
             authorizationConfirmed: false
         },
         step2: {
@@ -251,7 +252,13 @@
                             <option value="commercial" ${data.propertyType === 'commercial' ? 'selected' : ''}>تجاري</option>
                             <option value="land" ${data.propertyType === 'land' ? 'selected' : ''}>أرض</option>
                             <option value="industrial" ${data.propertyType === 'industrial' ? 'selected' : ''}>صناعي</option>
+                            <option value="others" ${data.propertyType === 'others' ? 'selected' : ''}>اخرى</option>
                         </select>
+                        <!-- Other Property Type Input (shown when "اخرى" is selected) -->
+                        <div id="property-type-other-container" style="display: none; opacity: 0; transition: opacity 0.3s ease, max-height 0.3s ease; max-height: 0; overflow: hidden; margin-top: 0.5rem;">
+                            <input type="text" class="add-new-auction-form-input" id="property-type-other" value="${data.propertyTypeOther || ''}" 
+                                   placeholder="حدد نوع العقار">
+                        </div>
                         <small class="form-helper">اختر نوع العقار المعروض</small>
                     </div>
 
@@ -646,7 +653,7 @@
                         </div>
                         <div class="review-item">
                             <span class="review-label">نوع العقار:</span>
-                            <span class="review-value">${getPropertyTypeLabel(data.step1.propertyType)}</span>
+                            <span class="review-value">${data.step1.propertyType === 'others' && data.step1.propertyTypeOther ? data.step1.propertyTypeOther : getPropertyTypeLabel(data.step1.propertyType)}</span>
                         </div>
                     </div>
 
@@ -757,7 +764,8 @@
             'residential': 'سكني',
             'commercial': 'تجاري',
             'land': 'أرض',
-            'industrial': 'صناعي'
+            'industrial': 'صناعي',
+            'others': 'اخرى'
         };
         return labels[type] || 'غير محدد';
     }
@@ -866,6 +874,7 @@
         if (!data.step1.contactPhone) missing.push('رقم الهاتف');
         if (!data.step1.propertyCity) missing.push('مدينة العقار');
         if (!data.step1.propertyType) missing.push('نوع العقار');
+        if (data.step1.propertyType === 'others' && !data.step1.propertyTypeOther) missing.push('تحديد نوع العقار (اخرى)');
 
         // Step 2
         if (!data.step2.propertyTitle) missing.push('رابط عنوان العقار (من قوقل ماب)');
@@ -994,6 +1003,7 @@
             contactPhone: document.getElementById('contact-phone')?.value || '',
             propertyCity: document.getElementById('property-city')?.value || '',
             propertyType: document.getElementById('property-type')?.value || '',
+            propertyTypeOther: document.getElementById('property-type-other')?.value || '',
             authorizationConfirmed: document.getElementById('authorization-checkbox')?.checked || false
         };
         autoSaveData();
@@ -1314,7 +1324,7 @@
                 </div>
                 <div class="review-item">
                     <span class="review-label">نوع العقار:</span>
-                    <span class="review-value">${getPropertyTypeLabel(data.step1.propertyType)}</span>
+                    <span class="review-value">${data.step1.propertyType === 'others' && data.step1.propertyTypeOther ? data.step1.propertyTypeOther : getPropertyTypeLabel(data.step1.propertyType)}</span>
                 </div>
             </div>
 
@@ -1530,6 +1540,40 @@
     }
 
     /**
+     * Show/hide property type other input based on selection
+     */
+    function togglePropertyTypeOtherInput() {
+        const propertyTypeSelect = document.getElementById('property-type');
+        const otherInputContainer = document.getElementById('property-type-other-container');
+
+        if (!propertyTypeSelect || !otherInputContainer) return;
+
+        const selectedValue = propertyTypeSelect.value;
+
+        if (selectedValue === 'others') {
+            // Show the input smoothly
+            otherInputContainer.style.display = 'block';
+            // Force reflow to ensure display change is applied
+            otherInputContainer.offsetHeight;
+            otherInputContainer.style.maxHeight = '100px';
+            // Use requestAnimationFrame for smooth opacity transition
+            requestAnimationFrame(() => {
+                otherInputContainer.style.opacity = '1';
+            });
+        } else {
+            // Hide the input smoothly
+            otherInputContainer.style.opacity = '0';
+            otherInputContainer.style.maxHeight = '0';
+            // Hide after transition completes
+            setTimeout(() => {
+                if (propertyTypeSelect.value !== 'others') {
+                    otherInputContainer.style.display = 'none';
+                }
+            }, 300);
+        }
+    }
+
+    /**
      * Setup Step 1 listeners
      */
     function setupStep1Listeners() {
@@ -1543,6 +1587,25 @@
                 saveStep1();
             });
         });
+
+        // Property type change - show/hide other input
+        const propertyTypeSelect = document.getElementById('property-type');
+        if (propertyTypeSelect) {
+            propertyTypeSelect.addEventListener('change', function () {
+                togglePropertyTypeOtherInput();
+                saveStep1();
+            });
+
+            // Initialize on load
+            togglePropertyTypeOtherInput();
+        }
+
+        // Property type other input - save on change
+        const propertyTypeOtherInput = document.getElementById('property-type-other');
+        if (propertyTypeOtherInput) {
+            propertyTypeOtherInput.addEventListener('blur', saveStep1);
+            propertyTypeOtherInput.addEventListener('input', saveStep1);
+        }
 
         // Authorization checkbox - change button background and show/hide error message
         const authCheckbox = document.getElementById('authorization-checkbox');
