@@ -92,6 +92,22 @@
     }
 
     /**
+     * Update seller name label based on selected seller type
+     */
+    function updateSellerNameLabel() {
+        const label = document.getElementById('seller-name-label');
+        if (!label) return;
+
+        const selectedRadio = document.querySelector('input[name="sellerType"]:checked');
+        if (selectedRadio) {
+            label.textContent = selectedRadio.value === 'company' ? 'اسم الشركة' : 'اسم البائع';
+        } else {
+            // Default to 'اسم البائع' if nothing is selected
+            label.textContent = 'اسم البائع';
+        }
+    }
+
+    /**
      * Build auction wizard view markup
      */
     function renderAuctionWizardView() {
@@ -157,6 +173,9 @@
 
         // Show current step
         showStep(currentStep);
+
+        // Update seller name label based on saved seller type
+        updateSellerNameLabel();
 
         // Allow listeners to attach on fresh markup
         eventListenersAttached = false;
@@ -277,26 +296,18 @@
                 <form class="wizard-form" id="step2-form">
                     <!-- Property Title -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">عنوان العقار</label>
+                        <label class="add-new-auction-form-label">رابط عنوان العقار (من قوقل ماب)</label>
                         <input type="text" class="add-new-auction-form-input" id="property-title" value="${data.propertyTitle}" 
-                               placeholder="مثل: شقة فاخرة في حي العليا">
-                        <small class="form-helper">عنوان قصير يصف العقار (مثلاً "شقة في مكة في حي العزيزية" او "ارض زراعية في شمال الرياض")</small>
-                    </div>
-
-                    <!-- Property Address -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">العنوان الكامل</label>
-                        <textarea class="add-new-auction-form-input form-textarea" id="property-address-url" rows="3" 
-                                  placeholder="أدخل العنوان الكامل للعقار">${data.propertyAddressUrl}</textarea>
-                        <small class="form-helper">العنوان الكامل من قوقل ماب (مثلاً رابط قوقل ماب او وصف كامل لعنوان العقار")</small>
+                               placeholder="الصق الرابط من قوقل ماب">
+                        <small class="form-helper">ابحث عن موقع العقار في قوقل ماب واستخدمه هنا</small>
                     </div>
 
                     <!-- Property Size -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">مساحة العقار</label>
                         <div class="input-with-unit">
-                            <input type="number" class="add-new-auction-form-input" id="property-size" value="${data.propertySize}" 
-                            placeholder="0" min="0" step="0.01" dir="ltr">
+                            <input type="text" class="add-new-auction-form-input" id="property-size" value="${data.propertySize ? data.propertySize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}" 
+                            placeholder="0" dir="ltr">
                         </div>
                         <small class="form-helper">المساحة بالمتر المربع</small>
                     </div>
@@ -311,7 +322,7 @@
 
                     <!-- Property Boundaries -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">حدود وأطوال العقار</label>
+                        <label class="add-new-auction-form-label">حدود وأطوال العقار (إختياري)</label>
                         <div class="boundaries-group">
                             <div class="boundary-item">
                                 <label class="boundary-label">شمال</label>
@@ -551,7 +562,7 @@
 
                     <!-- Seller Declaration -->
                     <div class="form-group">
-                        <label class="checkbox-label">
+                        <label class="checkbox-label-content">
                             <input type="checkbox" id="seller-declaration-checkbox" ${data.sellerDeclaration ? 'checked' : ''}>
                             <span>أؤكد صحة جميع المعلومات والمستندات المرفقة</span>
                         </label>
@@ -642,12 +653,8 @@
                     <div class="review-section">
                         <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
                         <div class="review-item">
-                            <span class="review-label">عنوان العقار:</span>
+                            <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
                             <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">العنوان الكامل:</span>
-                            <span class="review-value">${data.step2.propertyAddressUrl || 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
                             <span class="review-label">المساحة:</span>
@@ -861,8 +868,7 @@
         if (!data.step1.propertyType) missing.push('نوع العقار');
 
         // Step 2
-        if (!data.step2.propertyTitle) missing.push('عنوان العقار');
-        if (!data.step2.propertyAddressUrl) missing.push('عنوان العقار (من قوقل ماب)');
+        if (!data.step2.propertyTitle) missing.push('رابط عنوان العقار (من قوقل ماب)');
         if (!data.step2.propertySize) missing.push('مساحة العقار');
 
         // Step 3
@@ -997,10 +1003,14 @@
      * Save step 2 data
      */
     function saveStep2() {
+        // Get property size and remove commas for storage
+        const propertySizeValue = document.getElementById('property-size')?.value || '';
+        const propertySizeClean = propertySizeValue.replace(/,/g, '');
+
         formData.step2 = {
             propertyTitle: document.getElementById('property-title')?.value || '',
-            propertyAddressUrl: document.getElementById('property-address-url')?.value || '',
-            propertySize: document.getElementById('property-size')?.value || '',
+            propertyAddressUrl: '',
+            propertySize: propertySizeClean,
             propertySizeUnit: 'م²',
             propertyDescription: document.getElementById('property-description')?.value || '',
             propertyBoundaries: {
@@ -1305,12 +1315,8 @@
             <div class="review-section">
                 <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
                 <div class="review-item">
-                    <span class="review-label">عنوان العقار:</span>
+                    <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
                     <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">العنوان الكامل:</span>
-                    <span class="review-value">${data.step2.propertyAddressUrl || 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
                     <span class="review-label">المساحة:</span>
@@ -1439,6 +1445,49 @@
     }
 
     /**
+     * Setup progress steps navigation - make them clickable
+     */
+    function setupProgressStepsNavigation() {
+        const progressSteps = document.querySelectorAll('.progress-step');
+
+        progressSteps.forEach((stepElement) => {
+            const targetStep = parseInt(stepElement.getAttribute('data-step'), 10);
+
+            if (!targetStep || isNaN(targetStep)) return;
+
+            // Add click event listener
+            stepElement.addEventListener('click', function () {
+                // Save current step data before switching
+                if (currentStep === 1) {
+                    saveStep1();
+                } else if (currentStep === 2) {
+                    saveStep2();
+                } else if (currentStep === 3) {
+                    saveStep3();
+                } else if (currentStep === 4) {
+                    saveStep4();
+                }
+
+                // Update current step
+                currentStep = targetStep;
+                autoSaveData();
+
+                // Show the target step with smooth transition
+                showStep(targetStep);
+
+                // If navigating to step 5, update review content
+                if (targetStep === 5) {
+                    renderStep5Content();
+                }
+            });
+
+            // Add hover effect styling
+            stepElement.style.cursor = 'pointer';
+            stepElement.style.transition = 'all 0.3s ease';
+        });
+    }
+
+    /**
      * Attach event listeners
      */
     function attachEventListeners() {
@@ -1457,6 +1506,9 @@
                 }
             };
         }
+
+        // Make progress steps clickable
+        setupProgressStepsNavigation();
 
         // Attach scroll to top to all wizard buttons
         attachScrollToTopToButtons();
@@ -1619,8 +1671,42 @@
             });
         });
 
-        // Save step 2 inputs
-        ['property-title', 'property-address-url', 'property-size', 'property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
+        // Property size input with comma formatting
+        const propertySizeInput = document.getElementById('property-size');
+        if (propertySizeInput) {
+            propertySizeInput.addEventListener('input', function (e) {
+                // Remove all non-digit characters except decimal point
+                let value = this.value.replace(/[^\d.]/g, '');
+
+                // Split by decimal point
+                const parts = value.split('.');
+
+                // Format the integer part with commas
+                if (parts[0]) {
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+
+                // Rejoin with decimal point (limit to 2 decimal places)
+                let formattedValue = parts[0];
+                if (parts.length > 1) {
+                    formattedValue += '.' + parts[1].substring(0, 2);
+                }
+
+                // Update the input value
+                this.value = formattedValue;
+            });
+
+            propertySizeInput.addEventListener('blur', function () {
+                saveStep2();
+            });
+
+            propertySizeInput.addEventListener('change', function () {
+                saveStep2();
+            });
+        }
+
+        // Save step 2 inputs (excluding property-size as it has its own listener)
+        ['property-title', 'property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('blur', saveStep2);

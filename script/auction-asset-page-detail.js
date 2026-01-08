@@ -213,7 +213,7 @@
 
             <!-- Property Address Details Section -->
             <div class="asset-detail-section">
-                <h3 class="asset-detail-section-title">عنوان العقار</h3>
+                <h3 class="asset-detail-section-title">رابط عنوان العقار</h3>
                 <div class="product-details-list">
                     <div class="product-detail-row">
                         <i data-lucide="map-pin" class="detail-icon"></i>
