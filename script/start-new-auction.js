@@ -13,6 +13,22 @@
     // Form data storage (auto-saved as user progresses)
     let formData = {
         step1: {
+            // Main auction details
+            bidStartDate: '',
+            bidStartTime: '',
+            bidEndDate: '',
+            bidEndTime: '',
+            propertiesLocations: '',
+            brochurePDF: null,
+            auctionThumbnail: null,
+            auctionApprovalNumber: '',
+            // Company info (if approval number exists)
+            companyName: '',
+            companyEmail: '',
+            companyPhone: '',
+            // Number of properties
+            numberOfProperties: 0,
+            // Legacy fields (kept for backward compatibility)
             sellerType: '',
             sellerName: '',
             contactEmail: '',
@@ -20,7 +36,12 @@
             propertyCity: '',
             authorizationConfirmed: false
         },
+        // Properties array - each property has its own data
+        properties: [],
+        // Current property being edited (for step 2)
+        currentPropertyIndex: null,
         step2: {
+            // This is now used for individual property editing
             propertyType: '',
             propertyTypeOther: '',
             propertyTitle: '',
@@ -82,7 +103,53 @@
             const savedData = localStorage.getItem('auctionWizardData');
             const savedStep = localStorage.getItem('auctionWizardCurrentStep');
             if (savedData) {
-                formData = JSON.parse(savedData);
+                const parsed = JSON.parse(savedData);
+                // Merge with default structure to ensure all properties exist
+                formData = {
+                    step1: {
+                        bidStartDate: '',
+                        bidStartTime: '',
+                        bidEndDate: '',
+                        bidEndTime: '',
+                        propertiesLocations: '',
+                        brochurePDF: null,
+                        auctionThumbnail: null,
+                        auctionApprovalNumber: '',
+                        companyName: '',
+                        companyEmail: '',
+                        companyPhone: '',
+                        numberOfProperties: 0,
+                        sellerType: '',
+                        sellerName: '',
+                        contactEmail: '',
+                        contactPhone: '',
+                        propertyCity: '',
+                        authorizationConfirmed: false,
+                        ...parsed.step1
+                    },
+                    properties: parsed.properties || [],
+                    currentPropertyIndex: parsed.currentPropertyIndex || null,
+                    step2: {
+                        propertyType: '',
+                        propertyTypeOther: '',
+                        propertyTitle: '',
+                        propertyAddressUrl: '',
+                        propertySize: '',
+                        propertySizeUnit: 'م²',
+                        propertyDescription: '',
+                        propertyBoundaries: {
+                            north: '',
+                            south: '',
+                            east: '',
+                            west: ''
+                        },
+                        propertyImages: [],
+                        ...parsed.step2
+                    },
+                    step3: parsed.step3 || formData.step3,
+                    step4: parsed.step4 || formData.step4,
+                    step5: parsed.step5 || formData.step5
+                };
             }
             if (savedStep) {
                 currentStep = parseInt(savedStep, 10) || 1;
@@ -105,6 +172,132 @@
         } else {
             // Default to 'اسم البائع' if nothing is selected
             label.textContent = 'اسم البائع';
+        }
+    }
+
+    /**
+     * Render property cards container
+     */
+    function renderPropertyCardsContainer() {
+        const container = document.getElementById('number-of-auction-properties-container');
+        if (!container) return;
+
+        const numberOfProperties = formData.step1.numberOfProperties || 0;
+        const properties = formData.properties || [];
+
+        // Ensure properties array has correct length
+        while (properties.length < numberOfProperties) {
+            properties.push({
+                id: Date.now() + Math.random(),
+                propertyType: '',
+                propertyTypeOther: '',
+                propertyTitle: '',
+                propertyAddressUrl: '',
+                propertySize: '',
+                propertySizeUnit: 'م²',
+                propertyDescription: '',
+                propertyBoundaries: {
+                    north: '',
+                    south: '',
+                    east: '',
+                    west: ''
+                },
+                propertyImages: []
+            });
+        }
+        // Remove excess properties
+        while (properties.length > numberOfProperties) {
+            properties.pop();
+        }
+
+        formData.properties = properties;
+        autoSaveData();
+
+        if (numberOfProperties === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const currentIndex = formData.currentPropertyIndex !== null ? formData.currentPropertyIndex : -1;
+
+        container.innerHTML = `
+            <div class="properties-cards-container">
+                ${properties.map((property, index) => `
+                    <div class="property-card-item ${currentIndex === index ? 'selected' : ''}" data-property-index="${index}">
+                        <h4 class="property-card-title">عقار ${index + 1}</h4>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // Add click handlers to property cards
+        container.querySelectorAll('.property-card-item').forEach((card, index) => {
+            card.addEventListener('click', () => {
+                selectPropertyCard(index);
+                // Navigate to step 2 to edit this property
+                formData.currentPropertyIndex = index;
+                autoSaveData();
+                currentStep = 2;
+
+                // Show step 2 first
+                showStep(2);
+
+                // Load property data into step 2 (this will re-render it)
+                loadPropertyToStep2(index);
+
+                // Ensure step 2 is displayed after re-rendering (renderStep2 sets display: none by default)
+                setTimeout(() => {
+                    const step2Element = document.getElementById('wizard-step-2');
+                    if (step2Element) {
+                        step2Element.style.display = 'block';
+                    }
+                }, 10);
+            });
+        });
+    }
+
+    /**
+     * Select a property card and update visual state
+     */
+    function selectPropertyCard(index) {
+        // Remove selected class from all cards
+        document.querySelectorAll('.property-card-item').forEach(card => {
+            card.classList.remove('selected');
+        });
+
+        // Add selected class to the specified card
+        const card = document.querySelector(`.property-card-item[data-property-index="${index}"]`);
+        if (card) {
+            card.classList.add('selected');
+        }
+
+        // Update formData
+        formData.currentPropertyIndex = index;
+        autoSaveData();
+    }
+
+    /**
+     * Load property data into step 2 for editing
+     */
+    function loadPropertyToStep2(propertyIndex) {
+        const property = formData.properties[propertyIndex];
+        if (!property) return;
+
+        // Copy property data to step2
+        formData.step2 = JSON.parse(JSON.stringify(property));
+        autoSaveData();
+
+        // Re-render step 2 with the property data
+        const step2Element = document.getElementById('wizard-step-2');
+        if (step2Element) {
+            step2Element.outerHTML = renderStep2();
+            // Ensure step 2 is displayed after re-rendering (renderStep2 sets display: none by default)
+            const newStep2Element = document.getElementById('wizard-step-2');
+            if (newStep2Element) {
+                newStep2Element.style.display = 'block';
+            }
+            setupStep2Listeners();
+            lucide.createIcons();
         }
     }
 
@@ -133,9 +326,10 @@
 
                     <div id="number-of-auction-properties-container"></div>
 
-                    <!-- Progress Bar -->
-                    <div class="progress-bar" id="wizard-progress-bar"></div>
-                    <div class="wizard-progress">
+                    <!-- Progress Bar Wrapper -->
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="wizard-progress-bar"></div>
+                        <div class="wizard-progress">
                         <div class="progress-steps">
                             <div class="progress-step ${currentStep > 1 ? 'passed' : currentStep === 1 ? 'current' : 'future'}" data-step="1">
                                 <span class="step-number">1</span>
@@ -159,6 +353,7 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- Step Content Container -->
                     <div class="wizard-steps-container">
@@ -174,6 +369,9 @@
 
         // Update progress bar
         updateProgressBar();
+
+        // Render property cards container
+        renderPropertyCardsContainer();
 
         // Show current step
         showStep(currentStep);
@@ -192,74 +390,126 @@
      * Render Step 1: Quick Start
      */
     function renderStep1() {
-        const data = formData.step1;
+        const data = formData.step1 || {};
+        const hasBrochure = data.brochurePDF !== null && data.brochurePDF !== undefined;
+        const hasThumbnail = data.auctionThumbnail !== null && data.auctionThumbnail !== undefined && data.auctionThumbnail.preview;
+        const hasApprovalNumber = data.auctionApprovalNumber && data.auctionApprovalNumber.trim() !== '';
+
         return `
             <div class="wizard-step" id="wizard-step-1">
                 <h3 class="step-title">البدء السريع</h3>
-                <p class="step-subtitle">ابدأ بإدخال معلوماتك الأساسية</p>
+                <p class="step-subtitle">ابدأ بإدخال معلومات المزاد الأساسية</p>
 
                 <form class="wizard-form" id="step1-form">
-                    <!-- Seller Type -->
+                    <!-- Bid Start Date & Time -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">نوع البائع</label>
-                        <div class="add-new-auction-radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="sellerType" value="company" ${data.sellerType === 'company' ? 'checked' : ''}>
-                                <span>شركة</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="sellerType" value="individual" ${data.sellerType === 'individual' ? 'checked' : ''}>
-                                <span>فرد</span>
-                            </label>
+                        <label class="add-new-auction-form-label">تاريخ ووقت بدء المزايدة</label>
+                        <div class="datetime-group">
+                            <input type="text" class="add-new-auction-form-input" id="bid-start-date" value="${data.bidStartDate ? formatDateForDisplay(data.bidStartDate) : ''}" placeholder="اختر التاريخ" readonly>
+                            <input type="time" class="add-new-auction-form-input" id="bid-start-time" value="${data.bidStartTime || '12:00'}" style="display: none;">
+                            <input type="text" class="add-new-auction-form-input" id="bid-start-time-display" value="${data.bidStartTime ? formatTimeForDisplay(data.bidStartTime) : '12:00 مساءً'}" readonly style="pointer-events: none; cursor: default;">
+                        </div>
+                        <small class="form-helper">متى تبدأ المزايدة</small>
+                    </div>
+
+                    <!-- Bid End Date & Time -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">تاريخ ووقت انتهاء المزايدة</label>
+                        <div class="datetime-group">
+                            <input type="text" class="add-new-auction-form-input" id="bid-end-date" value="${data.bidEndDate ? formatDateForDisplay(data.bidEndDate) : ''}" placeholder="اختر التاريخ" readonly>
+                            <input type="time" class="add-new-auction-form-input" id="bid-end-time" value="${data.bidEndTime || '12:00'}" style="display: none;">
+                            <input type="text" class="add-new-auction-form-input" id="bid-end-time-display" value="${data.bidEndTime ? formatTimeForDisplay(data.bidEndTime) : '12:00 مساءً'}" readonly style="pointer-events: none; cursor: default;">
+                        </div>
+                        <small class="form-helper">متى تنتهي المزايدة</small>
+                    </div>
+
+                    <!-- Properties Locations -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">مواقع العقارات</label>
+                        <input type="text" class="add-new-auction-form-input" id="properties-locations" value="${data.propertiesLocations || ''}" 
+                               placeholder="مكة المكرمة، الرياض، المدينة">
+                        <small class="form-helper">أدخل مواقع العقارات مفصولة بفواصل</small>
+                    </div>
+
+                    <!-- Brochure PDF -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">بروشور PDF (إختياري)</label>
+                        <div class="file-upload-area">
+                            <input type="file" id="brochure-pdf-input" accept=".pdf" style="display: none;">
+                            <div class="file-upload-placeholder ${hasBrochure ? 'has-file' : ''}" id="brochure-pdf-placeholder">
+                                ${hasBrochure ? `
+                                    <button type="button" class="delete-file-btn" data-file="brochure-pdf" aria-label="حذف الملف">
+                                        <i data-lucide="x" class="delete-icon"></i>
+                                    </button>
+                                    <i data-lucide="file-check" class="upload-icon"></i>
+                                    <p>تم رفع الملف</p>
+                                    <button type="button" class="change-file-btn" data-file="brochure-pdf">تغيير الملف</button>
+                                ` : `
+                                    <i data-lucide="upload" class="upload-icon"></i>
+                                    <p>اضغط لرفع ملف PDF</p>
+                                    <small>بروشور المزاد</small>
+                                `}
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Seller Name -->
+                    <!-- Auction Thumbnail -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label" id="seller-name-label">اسم البائع</label>
-                        <input type="text" class="add-new-auction-form-input" id="seller-name" value="${data.sellerName}" 
-                               placeholder="أدخل اسم الشركة أو البائع">
-                        <small class="form-helper">اسم الشركة أو البائع كما سيظهر في المزاد</small>
-                    </div>
-
-                    <!-- Contact Email -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">البريد الإلكتروني</label>
-                        <input type="email" class="add-new-auction-form-input" id="contact-email" value="${data.contactEmail}" 
-                               placeholder="example@email.com" dir="ltr">
-                        <small class="form-helper">سيتم استخدام هذا البريد للتواصل معك</small>
-                    </div>
-
-                    <!-- Contact Phone -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">رقم الهاتف</label>
-                        <input type="tel" class="add-new-auction-form-input" id="contact-phone" value="${data.contactPhone}" 
-                               placeholder="05xxxxxxxx" dir="ltr">
-                        <small class="form-helper">رقم هاتف للتواصل السريع</small>
-                    </div>
-
-                    <!-- Property City -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">مند العقارات</label>
-                        <input type="text" class="add-new-auction-form-input" id="property-city" value="${data.propertyCity}" 
-                               placeholder="مثل: الرياض، جدة، الدمام">
-                        <small class="form-helper">المدن التي تقع فيها العقارات</small>
-                    </div>
-
-                    <!-- Authorization Checkbox -->
-                    <div class="form-group">
-                        <label class="checkbox-label" style="padding-bottom: 0;">
-                            <div class="checkbox-label-content">
-                                <input type="checkbox" id="authorization-checkbox" ${data.authorizationConfirmed ? 'checked' : ''}>
-                                <span>أؤكد أن لدي الصلاحية لبيع هذه العقارات بالمزاد العلني.</span>
+                        <label class="add-new-auction-form-label">صورة المزاد الرئيسية (إختياري)</label>
+                        <div class="image-upload-area" id="thumbnail-upload-area">
+                            <input type="file" id="auction-thumbnail-input" accept="image/*" style="display: none;">
+                            <div class="upload-placeholder" id="thumbnail-upload-placeholder">
+                                ${hasThumbnail && data.auctionThumbnail.preview ? `
+                                    <div class="image-preview-item" style="margin: 0 auto;">
+                                        <img src="${data.auctionThumbnail.preview}" alt="Thumbnail Preview">
+                                        <button type="button" class="remove-image-btn" data-file="thumbnail">×</button>
+                                    </div>
+                                ` : `
+                                    <i data-lucide="image" class="upload-icon"></i>
+                                    <p>اسحب الصورة هنا أو اضغط للاختيار</p>
+                                    <small>صورة رئيسية للمزاد</small>
+                                `}
                             </div>
-                            <span class="authorization-error-message" id="authorization-error-message" style="opacity: 0;">يرجى الموافقة على البند أعلاه.</span>
-                        </label>
+                        </div>
+                    </div>
+
+                    <!-- Auction Approval Number -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">رقم موافقة المزاد (إختياري)</label>
+                        <input type="text" class="add-new-auction-form-input" id="auction-approval-number-step1" value="${data.auctionApprovalNumber || ''}" 
+                               placeholder="أدخل رقم الموافقة">
+                        <small class="form-helper">رقم موافقة المزاد من الجهة المختصة</small>
+                    </div>
+
+                    <!-- Company Info (shown if approval number exists) -->
+                    <div id="company-info-container" style="display: ${hasApprovalNumber ? 'block' : 'none'}; opacity: ${hasApprovalNumber ? '1' : '0'}; transition: opacity 0.3s ease;">
+                        <div class="form-group">
+                            <label class="add-new-auction-form-label">اسم الشركة</label>
+                            <input type="text" class="add-new-auction-form-input" id="company-name" value="${data.companyName || ''}" 
+                                   placeholder="أدخل اسم الشركة">
+                        </div>
+                        <div class="form-group">
+                            <label class="add-new-auction-form-label">البريد الإلكتروني للشركة</label>
+                            <input type="email" class="add-new-auction-form-input" id="company-email" value="${data.companyEmail || ''}" 
+                                   placeholder="example@company.com" dir="ltr">
+                        </div>
+                        <div class="form-group">
+                            <label class="add-new-auction-form-label">رقم هاتف الشركة</label>
+                            <input type="tel" class="add-new-auction-form-input" id="company-phone" value="${data.companyPhone || ''}" 
+                                   placeholder="05xxxxxxxx" dir="ltr">
+                        </div>
+                    </div>
+
+                    <!-- Number of Properties -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">عدد العقارات</label>
+                        <input type="number" class="add-new-auction-form-input" id="number-of-properties" value="${data.numberOfProperties || 0}" 
+                               placeholder="0" min="0" dir="ltr">
+                        <small class="form-helper">عدد العقارات في هذا المزاد</small>
                     </div>
 
                     <!-- Step 1 Buttons -->
                     <div class="wizard-buttons">
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step1-save-btn">حفظ المعلومات</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step1-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -378,7 +628,6 @@
                     <!-- Step 2 Buttons -->
                     <div class="wizard-buttons">
                         <button type="button" class="wizard-btn wizard-btn-secondary" id="step2-back-btn">خلف</button>
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step2-save-btn">حفظ المعلومات</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step2-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -488,7 +737,6 @@
                     <!-- Step 3 Buttons -->
                     <div class="wizard-buttons">
                         <button type="button" class="wizard-btn wizard-btn-secondary" id="step3-back-btn">خلف</button>
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step3-save-btn">حفظ المعلومات</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step3-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -594,7 +842,6 @@
                     <!-- Step 4 Buttons -->
                     <div class="wizard-buttons">
                         <button type="button" class="wizard-btn wizard-btn-secondary" id="step4-back-btn">خلف</button>
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step4-save-btn">حفظ المعلومات</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step4-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -607,8 +854,78 @@
      */
     function renderStep5() {
         const data = formData;
+        const step1Data = data.step1;
+        const properties = data.properties || [];
         const missingFields = getMissingFields();
-        const isReadyToSubmit = missingFields.length === 0 && data.step1.authorizationConfirmed && data.step4.sellerDeclaration;
+        const isReadyToSubmit = missingFields.length === 0 && step1Data.authorizationConfirmed && data.step4.sellerDeclaration;
+
+        // Render property cards
+        const propertyCardsHTML = properties.map((property, index) => {
+            const propertyTypeLabel = property.propertyType === 'others' && property.propertyTypeOther
+                ? property.propertyTypeOther
+                : getPropertyTypeLabel(property.propertyType);
+            const propertySize = property.propertySize ? convertArabicToEnglish(property.propertySize) + ' ' + property.propertySizeUnit : 'غير محدد';
+
+            return `
+                <div class="review-property-card" data-property-index="${index}">
+                    <div class="review-property-card-header">
+                        <h4 class="review-property-card-title">عقار ${index + 1}</h4>
+                        <div class="review-property-card-brief">
+                            <span class="review-property-brief-item">${propertyTypeLabel || 'غير محدد'}</span>
+                            <span class="review-property-brief-item">${propertySize}</span>
+                        </div>
+                    </div>
+                    <div class="review-property-card-content" style="display: none;">
+                        <div class="review-item">
+                            <span class="review-label">نوع العقار:</span>
+                            <span class="review-value">${propertyTypeLabel}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">رابط عنوان العقار:</span>
+                            <span class="review-value">${property.propertyTitle || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">المساحة:</span>
+                            <span class="review-value">${propertySize}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">الوصف:</span>
+                            <span class="review-value">${property.propertyDescription || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">حدود وأطوال العقار:</span>
+                            <div class="review-boundaries">
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">شمال:</span>
+                                    <span class="review-boundary-value">${property.propertyBoundaries?.north || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">جنوب:</span>
+                                    <span class="review-boundary-value">${property.propertyBoundaries?.south || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">شرق:</span>
+                                    <span class="review-boundary-value">${property.propertyBoundaries?.east || 'غير محدد'}</span>
+                                </div>
+                                <div class="review-boundary-item">
+                                    <span class="review-boundary-label">غرب:</span>
+                                    <span class="review-boundary-value">${property.propertyBoundaries?.west || 'غير محدد'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">عدد الصور:</span>
+                            <span class="review-value">${convertArabicToEnglish(property.propertyImages?.length || 0)} صورة</span>
+                        </div>
+                        <div class="review-property-card-actions">
+                            <button type="button" class="review-property-btn review-property-collapse-btn" data-property-index="${index}">تصغير</button>
+                            <button type="button" class="review-property-btn review-property-edit-btn" data-property-index="${index}">تعديل</button>
+                            <button type="button" class="review-property-btn review-property-delete-btn" data-property-index="${index}">حذف</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
 
         return `
             <div class="wizard-step" id="wizard-step-5" style="display: none;">
@@ -631,122 +948,71 @@
                         </div>
                     ` : ''}
 
-                    <!-- Review Sections -->
+                    <!-- Main Auction Details -->
                     <div class="review-section">
-                        <h4 class="review-section-title">المرحلة 1: المعلومات الأساسية</h4>
+                        <h4 class="review-section-title">معلومات المزاد الرئيسية</h4>
                         <div class="review-item">
-                            <span class="review-label">نوع البائع:</span>
-                            <span class="review-value">${data.step1.sellerType === 'company' ? 'شركة' : data.step1.sellerType === 'individual' ? 'فرد' : 'غير محدد'}</span>
+                            <span class="review-label">تاريخ ووقت بدء المزايدة:</span>
+                            <span class="review-value">${formatDateTime(step1Data.bidStartDate, step1Data.bidStartTime) || 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">اسم البائع:</span>
-                            <span class="review-value">${data.step1.sellerName || 'غير محدد'}</span>
+                            <span class="review-label">تاريخ ووقت انتهاء المزايدة:</span>
+                            <span class="review-value">${formatDateTime(step1Data.bidEndDate, step1Data.bidEndTime) || 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">البريد الإلكتروني:</span>
-                            <span class="review-value">${data.step1.contactEmail || 'غير محدد'}</span>
+                            <span class="review-label">مواقع العقارات:</span>
+                            <span class="review-value">${step1Data.propertiesLocations || 'غير محدد'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">رقم الهاتف:</span>
-                            <span class="review-value">${data.step1.contactPhone ? convertArabicToEnglish(data.step1.contactPhone) : 'غير محدد'}</span>
+                            <span class="review-label">بروشور PDF:</span>
+                            <span class="review-value">${step1Data.brochurePDF ? 'تم الرفع' : 'غير مرفق'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">مدينة العقار:</span>
-                            <span class="review-value">${data.step1.propertyCity || 'غير محدد'}</span>
+                            <span class="review-label">صورة المزاد الرئيسية:</span>
+                            <span class="review-value">${step1Data.auctionThumbnail ? 'تم الرفع' : 'غير مرفق'}</span>
                         </div>
-                    </div>
-
-                    <div class="review-section">
-                        <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
-                        <div class="review-item">
-                            <span class="review-label">نوع العقار:</span>
-                            <span class="review-value">${data.step2.propertyType === 'others' && data.step2.propertyTypeOther ? data.step2.propertyTypeOther : getPropertyTypeLabel(data.step2.propertyType)}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
-                            <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">المساحة:</span>
-                            <span class="review-value">${data.step2.propertySize ? convertArabicToEnglish(data.step2.propertySize) + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">الوصف:</span>
-                            <span class="review-value">${data.step2.propertyDescription || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">حدود وأطوال العقار:</span>
-                            <div class="review-boundaries">
-                                <div class="review-boundary-item">
-                                    <span class="review-boundary-label">شمال:</span>
-                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.north || 'غير محدد'}</span>
-                                </div>
-                                <div class="review-boundary-item">
-                                    <span class="review-boundary-label">جنوب:</span>
-                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.south || 'غير محدد'}</span>
-                                </div>
-                                <div class="review-boundary-item">
-                                    <span class="review-boundary-label">شرق:</span>
-                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.east || 'غير محدد'}</span>
-                                </div>
-                                <div class="review-boundary-item">
-                                    <span class="review-boundary-label">غرب:</span>
-                                    <span class="review-boundary-value">${data.step2.propertyBoundaries?.west || 'غير محدد'}</span>
-                                </div>
+                        ${step1Data.auctionApprovalNumber ? `
+                            <div class="review-item">
+                                <span class="review-label">رقم موافقة المزاد:</span>
+                                <span class="review-value">${convertArabicToEnglish(step1Data.auctionApprovalNumber)}</span>
                             </div>
-                        </div>
+                            ${step1Data.companyName ? `
+                                <div class="review-item">
+                                    <span class="review-label">اسم الشركة:</span>
+                                    <span class="review-value">${step1Data.companyName}</span>
+                                </div>
+                            ` : ''}
+                            ${step1Data.companyEmail ? `
+                                <div class="review-item">
+                                    <span class="review-label">البريد الإلكتروني للشركة:</span>
+                                    <span class="review-value">${step1Data.companyEmail}</span>
+                                </div>
+                            ` : ''}
+                            ${step1Data.companyPhone ? `
+                                <div class="review-item">
+                                    <span class="review-label">رقم هاتف الشركة:</span>
+                                    <span class="review-value">${convertArabicToEnglish(step1Data.companyPhone)}</span>
+                                </div>
+                            ` : ''}
+                        ` : ''}
                         <div class="review-item">
-                            <span class="review-label">عدد الصور:</span>
-                            <span class="review-value">${convertArabicToEnglish(data.step2.propertyImages.length)} صورة</span>
+                            <span class="review-label">عدد العقارات:</span>
+                            <span class="review-value">${convertArabicToEnglish(step1Data.numberOfProperties || 0)}</span>
                         </div>
                     </div>
 
+                    <!-- Properties Section -->
                     <div class="review-section">
-                        <h4 class="review-section-title">المرحلة 3: إعداد المزاد</h4>
-                        <div class="review-item">
-                            <span class="review-label">سعر البداية:</span>
-                            <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">قيمة التأمين:</span>
-                            <span class="review-value">${data.step3.depositPrice ? formatCurrency(data.step3.depositPrice) : 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">قيمة الزيادة:</span>
-                            <span class="review-value">${data.step3.bidIncrement ? formatCurrency(data.step3.bidIncrement) : 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">السعر الأدنى لبيع العقار:</span>
-                            <span class="review-value">${data.step3.minimumSalePrice ? formatCurrency(data.step3.minimumSalePrice) : 'لايوجد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">تاريخ ووقت البداية:</span>
-                            <span class="review-value">${formatDateTime(data.step3.auctionStartDate, data.step3.auctionStartTime)}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">تاريخ ووقت النهاية:</span>
-                            <span class="review-value">${formatDateTime(data.step3.auctionEndDate, data.step3.auctionEndTime)}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">عدد أيام تشغيل المزاد:</span>
-                            <span class="review-value">${data.step3.auctionDaysAmount ? convertArabicToEnglish(data.step3.auctionDaysAmount) + ' أيام' : 'غير محدد'}</span>
-                        </div>
-                    </div>
-
-                    <div class="review-section">
-                        <h4 class="review-section-title">المرحلة 4: المستندات</h4>
-                        <div class="review-item">
-                            <span class="review-label">إثبات الملكية:</span>
-                            <span class="review-value">${data.step4.proofOfOwnership ? 'تم الرفع' : 'غير مرفق'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">رقم موافقة المزاد:</span>
-                            <span class="review-value">${data.step4.auctionApprovalNumber ? convertArabicToEnglish(data.step4.auctionApprovalNumber) : 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">ملف موافقة المزاد:</span>
-                            <span class="review-value">${data.step4.auctionApprovalPDF ? 'تم الرفع' : 'غير مرفق'}</span>
-                        </div>
+                        <h4 class="review-section-title">العقارات (${convertArabicToEnglish(properties.length)})</h4>
+                        ${properties.length > 0 ? `
+                            <div class="review-properties-container">
+                                ${propertyCardsHTML}
+                            </div>
+                        ` : `
+                            <div class="review-item">
+                                <span class="review-value">لا توجد عقارات مضافة</span>
+                            </div>
+                        `}
                     </div>
 
                     <!-- Step 5 Buttons -->
@@ -985,6 +1251,11 @@
 
         updateProgressBar();
 
+        // Re-render property cards when going to step 1 to show selected state
+        if (step === 1) {
+            renderPropertyCardsContainer();
+        }
+
         // Re-initialize date and time pickers when showing step 3
         if (step === 3) {
             setTimeout(() => {
@@ -998,15 +1269,41 @@
      * Save step 1 data
      */
     function saveStep1() {
-        const sellerType = document.querySelector('input[name="sellerType"]:checked')?.value || '';
+        const bidStartDateInput = document.getElementById('bid-start-date');
+        const bidStartTimeInput = document.getElementById('bid-start-time');
+        const bidEndDateInput = document.getElementById('bid-end-date');
+        const bidEndTimeInput = document.getElementById('bid-end-time');
+        const numberOfPropertiesInput = document.getElementById('number-of-properties');
+        const approvalNumberInput = document.getElementById('auction-approval-number-step1');
+
+        // Get date values from data attributes if available
+        const bidStartDate = bidStartDateInput?.getAttribute('data-date-value') || '';
+        const bidEndDate = bidEndDateInput?.getAttribute('data-date-value') || '';
+        const bidStartTime = bidStartTimeInput?.value || '12:00';
+        const bidEndTime = bidEndTimeInput?.value || '12:00';
+        const numberOfProperties = parseInt(numberOfPropertiesInput?.value || '0', 10) || 0;
+        const approvalNumber = approvalNumberInput?.value || '';
+
+        // Update formData.step1 with new fields
         formData.step1 = {
-            sellerType: sellerType,
-            sellerName: document.getElementById('seller-name')?.value || '',
-            contactEmail: document.getElementById('contact-email')?.value || '',
-            contactPhone: document.getElementById('contact-phone')?.value || '',
-            propertyCity: document.getElementById('property-city')?.value || '',
-            authorizationConfirmed: document.getElementById('authorization-checkbox')?.checked || false
+            ...formData.step1,
+            bidStartDate: bidStartDate,
+            bidStartTime: bidStartTime,
+            bidEndDate: bidEndDate,
+            bidEndTime: bidEndTime,
+            propertiesLocations: document.getElementById('properties-locations')?.value || '',
+            auctionApprovalNumber: approvalNumber,
+            companyName: document.getElementById('company-name')?.value || '',
+            companyEmail: document.getElementById('company-email')?.value || '',
+            companyPhone: document.getElementById('company-phone')?.value || '',
+            numberOfProperties: numberOfProperties
         };
+
+        // Update properties array length if number changed
+        if (formData.properties.length !== numberOfProperties) {
+            renderPropertyCardsContainer();
+        }
+
         autoSaveData();
     }
 
@@ -1018,7 +1315,7 @@
         const propertySizeValue = document.getElementById('property-size')?.value || '';
         const propertySizeClean = propertySizeValue.replace(/,/g, '');
 
-        formData.step2 = {
+        const propertyData = {
             propertyType: document.getElementById('property-type')?.value || '',
             propertyTypeOther: document.getElementById('property-type-other')?.value || '',
             propertyTitle: document.getElementById('property-title')?.value || '',
@@ -1034,6 +1331,20 @@
             },
             propertyImages: formData.step2.propertyImages || []
         };
+
+        // Update step2 for backward compatibility
+        formData.step2 = propertyData;
+
+        // If editing an existing property, save to properties array
+        if (formData.currentPropertyIndex !== null && formData.currentPropertyIndex >= 0) {
+            const index = formData.currentPropertyIndex;
+            if (formData.properties[index]) {
+                // Preserve the id
+                propertyData.id = formData.properties[index].id;
+                formData.properties[index] = propertyData;
+            }
+        }
+
         autoSaveData();
     }
 
@@ -1317,7 +1628,7 @@
                     <span class="review-value">${data.step1.contactPhone ? convertArabicToEnglish(data.step1.contactPhone) : 'غير محدد'}</span>
                 </div>
                 <div class="review-item">
-                    <span class="review-label">مدينة العقار:</span>
+                    <span class="review-label">مدن العقارات:</span>
                     <span class="review-value">${data.step1.propertyCity || 'غير محدد'}</span>
                 </div>
             </div>
@@ -1575,64 +1886,52 @@
      * Setup Step 1 listeners
      */
     function setupStep1Listeners() {
-        // Seller type change - update label
-        document.querySelectorAll('input[name="sellerType"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                const label = document.getElementById('seller-name-label');
-                if (label) {
-                    label.textContent = this.value === 'company' ? 'اسم الشركة' : 'اسم البائع';
-                }
+        // Initialize date pickers for bid start and end dates
+        initializeBidDatePickers();
+
+        // Number of properties input - update property cards when changed
+        const numberOfPropertiesInput = document.getElementById('number-of-properties');
+        if (numberOfPropertiesInput) {
+            numberOfPropertiesInput.addEventListener('change', () => {
+                saveStep1();
+                renderPropertyCardsContainer();
+            });
+            numberOfPropertiesInput.addEventListener('input', () => {
                 saveStep1();
             });
-        });
+        }
 
-        // Authorization checkbox - change button background and show/hide error message
-        const authCheckbox = document.getElementById('authorization-checkbox');
-        const errorMessage = document.getElementById('authorization-error-message');
-        const nextBtn = document.getElementById('step1-next-btn');
-
-        // Function to update button background color smoothly
-        function updateButtonBackground(isChecked) {
-            if (nextBtn) {
-                if (isChecked) {
-                    nextBtn.style.backgroundColor = 'var(--primary-color)';
-                    nextBtn.style.color = 'white';
-                    nextBtn.style.opacity = '1';
-                    nextBtn.style.cursor = 'pointer';
+        // Approval number input - show/hide company info
+        const approvalNumberInput = document.getElementById('auction-approval-number-step1');
+        const companyInfoContainer = document.getElementById('company-info-container');
+        if (approvalNumberInput && companyInfoContainer) {
+            approvalNumberInput.addEventListener('input', () => {
+                const hasApproval = approvalNumberInput.value.trim() !== '';
+                if (hasApproval) {
+                    companyInfoContainer.style.display = 'block';
+                    requestAnimationFrame(() => {
+                        companyInfoContainer.style.opacity = '1';
+                    });
                 } else {
-                    nextBtn.style.backgroundColor = '#e5e5e5';
-                    nextBtn.style.color = 'black';
-                    nextBtn.style.opacity = '0.6';
-                    nextBtn.style.cursor = 'not-allowed';
+                    companyInfoContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        if (!approvalNumberInput.value.trim()) {
+                            companyInfoContainer.style.display = 'none';
+                        }
+                    }, 300);
                 }
-            }
-        }
-
-        if (authCheckbox && nextBtn) {
-            // Set initial button background based on checkbox state
-            updateButtonBackground(authCheckbox.checked);
-
-            // Ensure error message is hidden initially (using opacity only)
-            if (errorMessage) {
-                errorMessage.style.opacity = '0';
-            }
-
-            authCheckbox.addEventListener('change', function () {
-                const isChecked = this.checked;
-                updateButtonBackground(isChecked);
-
-                // Smoothly hide error message when checked (using opacity only)
-                if (isChecked && errorMessage) {
-                    errorMessage.style.transition = 'opacity 0.3s ease';
-                    errorMessage.style.opacity = '0';
-                }
-
                 saveStep1();
             });
         }
+
+        // Brochure PDF upload
+        setupFileUpload('brochure-pdf-input', 'brochure-pdf-placeholder', 'brochurePDF', 'step1');
+
+        // Thumbnail image upload
+        setupThumbnailUpload();
 
         // Save step 1 inputs
-        ['seller-name', 'contact-email', 'contact-phone', 'property-city'].forEach(id => {
+        ['properties-locations', 'company-name', 'company-email', 'company-phone'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('blur', saveStep1);
@@ -1640,39 +1939,183 @@
             }
         });
 
-        // Step 1 buttons
-        const saveBtn1 = document.getElementById('step1-save-btn');
-        if (saveBtn1) {
-            saveBtn1.addEventListener('click', () => {
-                saveStep1();
-                alert('تم حفظ المعلومات بنجاح');
-            });
-        }
 
         const nextBtn1 = document.getElementById('step1-next-btn');
         if (nextBtn1) {
             nextBtn1.addEventListener('click', () => {
-                const authCheckbox = document.getElementById('authorization-checkbox');
-                const errorMessage = document.getElementById('authorization-error-message');
-
-                if (authCheckbox && authCheckbox.checked) {
-                    // Checkbox is checked, proceed normally
-                    saveStep1();
-                    currentStep = 2;
+                saveStep1();
+                // Automatically select the first property card (index 0)
+                if (formData.step1.numberOfProperties > 0) {
+                    selectPropertyCard(0);
+                    formData.currentPropertyIndex = 0;
                     autoSaveData();
-                    showStep(2);
-                } else {
-                    // Checkbox is not checked, smoothly show error message (using opacity only)
-                    if (errorMessage) {
-                        // Smoothly fade in
-                        requestAnimationFrame(() => {
-                            errorMessage.style.transition = 'opacity 0.3s ease';
-                            errorMessage.style.opacity = '1';
-                        });
-                    }
+                    // Load property data into step 2
+                    loadPropertyToStep2(0);
                 }
+                currentStep = 2;
+                autoSaveData();
+                showStep(2);
             });
         }
+    }
+
+    /**
+     * Initialize date pickers for bid start and end dates
+     */
+    function initializeBidDatePickers() {
+        const bidStartDateInput = document.getElementById('bid-start-date');
+        const bidEndDateInput = document.getElementById('bid-end-date');
+
+        if (bidStartDateInput && !bidStartDateInput.hasAttribute('data-pikaday-initialized')) {
+            const today = new Date();
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 365);
+
+            const startPicker = new Pikaday({
+                field: bidStartDateInput,
+                minDate: today,
+                maxDate: maxDate,
+                onSelect: function (date) {
+                    const dateStr = formatDateForStorage(date);
+                    bidStartDateInput.setAttribute('data-date-value', dateStr);
+                    bidStartDateInput.value = formatDateForDisplay(dateStr);
+                    saveStep1();
+                }
+            });
+            bidStartDateInput.setAttribute('data-pikaday-initialized', 'true');
+        }
+
+        if (bidEndDateInput && !bidEndDateInput.hasAttribute('data-pikaday-initialized')) {
+            const today = new Date();
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 365);
+
+            const endPicker = new Pikaday({
+                field: bidEndDateInput,
+                minDate: today,
+                maxDate: maxDate,
+                onSelect: function (date) {
+                    const dateStr = formatDateForStorage(date);
+                    bidEndDateInput.setAttribute('data-date-value', dateStr);
+                    bidEndDateInput.value = formatDateForDisplay(dateStr);
+                    saveStep1();
+                }
+            });
+            bidEndDateInput.setAttribute('data-pikaday-initialized', 'true');
+        }
+    }
+
+    /**
+     * Setup file upload handler
+     */
+    function setupFileUpload(inputId, placeholderId, dataKey, stepKey) {
+        const input = document.getElementById(inputId);
+        const placeholder = document.getElementById(placeholderId);
+        if (!input || !placeholder) return;
+
+        placeholder.addEventListener('click', (e) => {
+            if (!e.target.closest('.delete-file-btn') && !e.target.closest('.change-file-btn')) {
+                input.click();
+            }
+        });
+
+        input.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.type === 'application/pdf') {
+                    formData[stepKey][dataKey] = {
+                        file: file,
+                        name: file.name
+                    };
+                    placeholder.classList.add('has-file');
+                    placeholder.innerHTML = `
+                        <button type="button" class="delete-file-btn" data-file="${dataKey}" aria-label="حذف الملف">
+                            <i data-lucide="x" class="delete-icon"></i>
+                        </button>
+                        <i data-lucide="file-check" class="upload-icon"></i>
+                        <p>تم رفع الملف</p>
+                        <button type="button" class="change-file-btn" data-file="${dataKey}">تغيير الملف</button>
+                    `;
+                    lucide.createIcons();
+                    setupFileUpload(inputId, placeholderId, dataKey, stepKey);
+                }
+                autoSaveData();
+            }
+        });
+
+        // Delete file button
+        placeholder.querySelector('.delete-file-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            formData[stepKey][dataKey] = null;
+            input.value = '';
+            placeholder.classList.remove('has-file');
+            placeholder.innerHTML = `
+                <i data-lucide="upload" class="upload-icon"></i>
+                <p>اضغط لرفع ملف PDF</p>
+                <small>${dataKey === 'brochurePDF' ? 'بروشور المزاد' : 'ملف'}</small>
+            `;
+            lucide.createIcons();
+            setupFileUpload(inputId, placeholderId, dataKey, stepKey);
+            autoSaveData();
+        });
+
+        // Change file button
+        placeholder.querySelector('.change-file-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.click();
+        });
+    }
+
+    /**
+     * Setup thumbnail image upload
+     */
+    function setupThumbnailUpload() {
+        const input = document.getElementById('auction-thumbnail-input');
+        const placeholder = document.getElementById('thumbnail-upload-placeholder');
+        if (!input || !placeholder) return;
+
+        placeholder.addEventListener('click', (e) => {
+            if (!e.target.closest('.remove-image-btn')) {
+                input.click();
+            }
+        });
+
+        input.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    formData.step1.auctionThumbnail = {
+                        file: file,
+                        preview: event.target.result
+                    };
+                    placeholder.innerHTML = `
+                        <div class="image-preview-item" style="margin: 0 auto;">
+                            <img src="${event.target.result}" alt="Thumbnail Preview">
+                            <button type="button" class="remove-image-btn" data-file="thumbnail">×</button>
+                        </div>
+                    `;
+                    setupThumbnailUpload();
+                    autoSaveData();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove image button
+        placeholder.querySelector('.remove-image-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            formData.step1.auctionThumbnail = null;
+            input.value = '';
+            placeholder.innerHTML = `
+                <i data-lucide="image" class="upload-icon"></i>
+                <p>اسحب الصورة هنا أو اضغط للاختيار</p>
+                <small>صورة رئيسية للمزاد</small>
+            `;
+            lucide.createIcons();
+            setupThumbnailUpload();
+            autoSaveData();
+        });
     }
 
     /**
@@ -1831,17 +2274,11 @@
         if (backBtn2) {
             backBtn2.addEventListener('click', () => {
                 saveStep2();
+                // Update property cards to show current selection
+                renderPropertyCardsContainer();
                 currentStep = 1;
                 autoSaveData();
                 showStep(1);
-            });
-        }
-
-        const saveBtn2 = document.getElementById('step2-save-btn');
-        if (saveBtn2) {
-            saveBtn2.addEventListener('click', () => {
-                saveStep2();
-                alert('تم حفظ المعلومات بنجاح');
             });
         }
 
@@ -1849,6 +2286,8 @@
         if (nextBtn2) {
             nextBtn2.addEventListener('click', () => {
                 saveStep2();
+                // Always go to step 3 when clicking next from step 2
+                // The property selection is preserved for the flow
                 currentStep = 3;
                 autoSaveData();
                 showStep(3);
@@ -2054,14 +2493,6 @@
             });
         }
 
-        const saveBtn3 = document.getElementById('step3-save-btn');
-        if (saveBtn3) {
-            saveBtn3.addEventListener('click', () => {
-                saveStep3();
-                alert('تم حفظ المعلومات بنجاح');
-            });
-        }
-
         const nextBtn3 = document.getElementById('step3-next-btn');
         if (nextBtn3) {
             nextBtn3.addEventListener('click', () => {
@@ -2181,23 +2612,35 @@
             });
         }
 
-        const saveBtn4 = document.getElementById('step4-save-btn');
-        if (saveBtn4) {
-            saveBtn4.addEventListener('click', () => {
-                saveStep4();
-                alert('تم حفظ المعلومات بنجاح');
-            });
-        }
 
         const nextBtn4 = document.getElementById('step4-next-btn');
         if (nextBtn4) {
             nextBtn4.addEventListener('click', () => {
                 saveStep4();
-                currentStep = 5;
-                autoSaveData();
-                // Re-render step 5 to update review with latest data
-                renderStep5Content();
-                showStep(5);
+
+                // Check current selected property index
+                const currentIndex = formData.currentPropertyIndex !== null ? formData.currentPropertyIndex : -1;
+                const totalProperties = formData.properties.length;
+
+                // If current property is the last one, go to step 5
+                if (currentIndex === totalProperties - 1 || currentIndex === -1 || totalProperties === 0) {
+                    currentStep = 5;
+                    autoSaveData();
+                    // Re-render step 5 to update review with latest data
+                    renderStep5Content();
+                    showStep(5);
+                } else {
+                    // Select the next property card and go to step 2
+                    const nextIndex = currentIndex + 1;
+                    selectPropertyCard(nextIndex);
+                    formData.currentPropertyIndex = nextIndex;
+                    autoSaveData();
+                    // Load property data into step 2
+                    loadPropertyToStep2(nextIndex);
+                    currentStep = 2;
+                    autoSaveData();
+                    showStep(2);
+                }
             });
         }
     }
@@ -2240,6 +2683,180 @@
                     if (typeof window.ProfileNavigation !== 'undefined' && window.ProfileNavigation.navigateTo) {
                         window.ProfileNavigation.navigateTo(window.ProfileNavigation.routes.MENU);
                     }
+                }
+            });
+        }
+
+        // Property card interactions
+        setupPropertyCardListeners();
+    }
+
+    /**
+     * Setup property card listeners for expand/collapse, edit, delete
+     */
+    function setupPropertyCardListeners() {
+        // Expand/collapse on card header click
+        document.querySelectorAll('.review-property-card').forEach(card => {
+            const header = card.querySelector('.review-property-card-header');
+            const content = card.querySelector('.review-property-card-content');
+            if (header && content) {
+                header.addEventListener('click', (e) => {
+                    // Don't expand if clicking on action buttons
+                    if (e.target.closest('.review-property-card-actions')) return;
+
+                    const isExpanded = content.style.display !== 'none';
+                    if (isExpanded) {
+                        // Collapse
+                        content.style.display = 'none';
+                        card.classList.remove('expanded');
+                    } else {
+                        // Expand - collapse all others first
+                        document.querySelectorAll('.review-property-card').forEach(otherCard => {
+                            if (otherCard !== card) {
+                                const otherContent = otherCard.querySelector('.review-property-card-content');
+                                if (otherContent) {
+                                    otherContent.style.display = 'none';
+                                    otherCard.classList.remove('expanded');
+                                }
+                            }
+                        });
+                        // Expand this card
+                        content.style.display = 'block';
+                        card.classList.add('expanded');
+                        // Smooth scroll to card
+                        setTimeout(() => {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    }
+                });
+            }
+        });
+
+        // Collapse button
+        document.querySelectorAll('.review-property-collapse-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(btn.getAttribute('data-property-index'));
+                const card = document.querySelector(`.review-property-card[data-property-index="${index}"]`);
+                const content = card?.querySelector('.review-property-card-content');
+                if (content) {
+                    content.style.display = 'none';
+                    card.classList.remove('expanded');
+                }
+            });
+        });
+
+        // Edit button
+        document.querySelectorAll('.review-property-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(btn.getAttribute('data-property-index'));
+                formData.currentPropertyIndex = index;
+                autoSaveData();
+                currentStep = 2;
+                showStep(2);
+                loadPropertyToStep2(index);
+            });
+        });
+
+        // Delete button
+        document.querySelectorAll('.review-property-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(btn.getAttribute('data-property-index'));
+                showDeletePropertyConfirmation(index);
+            });
+        });
+    }
+
+    /**
+     * Show bottom sheet confirmation for property deletion
+     */
+    function showDeletePropertyConfirmation(propertyIndex) {
+        // Remove existing bottom sheet if any
+        const existingSheet = document.querySelector('.property-delete-bottom-sheet');
+        if (existingSheet) {
+            existingSheet.remove();
+        }
+
+        const bottomSheet = document.createElement('div');
+        bottomSheet.className = 'property-delete-bottom-sheet';
+        bottomSheet.innerHTML = `
+            <div class="bottom-sheet-overlay"></div>
+            <div class="bottom-sheet-content">
+                <div class="bottom-sheet-handle"></div>
+                <h3 class="bottom-sheet-title">تأكيد الحذف</h3>
+                <p class="bottom-sheet-message">هل أنت متأكد من حذف عقار ${propertyIndex + 1}؟</p>
+                <div class="bottom-sheet-buttons">
+                    <button class="bottom-sheet-btn bottom-sheet-cancel-btn" id="property-delete-cancel">إلغاء</button>
+                    <button class="bottom-sheet-btn bottom-sheet-confirm-btn" id="property-delete-confirm">تأكيد</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(bottomSheet);
+
+        // Show bottom sheet
+        requestAnimationFrame(() => {
+            bottomSheet.classList.add('active');
+        });
+
+        // Close handlers
+        const closeSheet = () => {
+            bottomSheet.classList.remove('active');
+            setTimeout(() => {
+                if (bottomSheet.parentNode) {
+                    bottomSheet.parentNode.removeChild(bottomSheet);
+                }
+            }, 300);
+        };
+
+        // Cancel button
+        const cancelBtn = bottomSheet.querySelector('#property-delete-cancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', closeSheet);
+        }
+
+        // Confirm button
+        const confirmBtn = bottomSheet.querySelector('#property-delete-confirm');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                // Delete property
+                formData.properties.splice(propertyIndex, 1);
+                formData.step1.numberOfProperties = Math.max(0, formData.step1.numberOfProperties - 1);
+
+                // Update number of properties input if it exists
+                const numberOfPropertiesInput = document.getElementById('number-of-properties');
+                if (numberOfPropertiesInput) {
+                    numberOfPropertiesInput.value = formData.step1.numberOfProperties;
+                }
+
+                autoSaveData();
+                closeSheet();
+
+                // Re-render step 5 and property cards container
+                renderStep5Content();
+                renderPropertyCardsContainer();
+            });
+        }
+
+        // Overlay click
+        const overlay = bottomSheet.querySelector('.bottom-sheet-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', closeSheet);
+        }
+
+        // Handle click
+        const handle = bottomSheet.querySelector('.bottom-sheet-handle');
+        if (handle) {
+            let startY = 0;
+            handle.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+            });
+            handle.addEventListener('touchend', (e) => {
+                const endY = e.changedTouches[0].clientY;
+                if (endY - startY > 50) {
+                    closeSheet();
                 }
             });
         }

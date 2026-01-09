@@ -5,14 +5,12 @@
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 
-/* Progress Bar */
-.wizard-progress {
+/* Progress Bar Container */
+.progress-bar-wrapper {
     position: relative;
-    overflow: visible;
-    /* Allow percentage text to be visible */
-    padding: 1rem 0.5rem;
     margin-bottom: 0.5rem;
 }
 
@@ -20,13 +18,24 @@
     position: absolute;
     top: 0;
     right: 0;
+    left: 0;
     height: 4px;
     background: var(--primary-color);
     transition: width 0.3s ease;
     width: 0%;
     max-width: 100%;
-    /* Progress bar width is relative to wizard-progress container */
     box-sizing: border-box;
+    z-index: 10;
+}
+
+/* Progress Bar */
+.wizard-progress {
+    position: relative;
+    overflow: visible;
+    /* Allow percentage text to be visible */
+    padding: 2rem 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .progress-bar::after {
@@ -719,7 +728,7 @@
     }
 
     .wizard-progress {
-        padding: 1rem 0;
+        padding: 2rem 0 1rem;
     }
 
     /* Show mobile labels and hide desktop labels */
@@ -763,4 +772,278 @@
     .wizard-btn {
         font-size: var(--font-size-xs);
     }
+}
+
+/* Properties Cards Container */
+.properties-cards-container {
+    display: flex;
+    gap: 0.2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem 0;
+    margin-bottom: 0.5rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.properties-cards-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.properties-cards-container::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: 3px;
+}
+
+.properties-cards-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.property-card-item {
+    width: fit-content;
+    padding: 0.1rem 0.5rem;
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+}
+
+.property-card-item.selected {
+    background: #0b2c4a;
+    border-color: #0b2c4a;
+}
+
+.property-card-item.selected .property-card-title {
+    color: var(--bg-white);
+}
+
+.property-card-title {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    margin: 0;
+    text-align: center;
+    transition: color var(--transition-base);
+}
+
+/* Review Property Cards */
+.review-properties-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.review-property-card {
+    background: var(--bg-white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.review-property-card.expanded {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.review-property-card-header {
+    padding: 1rem;
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.review-property-card-header:hover {
+    background: var(--bg-light);
+}
+
+.review-property-card-title {
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.review-property-card-brief {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.review-property-brief-item {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+}
+
+.review-property-card-content {
+    padding: 0 1rem 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.review-property-card.expanded .review-property-card-content {
+    max-height: 2000px;
+    padding: 0 1rem 1rem;
+}
+
+.review-property-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.review-property-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+}
+
+.review-property-collapse-btn {
+    background: var(--bg-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.review-property-collapse-btn:hover {
+    background: var(--bg-hover);
+}
+
+.review-property-edit-btn {
+    background: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.review-property-edit-btn:hover {
+    background: var(--primary-dark);
+}
+
+.review-property-delete-btn {
+    background: #e74c3c;
+    color: var(--bg-white);
+}
+
+.review-property-delete-btn:hover {
+    background: #c0392b;
+}
+
+/* Bottom Sheet for Property Deletion */
+.property-delete-bottom-sheet {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.property-delete-bottom-sheet.active {
+    pointer-events: all;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.property-delete-bottom-sheet.active .bottom-sheet-overlay {
+    opacity: 1;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    padding: 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.property-delete-bottom-sheet.active .bottom-sheet-content {
+    transform: translateY(0);
+}
+
+.property-delete-bottom-sheet .bottom-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    margin: 0 auto 1rem;
+    cursor: grab;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-handle:active {
+    cursor: grabbing;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-title {
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-message {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: inherit;
+}
+
+.property-delete-bottom-sheet .bottom-sheet-cancel-btn {
+    background: var(--bg-light);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.property-delete-bottom-sheet .bottom-sheet-cancel-btn:hover {
+    background: var(--bg-hover);
+}
+
+.property-delete-bottom-sheet .bottom-sheet-confirm-btn {
+    background: #e74c3c;
+    color: var(--bg-white);
+}
+
+.property-delete-bottom-sheet .bottom-sheet-confirm-btn:hover {
+    background: #c0392b;
 }
