@@ -292,6 +292,7 @@
     transition: opacity 0.3s ease;
     width: 100%;
     text-align: start;
+    margin-top: 0.5rem;
 }
 
 /* Input with Unit/Currency */

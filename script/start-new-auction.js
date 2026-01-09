@@ -508,6 +508,17 @@
                         <small class="form-helper">عدد العقارات في هذا المزاد</small>
                     </div>
 
+                    <!-- Authorization Checkbox -->
+                    <div class="form-group">
+                        <label class="checkbox-label" style="padding-bottom: 0;">
+                            <div class="checkbox-label-content">
+                                <input type="checkbox" id="authorization-checkbox" ${data.authorizationConfirmed ? 'checked' : ''}>
+                                <span>أؤكد أن لدي الصلاحية لبيع هذه العقارات بالمزاد العلني.</span>
+                            </div>
+                            <span class="authorization-error-message" id="authorization-error-message" style="opacity: 0;">يرجى الموافقة على البند أعلاه</span>
+                        </label>
+                    </div>
+
                     <!-- Step 1 Buttons -->
                     <div class="wizard-buttons">
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step1-next-btn">المرحلة التالية</button>
@@ -1296,7 +1307,8 @@
             companyName: document.getElementById('company-name')?.value || '',
             companyEmail: document.getElementById('company-email')?.value || '',
             companyPhone: document.getElementById('company-phone')?.value || '',
-            numberOfProperties: numberOfProperties
+            numberOfProperties: numberOfProperties,
+            authorizationConfirmed: document.getElementById('authorization-checkbox')?.checked || false
         };
 
         // Update properties array length if number changed
@@ -1939,10 +1951,74 @@
             }
         });
 
-
+        // Authorization checkbox validation
+        const authCheckbox = document.getElementById('authorization-checkbox');
+        const errorMessage = document.getElementById('authorization-error-message');
         const nextBtn1 = document.getElementById('step1-next-btn');
+
+        // Function to update button state based on checkbox
+        function updateButtonState(isChecked) {
+            if (nextBtn1) {
+                if (isChecked) {
+                    nextBtn1.style.backgroundColor = 'var(--primary-color)';
+                    nextBtn1.style.color = 'white';
+                    nextBtn1.style.opacity = '1';
+                    nextBtn1.style.cursor = 'pointer';
+                } else {
+                    nextBtn1.style.backgroundColor = 'rgb(229, 229, 229)';
+                    nextBtn1.style.color = 'black';
+                    nextBtn1.style.opacity = '0.6';
+                    nextBtn1.style.cursor = 'not-allowed';
+                }
+            }
+        }
+
+        // Function to check if button is in disabled state (gray background)
+        function isButtonDisabled() {
+            if (!nextBtn1) return false;
+            const bgColor = window.getComputedStyle(nextBtn1).backgroundColor;
+            // Check if background color is rgb(229, 229, 229) or equivalent
+            return bgColor === 'rgb(229, 229, 229)' || bgColor === '#e5e5e5';
+        }
+
+        // Initialize button state based on checkbox
+        if (authCheckbox && nextBtn1) {
+            updateButtonState(authCheckbox.checked);
+
+            // Handle checkbox change
+            authCheckbox.addEventListener('change', function () {
+                const isChecked = this.checked;
+                updateButtonState(isChecked);
+                saveStep1();
+
+                // Hide error message smoothly when checked
+                if (isChecked && errorMessage) {
+                    errorMessage.style.transition = 'opacity 0.3s ease';
+                    errorMessage.style.opacity = '0';
+                }
+            });
+        }
+
+        // Handle next button click
         if (nextBtn1) {
             nextBtn1.addEventListener('click', () => {
+                // Check if button is in disabled state (gray background)
+                if (isButtonDisabled()) {
+                    // Show error message smoothly
+                    if (errorMessage) {
+                        requestAnimationFrame(() => {
+                            errorMessage.style.transition = 'opacity 0.3s ease';
+                            errorMessage.style.opacity = '1';
+                        });
+                    }
+                    return; // Don't proceed if button is in disabled state
+                }
+
+                // Hide error message if it was shown
+                if (errorMessage) {
+                    errorMessage.style.opacity = '0';
+                }
+
                 saveStep1();
                 // Automatically select the first property card (index 0)
                 if (formData.step1.numberOfProperties > 0) {
