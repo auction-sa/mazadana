@@ -505,8 +505,8 @@
 
         // Parse bid start date
         const startDate = formatDate(auction.auction_bidStartDate);
-        const assets = auction.assets || [];
-        const assetCount = assets.length;
+        const auction_all_assets_object = auction.auction_all_assets_object || [];
+        const assetCount = auction_all_assets_object.length;
 
         // Determine status label and class for category tab based on badge status
         let categoryStatusLabel = '';
@@ -586,7 +586,7 @@
             </div>
 
             <!-- Assets Section -->
-            ${assets.map((asset, index) => renderAssetCard(asset, index, auction.id)).join('')}
+            ${auction_all_assets_object.map((asset, index) => renderAssetCard(asset, index, auction.id)).join('')}
         `;
 
         // Batch DOM write operation
@@ -650,7 +650,7 @@
 
         // Initialize countdown timers (deferred for better initial animation performance)
         deferHeavyOperations(() => {
-            assets.forEach((asset, index) => {
+            auction_all_assets_object.forEach((asset, index) => {
                 const containerId = `asset-countdown-${asset.id || index}`;
                 const countdownElement = document.getElementById(containerId);
                 if (!countdownElement) return;
@@ -817,8 +817,8 @@
      * Clean up countdown intervals
      */
     function cleanupCountdowns() {
-        if (currentAuctionData && currentAuctionData.assets) {
-            currentAuctionData.assets.forEach(asset => {
+        if (currentAuctionData && currentAuctionData.auction_all_assets_object) {
+            currentAuctionData.auction_all_assets_object.forEach(asset => {
                 if (asset._countdownInterval) {
                     clearInterval(asset._countdownInterval);
                     delete asset._countdownInterval;

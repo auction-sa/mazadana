@@ -402,7 +402,6 @@
         const data = formData.step1 || {};
         const hasBrochure = data.brochurePDF !== null && data.brochurePDF !== undefined;
         const hasThumbnail = data.auctionThumbnail !== null && data.auctionThumbnail !== undefined && data.auctionThumbnail.preview;
-        const hasApprovalNumber = data.auctionApprovalNumber && data.auctionApprovalNumber.trim() !== '';
 
         return `
             <div class="wizard-step" id="wizard-step-1">
@@ -410,28 +409,6 @@
                 <p class="step-subtitle">ابدأ بإدخال معلومات المزاد الأساسية</p>
 
                 <form class="wizard-form" id="step1-form">
-                    <!-- Bid Start Date & Time -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">تاريخ ووقت بدء المزايدة</label>
-                        <div class="datetime-group">
-                            <input type="text" class="add-new-auction-form-input" id="bid-start-date" value="${data.bidStartDate ? formatDateForDisplay(data.bidStartDate) : ''}" placeholder="اختر التاريخ" readonly>
-                            <input type="time" class="add-new-auction-form-input" id="bid-start-time" value="${data.bidStartTime || '12:00'}" style="display: none;">
-                            <input type="text" class="add-new-auction-form-input" id="bid-start-time-display" value="${data.bidStartTime ? formatTimeForDisplay(data.bidStartTime) : '12:00 مساءً'}" readonly style="pointer-events: none; cursor: default;">
-                        </div>
-                        <small class="form-helper">متى تبدأ المزايدة</small>
-                    </div>
-
-                    <!-- Bid End Date & Time -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">تاريخ ووقت انتهاء المزايدة</label>
-                        <div class="datetime-group">
-                            <input type="text" class="add-new-auction-form-input" id="bid-end-date" value="${data.bidEndDate ? formatDateForDisplay(data.bidEndDate) : ''}" placeholder="اختر التاريخ" readonly>
-                            <input type="time" class="add-new-auction-form-input" id="bid-end-time" value="${data.bidEndTime || '12:00'}" style="display: none;">
-                            <input type="text" class="add-new-auction-form-input" id="bid-end-time-display" value="${data.bidEndTime ? formatTimeForDisplay(data.bidEndTime) : '12:00 مساءً'}" readonly style="pointer-events: none; cursor: default;">
-                        </div>
-                        <small class="form-helper">متى تنتهي المزايدة</small>
-                    </div>
-
                     <!-- Properties Locations -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">مواقع العقارات</label>
@@ -510,8 +487,16 @@
                     <!-- Number of Properties -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">عدد العقارات</label>
-                        <input type="number" class="add-new-auction-form-input" id="number-of-properties" value="${data.numberOfProperties || 0}" 
-                               placeholder="0" min="0" dir="ltr">
+                        <div class="number-input-wrapper">
+                            <button type="button" class="number-input-btn number-input-decrease" id="number-of-properties-decrease" aria-label="تقليل العدد">
+                                <i data-lucide="minus"></i>
+                            </button>
+                            <input type="number" class="add-new-auction-form-input number-input-center" id="number-of-properties" value="${data.numberOfProperties || 0}"
+                                   placeholder="0" min="0" max="100" readonly dir="ltr">
+                            <button type="button" class="number-input-btn number-input-increase" id="number-of-properties-increase" aria-label="زيادة العدد">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
                         <small class="form-helper">عدد العقارات في هذا المزاد</small>
                     </div>
 
@@ -970,14 +955,6 @@
                     <div class="review-section">
                         <h4 class="review-section-title">معلومات المزاد الرئيسية</h4>
                         <div class="review-item">
-                            <span class="review-label">تاريخ ووقت بدء المزايدة:</span>
-                            <span class="review-value">${formatDateTime(step1Data.bidStartDate, step1Data.bidStartTime) || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
-                            <span class="review-label">تاريخ ووقت انتهاء المزايدة:</span>
-                            <span class="review-value">${formatDateTime(step1Data.bidEndDate, step1Data.bidEndTime) || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-item">
                             <span class="review-label">مواقع العقارات:</span>
                             <span class="review-value">${step1Data.propertiesLocations || 'غير محدد'}</span>
                         </div>
@@ -989,33 +966,25 @@
                             <span class="review-label">صورة المزاد الرئيسية:</span>
                             <span class="review-value">${step1Data.auctionThumbnail ? 'تم الرفع' : 'غير مرفق'}</span>
                         </div>
-                        ${step1Data.auctionApprovalNumber ? `
-                            <div class="review-item">
-                                <span class="review-label">رقم موافقة المزاد:</span>
-                                <span class="review-value">${convertArabicToEnglish(step1Data.auctionApprovalNumber)}</span>
-                            </div>
-                            ${step1Data.companyName ? `
-                                <div class="review-item">
-                                    <span class="review-label">اسم الشركة/البائع:</span>
-                                    <span class="review-value">${step1Data.companyName}</span>
-                                </div>
-                            ` : ''}
-                            ${step1Data.companyEmail ? `
-                                <div class="review-item">
-                                    <span class="review-label">البريد الإلكتروني للشركة:</span>
-                                    <span class="review-value">${step1Data.companyEmail}</span>
-                                </div>
-                            ` : ''}
-                            ${step1Data.companyPhone ? `
-                                <div class="review-item">
-                                    <span class="review-label">رقم هاتف الشركة:</span>
-                                    <span class="review-value">${convertArabicToEnglish(step1Data.companyPhone)}</span>
-                                </div>
-                            ` : ''}
-                        ` : ''}
+                        <div class="review-item">
+                            <span class="review-label">رقم موافقة المزاد:</span>
+                            <span class="review-value">${convertArabicToEnglish(step1Data.auctionApprovalNumber) || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">اسم الشركة/البائع:</span>
+                            <span class="review-value">${step1Data.companyName || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">البريد الإلكتروني للشركة:</span>
+                            <span class="review-value">${step1Data.companyEmail || 'غير محدد'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">رقم هاتف الشركة:</span>
+                            <span class="review-value">${convertArabicToEnglish(step1Data.companyPhone) || 'غير محدد'}</span>
+                        </div>
                         <div class="review-item">
                             <span class="review-label">عدد العقارات:</span>
-                            <span class="review-value">${convertArabicToEnglish(step1Data.numberOfProperties || 0)}</span>
+                            <span class="review-value">${convertArabicToEnglish(step1Data.numberOfProperties)}</span>
                         </div>
                     </div>
 
@@ -1057,18 +1026,6 @@
         return labels[type] || 'غير محدد';
     }
 
-    /**
-     * Helper: Format currency (with English numbers)
-     */
-    function formatCurrency(amount) {
-        if (!amount) return 'غير محدد';
-        // Format with English locale to get English numbers, then add currency icon
-        const formatted = new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(amount);
-        return `${formatted} <i data-lucide="saudi-riyal" class="rial-icon"></i>`;
-    }
 
     /**
      * Format date to Arabic display format: "Day Month Year" like "14 يناير 2026"
@@ -1305,28 +1262,15 @@
      * Save step 1 data
      */
     function saveStep1() {
-        const bidStartDateInput = document.getElementById('bid-start-date');
-        const bidStartTimeInput = document.getElementById('bid-start-time');
-        const bidEndDateInput = document.getElementById('bid-end-date');
-        const bidEndTimeInput = document.getElementById('bid-end-time');
         const numberOfPropertiesInput = document.getElementById('number-of-properties');
         const approvalNumberInput = document.getElementById('auction-approval-number-step1');
 
-        // Get date values from data attributes if available
-        const bidStartDate = bidStartDateInput?.getAttribute('data-date-value') || '';
-        const bidEndDate = bidEndDateInput?.getAttribute('data-date-value') || '';
-        const bidStartTime = bidStartTimeInput?.value || '12:00';
-        const bidEndTime = bidEndTimeInput?.value || '12:00';
         const numberOfProperties = parseInt(numberOfPropertiesInput?.value || '0', 10) || 0;
         const approvalNumber = approvalNumberInput?.value || '';
 
         // Update formData.step1 with new fields
         formData.step1 = {
             ...formData.step1,
-            bidStartDate: bidStartDate,
-            bidStartTime: bidStartTime,
-            bidEndDate: bidEndDate,
-            bidEndTime: bidEndTime,
             propertiesLocations: document.getElementById('properties-locations')?.value || '',
             auctionApprovalNumber: approvalNumber,
             companyName: document.getElementById('company-name')?.value || '',
@@ -1682,21 +1626,37 @@
 
             // Add click event listener
             stepElement.addEventListener('click', function () {
-                // Check if authorization checkbox is unchecked
-                const authCheckbox = document.getElementById('authorization-checkbox');
-                const errorMessage = document.getElementById('authorization-error-message');
+                // Check if number-of-properties has a valid value (> 0)
+                const numberOfPropertiesInput = document.getElementById('number-of-properties');
+                const numValue = numberOfPropertiesInput ? (parseInt(numberOfPropertiesInput.value.trim() || '0', 10) || 0) : 0;
 
-                if (authCheckbox && !authCheckbox.checked && errorMessage) {
-                    // Scroll to error message smoothly
-                    scrollToElement(errorMessage);
-                    // Show error message
-                    requestAnimationFrame(() => {
-                        errorMessage.style.transition = 'opacity 0.3s ease';
-                        errorMessage.style.opacity = '1';
-                    });
-                    return; // Don't proceed with navigation
+                // If number of properties is 0 or empty, scroll to input and highlight it
+                if (numValue <= 0) {
+                    if (numberOfPropertiesInput) {
+                        // Scroll to the input smoothly
+                        scrollToElement(numberOfPropertiesInput);
+
+                        // Highlight the input to show it's required
+                        numberOfPropertiesInput.style.borderColor = '#dc2626';
+                        numberOfPropertiesInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+
+                        // Remove highlight after a delay
+                        setTimeout(() => {
+                            numberOfPropertiesInput.style.borderColor = '';
+                            numberOfPropertiesInput.style.boxShadow = '';
+                        }, 2000);
+
+                        // Focus the input
+                        setTimeout(() => {
+                            numberOfPropertiesInput.focus();
+                        }, 300);
+                    }
+
+                    // Don't proceed with navigation - just scroll to input
+                    return;
                 }
 
+                // If number of properties is valid, proceed with normal navigation
                 // Check if any property card is selected, if not, select the first one
                 const selectedCard = document.querySelector('.property-card-item.selected');
                 const firstCard = document.querySelector('.property-card-item[data-property-index="0"]');
@@ -1811,19 +1771,114 @@
      * Setup Step 1 listeners
      */
     function setupStep1Listeners() {
-        // Initialize date pickers for bid start and end dates
-        initializeBidDatePickers();
+        // Authorization checkbox validation
+        const authCheckbox = document.getElementById('authorization-checkbox');
+        const errorMessage = document.getElementById('authorization-error-message');
+        const nextBtn1 = document.getElementById('step1-next-btn');
 
-        // Number of properties input - update property cards when changed
+        // Number of properties input - update property cards when changed and validate button
         const numberOfPropertiesInput = document.getElementById('number-of-properties');
-        if (numberOfPropertiesInput) {
-            numberOfPropertiesInput.addEventListener('change', () => {
+
+        // Function to update button state based on checkbox and number of properties
+        function updateButtonState(isChecked) {
+            const numValue = numberOfPropertiesInput ? (parseInt(numberOfPropertiesInput.value.trim() || '0', 10) || 0) : 0;
+            const clampedValue = Math.max(0, Math.min(100, numValue));
+            // Update input value if it was out of bounds
+            if (numberOfPropertiesInput && numValue !== clampedValue) {
+                numberOfPropertiesInput.value = clampedValue;
                 saveStep1();
                 renderPropertyCardsContainer();
-            });
-            numberOfPropertiesInput.addEventListener('input', () => {
+            }
+            const hasValidProperties = clampedValue > 0;
+            const shouldBeEnabled = isChecked && hasValidProperties;
+
+            if (nextBtn1) {
+                if (shouldBeEnabled) {
+                    nextBtn1.style.backgroundColor = 'var(--primary-color)';
+                    nextBtn1.style.color = 'white';
+                    nextBtn1.style.opacity = '1';
+                    nextBtn1.style.cursor = 'pointer';
+                } else {
+                    nextBtn1.style.backgroundColor = 'rgb(229, 229, 229)';
+                    nextBtn1.style.color = 'black';
+                    nextBtn1.style.opacity = '0.6';
+                    nextBtn1.style.cursor = 'not-allowed';
+                }
+            }
+        }
+
+        // Function to validate and update button state based on number of properties
+        function validateNumberOfProperties() {
+            // Use the updateButtonState function which checks both authorization and number of properties
+            if (authCheckbox && nextBtn1) {
+                updateButtonState(authCheckbox.checked);
+            }
+        }
+
+        if (numberOfPropertiesInput) {
+            // Make input readonly
+            numberOfPropertiesInput.setAttribute('readonly', 'readonly');
+
+            // Get increase/decrease buttons
+            const increaseBtn = document.getElementById('number-of-properties-increase');
+            const decreaseBtn = document.getElementById('number-of-properties-decrease');
+
+            // Function to update number value
+            function updateNumberValue(delta) {
+                const currentValue = parseInt(numberOfPropertiesInput.value || '0', 10) || 0;
+                let newValue = currentValue + delta;
+
+                // Enforce min (0) and max (100)
+                newValue = Math.max(0, Math.min(100, newValue));
+
+                numberOfPropertiesInput.value = newValue;
                 saveStep1();
-            });
+                renderPropertyCardsContainer();
+                validateNumberOfProperties();
+                updateButtonStates();
+            }
+
+            // Function to update button disabled states
+            function updateButtonStates() {
+                const currentValue = parseInt(numberOfPropertiesInput.value || '0', 10) || 0;
+
+                if (increaseBtn) {
+                    increaseBtn.disabled = currentValue >= 100;
+                }
+
+                if (decreaseBtn) {
+                    decreaseBtn.disabled = currentValue <= 0;
+                }
+            }
+
+            // Increase button
+            if (increaseBtn) {
+                increaseBtn.addEventListener('click', () => {
+                    updateNumberValue(1);
+                });
+            }
+
+            // Decrease button
+            if (decreaseBtn) {
+                decreaseBtn.addEventListener('click', () => {
+                    updateNumberValue(-1);
+                });
+            }
+
+            // Initial button state update
+            updateButtonStates();
+
+            // Initialize icons for buttons
+            if (increaseBtn || decreaseBtn) {
+                setTimeout(() => {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }, 100);
+            }
+
+            // Initial validation
+            validateNumberOfProperties();
         }
 
         // Brochure PDF upload
@@ -1841,27 +1896,6 @@
             }
         });
 
-        // Authorization checkbox validation
-        const authCheckbox = document.getElementById('authorization-checkbox');
-        const errorMessage = document.getElementById('authorization-error-message');
-        const nextBtn1 = document.getElementById('step1-next-btn');
-
-        // Function to update button state based on checkbox
-        function updateButtonState(isChecked) {
-            if (nextBtn1) {
-                if (isChecked) {
-                    nextBtn1.style.backgroundColor = 'var(--primary-color)';
-                    nextBtn1.style.color = 'white';
-                    nextBtn1.style.opacity = '1';
-                    nextBtn1.style.cursor = 'pointer';
-                } else {
-                    nextBtn1.style.backgroundColor = 'rgb(229, 229, 229)';
-                    nextBtn1.style.color = 'black';
-                    nextBtn1.style.opacity = '0.6';
-                    nextBtn1.style.cursor = 'not-allowed';
-                }
-            }
-        }
 
         // Function to check if button is in disabled state (gray background)
         function isButtonDisabled() {
@@ -1871,7 +1905,7 @@
             return bgColor === 'rgb(229, 229, 229)' || bgColor === '#e5e5e5';
         }
 
-        // Initialize button state based on checkbox
+        // Initialize button state based on checkbox and number of properties
         if (authCheckbox && nextBtn1) {
             updateButtonState(authCheckbox.checked);
 
@@ -1888,6 +1922,8 @@
                 }
             });
         }
+
+        // Also validate button when number of properties changes (handled in the input listener above)
 
         // Handle next button click
         if (nextBtn1) {
@@ -1925,51 +1961,6 @@
         }
     }
 
-    /**
-     * Initialize date pickers for bid start and end dates
-     */
-    function initializeBidDatePickers() {
-        const bidStartDateInput = document.getElementById('bid-start-date');
-        const bidEndDateInput = document.getElementById('bid-end-date');
-
-        if (bidStartDateInput && !bidStartDateInput.hasAttribute('data-pikaday-initialized')) {
-            const today = new Date();
-            const maxDate = new Date(today);
-            maxDate.setDate(maxDate.getDate() + 365);
-
-            const startPicker = new Pikaday({
-                field: bidStartDateInput,
-                minDate: today,
-                maxDate: maxDate,
-                onSelect: function (date) {
-                    const dateStr = formatDateForStorage(date);
-                    bidStartDateInput.setAttribute('data-date-value', dateStr);
-                    bidStartDateInput.value = formatDateForDisplay(dateStr);
-                    saveStep1();
-                }
-            });
-            bidStartDateInput.setAttribute('data-pikaday-initialized', 'true');
-        }
-
-        if (bidEndDateInput && !bidEndDateInput.hasAttribute('data-pikaday-initialized')) {
-            const today = new Date();
-            const maxDate = new Date(today);
-            maxDate.setDate(maxDate.getDate() + 365);
-
-            const endPicker = new Pikaday({
-                field: bidEndDateInput,
-                minDate: today,
-                maxDate: maxDate,
-                onSelect: function (date) {
-                    const dateStr = formatDateForStorage(date);
-                    bidEndDateInput.setAttribute('data-date-value', dateStr);
-                    bidEndDateInput.value = formatDateForDisplay(dateStr);
-                    saveStep1();
-                }
-            });
-            bidEndDateInput.setAttribute('data-pikaday-initialized', 'true');
-        }
-    }
 
     /**
      * Setup file upload handler
@@ -2787,6 +2778,12 @@
                 const numberOfPropertiesInput = document.getElementById('number-of-properties');
                 if (numberOfPropertiesInput) {
                     numberOfPropertiesInput.value = formData.step1.numberOfProperties;
+                    // Update button states
+                    const increaseBtn = document.getElementById('number-of-properties-increase');
+                    const decreaseBtn = document.getElementById('number-of-properties-decrease');
+                    const currentValue = parseInt(numberOfPropertiesInput.value || '0', 10) || 0;
+                    if (increaseBtn) increaseBtn.disabled = currentValue >= 100;
+                    if (decreaseBtn) decreaseBtn.disabled = currentValue <= 0;
                 }
 
                 autoSaveData();

@@ -222,8 +222,8 @@
     // Get image URL from auction
     function getAuctionImageUrl(auction) {
         if (auction.auction_image) return auction.auction_image;
-        if (auction.assets && auction.assets.length > 0 && auction.assets[0].auctionAsset_image) {
-            return auction.assets[0].auctionAsset_image;
+        if (auction.auction_all_assets_object && auction.auction_all_assets_object.length > 0 && auction.auction_all_assets_object[0].auctionAsset_image) {
+            return auction.auction_all_assets_object[0].auctionAsset_image;
         }
         return null;
     }

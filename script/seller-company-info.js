@@ -537,7 +537,7 @@
 
             const timeRemaining = auction.auction_bidStartDate || 'غير محدد';
             const auctionLocation = auction.auction_location || 'غير محدد';
-            const assetCount = auction.auction_numberOfAssets || (auction.assets ? auction.assets.length : 0);
+            const assetCount = auction.auction_numberOfAssets || (auction.auction_all_assets_object ? auction.auction_all_assets_object.length : 0);
             const viewCount = auction.auction_viewCount || 0;
             const auctionTitle = auction.auction_title || 'عقار في المزاد';
             const remainingInfo = getRemainingTimeInfo(auction.auction_bidStartDate, auction.auction_bidEndDate);

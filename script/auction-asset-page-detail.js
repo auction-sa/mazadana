@@ -1179,7 +1179,7 @@
                 return;
             }
 
-            const asset = (auction.assets || []).find(a => a.id === parseInt(assetId));
+            const asset = (auction.auction_all_assets_object || []).find(a => a.id === parseInt(assetId));
 
             if (!asset) {
                 console.error('Asset not found:', assetId);

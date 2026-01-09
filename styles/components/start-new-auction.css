@@ -197,6 +197,65 @@
     text-align: right;
 }
 
+/* Number Input Wrapper */
+.number-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.number-input-wrapper .add-new-auction-form-input {
+    flex: 1;
+    margin: 0;
+    height: 2.5rem;
+}
+
+.number-input-center {
+    text-align: center !important;
+    cursor: default;
+}
+
+.number-input-center:focus {
+    cursor: default;
+}
+
+.number-input-center[readonly] {
+    background-color: var(--bg-white);
+    cursor: default;
+}
+
+/* Number Input Buttons */
+.number-input-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-white);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: var(--font-size-base);
+}
+
+.number-input-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-white);
+    color: var(--text-light);
+    border-color: var(--border-light);
+}
+
+.number-input-btn i {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
 .add-new-auction-form-input:focus {
     outline: none;
     border-color: var(--primary-color);
