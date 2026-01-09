@@ -1186,7 +1186,7 @@
         detailsPage.querySelectorAll('.property-detail-bottom-btn').forEach(btn => {
             const action = btn.getAttribute('data-action');
             const index = parseInt(btn.getAttribute('data-property-index'));
-            
+
             if (action === 'back') {
                 btn.onclick = () => {
                     closePropertyDetailsPage();
@@ -3061,20 +3061,20 @@
                     showStep(1);
                     // Clear property cards container
                     renderPropertyCardsContainer();
-                    
+
                     // Ensure step1-next-btn is disabled (gray background) since number-of-properties is 0
                     setTimeout(() => {
                         const nextBtn1 = document.getElementById('step1-next-btn');
                         const authCheckbox = document.getElementById('authorization-checkbox');
                         const numberOfPropertiesInput = document.getElementById('number-of-properties');
-                        
+
                         if (nextBtn1) {
                             // Check if number of properties is 0
                             const numValue = numberOfPropertiesInput ? (parseInt(numberOfPropertiesInput.value.trim() || '0', 10) || 0) : 0;
                             const hasValidProperties = numValue > 0;
                             const isChecked = authCheckbox ? authCheckbox.checked : false;
                             const shouldBeEnabled = isChecked && hasValidProperties;
-                            
+
                             if (shouldBeEnabled) {
                                 nextBtn1.style.backgroundColor = 'var(--primary-color)';
                                 nextBtn1.style.color = 'white';
