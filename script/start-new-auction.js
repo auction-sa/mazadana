@@ -375,6 +375,11 @@
                         ${renderStep4()}
                         ${renderStep5()}
                     </div>
+
+                    <!-- Property Details Page (shown when clicking review-property-card) -->
+                    <div id="start-new-auction-property-details-page" class="property-details-page" style="display: none;">
+                        <!-- Content will be rendered dynamically -->
+                    </div>
                 </div>
             </div>
         `;
@@ -507,7 +512,7 @@
                                 <input type="checkbox" id="authorization-checkbox" ${data.authorizationConfirmed ? 'checked' : ''}>
                                 <span>أؤكد أن لدي الصلاحية لبيع هذه العقارات بالمزاد العلني.</span>
                             </div>
-                            <span class="authorization-error-message" id="authorization-error-message" style="opacity: 0;">يرجى الموافقة على البند أعلاه</span>
+                            <span class="authorization-error-message" id="authorization-error-message" style="opacity: 0;">يرجى الموافقة على البند أعلاه وتحديد عدد العقارت</span>
                         </label>
                     </div>
 
@@ -629,7 +634,7 @@
 
                     <!-- Step 2 Buttons -->
                     <div class="wizard-buttons">
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step2-back-btn">خلف</button>
+                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step2-back-btn">عودة</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step2-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -738,7 +743,7 @@
 
                     <!-- Step 3 Buttons -->
                     <div class="wizard-buttons">
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step3-back-btn">خلف</button>
+                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step3-back-btn">عودة</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step3-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -843,7 +848,7 @@
 
                     <!-- Step 4 Buttons -->
                     <div class="wizard-buttons">
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step4-back-btn">خلف</button>
+                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step4-back-btn">عودة</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step4-next-btn">المرحلة التالية</button>
                     </div>
                 </form>
@@ -920,7 +925,7 @@
                             <span class="review-value">${convertArabicToEnglish(property.propertyImages?.length || 0)} صورة</span>
                         </div>
                         <div class="review-property-card-actions">
-                            <button type="button" class="review-property-btn review-property-collapse-btn" data-property-index="${index}">تصغير</button>
+                            <button type="button" class="review-property-btn review-property-collapse-btn" data-property-index="${index}">عودة</button>
                             <button type="button" class="review-property-btn review-property-edit-btn" data-property-index="${index}">تعديل</button>
                             <button type="button" class="review-property-btn review-property-delete-btn" data-property-index="${index}">حذف</button>
                         </div>
@@ -1003,7 +1008,7 @@
 
                     <!-- Step 5 Buttons -->
                     <div class="wizard-buttons">
-                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step5-back-btn">خلف</button>
+                        <button type="button" class="wizard-btn wizard-btn-secondary" id="step5-back-btn">عودة</button>
                         <button type="button" class="wizard-btn wizard-btn-primary" id="step5-submit-btn" ${!isReadyToSubmit ? 'disabled' : ''}>تأكيد المعلومات للمراجعة</button>
                     </div>
                 </div>
@@ -1025,6 +1030,218 @@
         return labels[type] || 'غير محدد';
     }
 
+    /**
+     * Render the property details page content for a specific property
+     */
+    function renderPropertyDetailsPageContent(propertyIndex) {
+        const property = formData.properties?.[propertyIndex];
+        if (!property) return '';
+
+        const propertyTypeLabel = property.propertyType === 'others' && property.propertyTypeOther
+            ? property.propertyTypeOther
+            : getPropertyTypeLabel(property.propertyType);
+        const propertySize = property.propertySize ? convertArabicToEnglish(property.propertySize) + ' ' + (property.propertySizeUnit || 'م²') : 'غير محدد';
+
+        // Property images HTML
+        const propertyImages = property.propertyImages || [];
+        const imagesHTML = propertyImages.length > 0
+            ? propertyImages.map(img => `
+                <div class="property-detail-image-item">
+                    <img src="${img.preview || img}" alt="صورة العقار" />
+                </div>
+            `).join('')
+            : '<p class="property-detail-no-images">لا توجد صور</p>';
+
+        return `
+            <div class="property-details-page-header">
+                <button type="button" class="property-details-back-btn" id="property-details-back-btn" aria-label="رجوع">
+                    <i data-lucide="arrow-right" class="property-details-back-icon"></i>
+                </button>
+                <h3 class="property-details-page-title">تفاصيل عقار ${propertyIndex + 1}</h3>
+            </div>
+            <div class="property-details-page-content">
+                <div class="property-details-section">
+                    <h4 class="property-details-section-title">معلومات العقار الأساسية</h4>
+                    <div class="property-detail-item">
+                        <span class="property-detail-label">نوع العقار:</span>
+                        <span class="property-detail-value">${propertyTypeLabel || 'غير محدد'}</span>
+                    </div>
+                    <div class="property-detail-item">
+                        <span class="property-detail-label">رابط عنوان العقار (من قوقل ماب):</span>
+                        <span class="property-detail-value">${property.propertyTitle ? `<a href="${property.propertyTitle}" target="_blank" rel="noopener noreferrer" class="property-detail-link">${property.propertyTitle}</a>` : 'غير محدد'}</span>
+                    </div>
+                    <div class="property-detail-item">
+                        <span class="property-detail-label">المساحة:</span>
+                        <span class="property-detail-value">${propertySize}</span>
+                    </div>
+                    <div class="property-detail-item">
+                        <span class="property-detail-label">الوصف:</span>
+                        <span class="property-detail-value property-detail-description">${property.propertyDescription || 'غير محدد'}</span>
+                    </div>
+                </div>
+
+                <div class="property-details-section">
+                    <h4 class="property-details-section-title">حدود وأطوال العقار</h4>
+                    <div class="property-detail-boundaries">
+                        <div class="property-detail-boundary-item">
+                            <span class="property-detail-boundary-label">شمال:</span>
+                            <span class="property-detail-boundary-value">${property.propertyBoundaries?.north || 'غير محدد'}</span>
+                        </div>
+                        <div class="property-detail-boundary-item">
+                            <span class="property-detail-boundary-label">جنوب:</span>
+                            <span class="property-detail-boundary-value">${property.propertyBoundaries?.south || 'غير محدد'}</span>
+                        </div>
+                        <div class="property-detail-boundary-item">
+                            <span class="property-detail-boundary-label">شرق:</span>
+                            <span class="property-detail-boundary-value">${property.propertyBoundaries?.east || 'غير محدد'}</span>
+                        </div>
+                        <div class="property-detail-boundary-item">
+                            <span class="property-detail-boundary-label">غرب:</span>
+                            <span class="property-detail-boundary-value">${property.propertyBoundaries?.west || 'غير محدد'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-details-section">
+                    <h4 class="property-details-section-title">صور العقار</h4>
+                    <div class="property-detail-images-grid">
+                        ${imagesHTML}
+                    </div>
+                </div>
+
+                <div class="property-details-actions">
+                    <button type="button" class="wizard-btn wizard-btn-secondary property-detail-bottom-btn" data-property-index="${propertyIndex}" data-action="back">عودة</button>
+                    <button type="button" class="wizard-btn wizard-btn-secondary property-detail-bottom-btn" data-property-index="${propertyIndex}" data-action="edit">تعديل</button>
+                    <button type="button" class="wizard-btn wizard-btn-secondary property-detail-bottom-btn" data-property-index="${propertyIndex}" data-action="delete">حذف</button>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Open the property details page for a specific property
+     */
+    function openPropertyDetailsPage(propertyIndex) {
+        const detailsPage = document.getElementById('start-new-auction-property-details-page');
+        const wizardStep5 = document.getElementById('wizard-step-5');
+
+        if (!detailsPage || !wizardStep5) return;
+
+        // Render the property details content
+        detailsPage.innerHTML = renderPropertyDetailsPageContent(propertyIndex);
+
+        // Reset state: ensure we start from initial position (off-screen) for slide animation
+        detailsPage.classList.remove('property-details-page-open', 'property-details-page-closing');
+
+        // Ensure property details page is scrolled to top instantly (before it becomes visible)
+        detailsPage.scrollTop = 0;
+
+        // Show property details page immediately (initially off-screen with translateX(100%))
+        detailsPage.style.display = 'block';
+
+        // Hide wizard-step-5 with fade out (both animations happen simultaneously)
+        wizardStep5.style.transition = 'opacity 0.25s ease';
+        wizardStep5.style.opacity = '0';
+        // Hide after opacity transition completes
+        setTimeout(() => {
+            wizardStep5.style.display = 'none';
+        }, 250);
+
+        // Trigger reflow to ensure initial state is applied before animation
+        detailsPage.offsetHeight;
+
+        // Add open class to trigger slide-to-left animation immediately
+        // Small delay to ensure browser has painted the initial state
+        requestAnimationFrame(() => {
+            detailsPage.classList.add('property-details-page-open');
+        });
+
+        // Scroll to top instantly - use multiple methods to ensure it works
+        detailsPage.scrollTop = 0;
+        // Also scroll after animation starts to ensure it stays at top
+        requestAnimationFrame(() => {
+            detailsPage.scrollTop = 0;
+        });
+        // Scroll again after a short delay to catch any layout changes
+        setTimeout(() => {
+            detailsPage.scrollTop = 0;
+        }, 100);
+
+        // Initialize lucide icons
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            // Final scroll to top after everything is rendered
+            detailsPage.scrollTop = 0;
+        }, 50);
+
+        // Attach header back button listener
+        const headerBackBtn = document.getElementById('property-details-back-btn');
+        if (headerBackBtn) {
+            headerBackBtn.onclick = closePropertyDetailsPage;
+        }
+
+        // Attach button listeners using data-action attributes
+        detailsPage.querySelectorAll('.property-detail-bottom-btn').forEach(btn => {
+            const action = btn.getAttribute('data-action');
+            const index = parseInt(btn.getAttribute('data-property-index'));
+            
+            if (action === 'back') {
+                btn.onclick = () => {
+                    closePropertyDetailsPage();
+                };
+            } else if (action === 'edit') {
+                btn.onclick = () => {
+                    // Close details page without showing step 5 (we're going to step 2)
+                    const page = document.getElementById('start-new-auction-property-details-page');
+                    if (page) {
+                        page.classList.remove('property-details-page-open');
+                        page.classList.add('property-details-page-closing');
+                        setTimeout(() => {
+                            page.style.display = 'none';
+                            page.classList.remove('property-details-page-closing');
+                            // Navigate to step 2 for editing
+                            formData.currentPropertyIndex = index;
+                            autoSaveData();
+                            currentStep = 2;
+                            showStep(2);
+                            loadPropertyToStep2(index);
+                        }, 300);
+                    }
+                };
+            } else if (action === 'delete') {
+                btn.onclick = () => {
+                    // Show delete confirmation
+                    // Note: The property details page is automatically closed in showDeletePropertyConfirmation before re-rendering
+                    showDeletePropertyConfirmation(index);
+                };
+            }
+        });
+    }
+
+    /**
+     * Close the property details page and return to step 5
+     */
+    function closePropertyDetailsPage() {
+        const detailsPage = document.getElementById('start-new-auction-property-details-page');
+        const wizardStep5 = document.getElementById('wizard-step-5');
+
+        if (!detailsPage || !wizardStep5) return;
+
+        // Add closing class for fade out animation
+        detailsPage.classList.remove('property-details-page-open');
+        detailsPage.classList.add('property-details-page-closing');
+
+        wizardStep5.style.display = 'block';
+        wizardStep5.style.opacity = '1';
+
+        // After fade out animation completes, hide details page and show step 5
+        setTimeout(() => {
+            detailsPage.style.display = 'none';
+            detailsPage.classList.remove('property-details-page-closing');
+        }, 300);
+    }
 
     /**
      * Format date to Arabic display format: "Day Month Year" like "14 يناير 2026"
@@ -1214,6 +1431,13 @@
         /* Scroll to the top page */
         scrollToTop();
 
+        // Ensure property details page state is managed when changing steps
+        const propertyDetailsPage = document.getElementById('start-new-auction-property-details-page');
+        if (propertyDetailsPage && propertyDetailsPage.style.display === 'block') {
+            // Hide property details page when changing steps (user should see the step content, not property details)
+            propertyDetailsPage.style.display = 'none';
+            propertyDetailsPage.classList.remove('property-details-page-open', 'property-details-page-closing');
+        }
 
         // Hide all steps
         for (let i = 1; i <= 5; i++) {
@@ -1587,18 +1811,21 @@
      * Scroll to top smoothly
      */
     function scrollToTop() {
+        // Scroll the main scrollable container instantly
         const scrollableContainer = document.querySelector('#add-new-auction-view .scrollable-container');
         if (scrollableContainer) {
-            scrollableContainer.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        } else {
-            // Fallback to window scroll
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            scrollableContainer.scrollTop = 0;
+        }
+
+        // Also scroll the property details page if it's visible (instant, unnoticeable)
+        const propertyDetailsPage = document.getElementById('start-new-auction-property-details-page');
+        if (propertyDetailsPage && propertyDetailsPage.style.display === 'block') {
+            propertyDetailsPage.scrollTop = 0;
+        }
+
+        // Fallback to window scroll (instant)
+        if (window.scrollY > 0) {
+            window.scrollTo(0, 0);
         }
     }
 
@@ -2680,41 +2907,30 @@
     }
 
     /**
-     * Setup property card listeners for expand/collapse, edit, delete
+     * Setup property card listeners for opening property details page, edit, delete
      */
     function setupPropertyCardListeners() {
-        // Expand/collapse on card header click
+        // Open property details page when clicking on the card (header or content area, but not action buttons)
         document.querySelectorAll('.review-property-card').forEach(card => {
             const header = card.querySelector('.review-property-card-header');
             const content = card.querySelector('.review-property-card-content');
-            if (header && content) {
-                header.addEventListener('click', (e) => {
-                    // Don't expand if clicking on action buttons
-                    if (e.target.closest('.review-property-card-actions')) return;
+            // Add click to both header and content areas
+            [header, content].forEach(element => {
+                if (element) {
+                    element.addEventListener('click', (e) => {
+                        // Don't open details page if clicking on action buttons
+                        if (e.target.closest('.review-property-card-actions')) return;
 
-                    const isExpanded = card.classList.contains('expanded');
-                    if (isExpanded) {
-                        // Collapse smoothly
-                        card.classList.remove('expanded');
-                    } else {
-                        // Expand - collapse all others first
-                        document.querySelectorAll('.review-property-card').forEach(otherCard => {
-                            if (otherCard !== card) {
-                                otherCard.classList.remove('expanded');
-                            }
-                        });
-                        // Expand this card smoothly
-                        card.classList.add('expanded');
-                        // Smooth scroll to card after expansion starts
-                        setTimeout(() => {
-                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }, 150);
-                    }
-                });
-            }
+                        const propertyIndex = parseInt(card.getAttribute('data-property-index'));
+                        if (!isNaN(propertyIndex)) {
+                            openPropertyDetailsPage(propertyIndex);
+                        }
+                    });
+                }
+            });
         });
 
-        // Collapse button
+        // Collapse button - collapse the card if expanded (card can still be expanded for quick view)
         document.querySelectorAll('.review-property-collapse-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2751,8 +2967,10 @@
 
     /**
      * Show bottom sheet confirmation for property deletion
+     * @param {number} propertyIndex - Index of the property to delete
+     * @param {Function} onDeleteCallback - Optional callback to execute after deletion
      */
-    function showDeletePropertyConfirmation(propertyIndex) {
+    function showDeletePropertyConfirmation(propertyIndex, onDeleteCallback) {
         // Remove existing bottom sheet if any
         const existingSheet = document.querySelector('.property-delete-bottom-sheet');
         if (existingSheet) {
@@ -2818,11 +3036,84 @@
                 }
 
                 autoSaveData();
+
+                // Close property details page before re-rendering (if it's open)
+                const propertyDetailsPage = document.getElementById('start-new-auction-property-details-page');
+                if (propertyDetailsPage && propertyDetailsPage.style.display === 'block') {
+                    propertyDetailsPage.style.display = 'none';
+                    propertyDetailsPage.classList.remove('property-details-page-open', 'property-details-page-closing');
+                    // Show wizard-step-5 again
+                    const wizardStep5 = document.getElementById('wizard-step-5');
+                    if (wizardStep5) {
+                        wizardStep5.style.display = 'block';
+                        wizardStep5.style.opacity = '1';
+                    }
+                }
+
                 closeSheet();
 
-                // Re-render step 5 and property cards container
-                renderStep5();
-                renderPropertyCardsContainer();
+                // Check if this was the last property - if so, navigate to step 1
+                const remainingProperties = formData.properties.length;
+                if (remainingProperties === 0) {
+                    // No properties left - navigate to step 1 to reset the process
+                    currentStep = 1;
+                    autoSaveData();
+                    showStep(1);
+                    // Clear property cards container
+                    renderPropertyCardsContainer();
+                    
+                    // Ensure step1-next-btn is disabled (gray background) since number-of-properties is 0
+                    setTimeout(() => {
+                        const nextBtn1 = document.getElementById('step1-next-btn');
+                        const authCheckbox = document.getElementById('authorization-checkbox');
+                        const numberOfPropertiesInput = document.getElementById('number-of-properties');
+                        
+                        if (nextBtn1) {
+                            // Check if number of properties is 0
+                            const numValue = numberOfPropertiesInput ? (parseInt(numberOfPropertiesInput.value.trim() || '0', 10) || 0) : 0;
+                            const hasValidProperties = numValue > 0;
+                            const isChecked = authCheckbox ? authCheckbox.checked : false;
+                            const shouldBeEnabled = isChecked && hasValidProperties;
+                            
+                            if (shouldBeEnabled) {
+                                nextBtn1.style.backgroundColor = 'var(--primary-color)';
+                                nextBtn1.style.color = 'white';
+                                nextBtn1.style.opacity = '1';
+                                nextBtn1.style.cursor = 'pointer';
+                            } else {
+                                nextBtn1.style.backgroundColor = 'rgb(229, 229, 229)';
+                                nextBtn1.style.color = 'black';
+                                nextBtn1.style.opacity = '0.6';
+                                nextBtn1.style.cursor = 'not-allowed';
+                            }
+                        }
+                    }, 50);
+                } else {
+                    // Re-render step 5 and property cards container
+                    // Update wizard-step-5 DOM with new content
+                    const wizardStep5Element = document.getElementById('wizard-step-5');
+                    if (wizardStep5Element) {
+                        const wasVisible = wizardStep5Element.style.display !== 'none';
+                        wizardStep5Element.outerHTML = renderStep5();
+                        // Re-attach event listeners for the new step 5 content
+                        setupStep5Listeners();
+                        // Restore visibility state
+                        const newStep5Element = document.getElementById('wizard-step-5');
+                        if (newStep5Element && wasVisible) {
+                            newStep5Element.style.display = 'block';
+                            newStep5Element.style.opacity = '1';
+                        }
+                    } else {
+                        // If step 5 doesn't exist, just render it (shouldn't happen but safety check)
+                        renderStep5();
+                    }
+                    renderPropertyCardsContainer();
+                }
+
+                // Execute callback if provided (after re-rendering)
+                if (onDeleteCallback && typeof onDeleteCallback === 'function') {
+                    onDeleteCallback();
+                }
             });
         }
 
