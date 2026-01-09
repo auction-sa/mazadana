@@ -850,7 +850,7 @@
 }
 
 .review-property-card-header {
-    padding: 1rem;
+    padding: 0.5rem;
     cursor: pointer;
     transition: background var(--transition-base);
 }

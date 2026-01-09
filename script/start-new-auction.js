@@ -327,6 +327,10 @@
         // Load saved data
         loadSavedData();
 
+        // Reset current step to 1 when opening the wizard
+        currentStep = 1;
+        autoSaveData();
+
         auctionView.innerHTML = `
             <div class="settings-container">
                 <div class="account-tabs-header" id="start-auction-header">
@@ -1605,168 +1609,6 @@
         }
     }
 
-    /**
-     * Render step 5 content (update review without full re-render)
-     */
-    function renderStep5Content() {
-        const step5Element = document.getElementById('wizard-step-5');
-        if (!step5Element) return;
-
-        const reviewContainer = step5Element.querySelector('.review-container');
-        if (!reviewContainer) return;
-
-        const data = formData;
-        const missingFields = getMissingFields();
-        const isReadyToSubmit = missingFields.length === 0 && data.step1.authorizationConfirmed && data.step4.sellerDeclaration;
-
-        reviewContainer.innerHTML = `
-            <!-- Status Badge -->
-            <div class="status-badge ${isReadyToSubmit ? 'ready' : 'draft'}">
-                <i data-lucide="${isReadyToSubmit ? 'check-circle' : 'edit'}" class="status-icon"></i>
-                <span>${isReadyToSubmit ? 'جاهز للإرسال' : 'مسودة'}</span>
-            </div>
-
-            ${missingFields.length > 0 ? `
-                <div class="missing-fields-alert">
-                    <h4>الحقول الناقصة:</h4>
-                    <ul>
-                        ${missingFields.map(field => `<li>${field}</li>`).join('')}
-                    </ul>
-                </div>
-            ` : ''}
-
-            <!-- Review Sections -->
-            <div class="review-section">
-                <h4 class="review-section-title">المرحلة 1: المعلومات الأساسية</h4>
-                <div class="review-item">
-                    <span class="review-label">نوع البائع:</span>
-                    <span class="review-value">${data.step1.sellerType === 'company' ? 'شركة' : data.step1.sellerType === 'individual' ? 'فرد' : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">اسم البائع:</span>
-                    <span class="review-value">${data.step1.sellerName || 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">البريد الإلكتروني:</span>
-                    <span class="review-value">${data.step1.contactEmail || 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">رقم الهاتف:</span>
-                    <span class="review-value">${data.step1.contactPhone ? convertArabicToEnglish(data.step1.contactPhone) : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">مدن العقارات:</span>
-                    <span class="review-value">${data.step1.propertyCity || 'غير محدد'}</span>
-                </div>
-            </div>
-
-            <div class="review-section">
-                <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
-                <div class="review-item">
-                    <span class="review-label">نوع العقار:</span>
-                    <span class="review-value">${data.step2.propertyType === 'others' && data.step2.propertyTypeOther ? data.step2.propertyTypeOther : getPropertyTypeLabel(data.step2.propertyType)}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
-                    <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">المساحة:</span>
-                    <span class="review-value">${data.step2.propertySize ? convertArabicToEnglish(data.step2.propertySize) + ' ' + data.step2.propertySizeUnit : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">الوصف:</span>
-                    <span class="review-value">${data.step2.propertyDescription || 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">حدود وأطوال العقار:</span>
-                    <div class="review-boundaries">
-                        <div class="review-boundary-item">
-                            <span class="review-boundary-label">شمال:</span>
-                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.north || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-boundary-item">
-                            <span class="review-boundary-label">جنوب:</span>
-                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.south || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-boundary-item">
-                            <span class="review-boundary-label">شرق:</span>
-                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.east || 'غير محدد'}</span>
-                        </div>
-                        <div class="review-boundary-item">
-                            <span class="review-boundary-label">غرب:</span>
-                            <span class="review-boundary-value">${data.step2.propertyBoundaries?.west || 'غير محدد'}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">عدد الصور:</span>
-                    <span class="review-value">${convertArabicToEnglish(data.step2.propertyImages.length)} صورة</span>
-                </div>
-            </div>
-
-            <div class="review-section">
-                <h4 class="review-section-title">المرحلة 3: إعداد المزاد</h4>
-                <div class="review-item">
-                    <span class="review-label">سعر البداية:</span>
-                    <span class="review-value">${data.step3.startPrice ? formatCurrency(data.step3.startPrice) : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">قيمة التأمين:</span>
-                    <span class="review-value">${data.step3.depositPrice ? formatCurrency(data.step3.depositPrice) : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">قيمة الزيادة:</span>
-                    <span class="review-value">${data.step3.bidIncrement ? formatCurrency(data.step3.bidIncrement) : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">السعر الأدنى لبيع العقار:</span>
-                    <span class="review-value">${data.step3.minimumSalePrice ? formatCurrency(data.step3.minimumSalePrice) : 'غير محدد (إختياري)'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">تاريخ ووقت البداية:</span>
-                    <span class="review-value">${formatDateTime(data.step3.auctionStartDate, data.step3.auctionStartTime)}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">تاريخ ووقت النهاية:</span>
-                    <span class="review-value">${formatDateTime(data.step3.auctionEndDate, data.step3.auctionEndTime)}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">عدد أيام تشغيل المزاد:</span>
-                    <span class="review-value">${data.step3.auctionDaysAmount ? convertArabicToEnglish(data.step3.auctionDaysAmount) + ' أيام' : 'غير محدد'}</span>
-                </div>
-            </div>
-
-            <div class="review-section">
-                <h4 class="review-section-title">المرحلة 4: المستندات</h4>
-                <div class="review-item">
-                    <span class="review-label">إثبات الملكية:</span>
-                    <span class="review-value">${data.step4.proofOfOwnership ? 'تم الرفع' : 'غير مرفق'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">رقم موافقة المزاد:</span>
-                    <span class="review-value">${data.step4.auctionApprovalNumber ? convertArabicToEnglish(data.step4.auctionApprovalNumber) : 'غير محدد'}</span>
-                </div>
-                <div class="review-item">
-                    <span class="review-label">ملف موافقة المزاد:</span>
-                    <span class="review-value">${data.step4.auctionApprovalPDF ? 'تم الرفع' : 'غير مرفق'}</span>
-                </div>
-            </div>
-
-            <!-- Step 5 Buttons -->
-            <div class="wizard-buttons">
-                <button type="button" class="wizard-btn wizard-btn-secondary" id="step5-back-btn">خلف</button>
-                <button type="button" class="wizard-btn wizard-btn-primary" id="step5-submit-btn" ${!isReadyToSubmit ? 'disabled' : ''}>تأكيد المعلومات للمراجعة</button>
-            </div>
-        `;
-
-        // Re-attach step 5 listeners
-        setupStep5Listeners();
-        // Re-attach scroll to top to buttons
-        attachScrollToTopToButtons();
-        lucide.createIcons();
-    }
-
 
     /**
      * Scroll to top smoothly
@@ -1879,7 +1721,7 @@
 
                 // If navigating to step 5, update review content
                 if (targetStep === 5) {
-                    renderStep5Content();
+                    renderStep5();
                 }
             });
 
@@ -2768,7 +2610,7 @@
                     currentStep = 5;
                     autoSaveData();
                     // Re-render step 5 to update review with latest data
-                    renderStep5Content();
+                    renderStep5();
                     showStep(5);
                 } else {
                     // Select the next property card and go to step 2
@@ -2976,7 +2818,7 @@
                 closeSheet();
 
                 // Re-render step 5 and property cards container
-                renderStep5Content();
+                renderStep5();
                 renderPropertyCardsContainer();
             });
         }
@@ -3040,6 +2882,13 @@
                         // Ensure view is rendered when it becomes active
                         if (!auctionWizardRendered || auctionView.innerHTML.trim() === '') {
                             renderAuctionWizardView();
+                        } else {
+                            // Reset to step 1 when view becomes active
+                            currentStep = 1;
+                            autoSaveData();
+                            showStep(1);
+                            clearPropertyCardSelection();
+                            renderPropertyCardsContainer();
                         }
 
                         disableBackButton(500);
