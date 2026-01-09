@@ -160,22 +160,6 @@
     }
 
     /**
-     * Update seller name label based on selected seller type
-     */
-    function updateSellerNameLabel() {
-        const label = document.getElementById('seller-name-label');
-        if (!label) return;
-
-        const selectedRadio = document.querySelector('input[name="sellerType"]:checked');
-        if (selectedRadio) {
-            label.textContent = selectedRadio.value === 'company' ? 'اسم الشركة' : 'اسم البائع';
-        } else {
-            // Default to 'اسم البائع' if nothing is selected
-            label.textContent = 'اسم البائع';
-        }
-    }
-
-    /**
      * Render property cards container
      */
     function renderPropertyCardsContainer() {
@@ -254,6 +238,11 @@
                 }, 10);
             });
         });
+
+        // If there's a selected property, load its data into step 2 inputs
+        if (currentIndex >= 0 && formData.properties[currentIndex]) {
+            loadPropertyToStep2(currentIndex);
+        }
     }
 
     /**
@@ -274,6 +263,11 @@
         // Update formData
         formData.currentPropertyIndex = index;
         autoSaveData();
+
+        // Automatically update step 2 inputs with the selected property data
+        if (formData.properties[index]) {
+            loadPropertyToStep2(index);
+        }
     }
 
     /**
@@ -394,9 +388,6 @@
         // Show current step
         showStep(currentStep);
 
-        // Update seller name label based on saved seller type
-        updateSellerNameLabel();
-
         // Allow listeners to attach on fresh markup
         eventListenersAttached = false;
 
@@ -500,9 +491,8 @@
                     </div>
 
                     <!-- Company Info (shown if approval number exists) -->
-                    <div id="company-info-container" style="display: ${hasApprovalNumber ? 'block' : 'none'}; opacity: ${hasApprovalNumber ? '1' : '0'}; transition: opacity 0.3s ease;">
                         <div class="form-group">
-                            <label class="add-new-auction-form-label">اسم الشركة</label>
+                            <label class="add-new-auction-form-label">اسم الشركة/البائع</label>
                             <input type="text" class="add-new-auction-form-input" id="company-name" value="${data.companyName || ''}" 
                                    placeholder="أدخل اسم الشركة">
                         </div>
@@ -516,7 +506,6 @@
                             <input type="tel" class="add-new-auction-form-input" id="company-phone" value="${data.companyPhone || ''}" 
                                    placeholder="05xxxxxxxx" dir="ltr">
                         </div>
-                    </div>
 
                     <!-- Number of Properties -->
                     <div class="form-group">
@@ -904,7 +893,7 @@
                             <span class="review-property-brief-item">${propertySize}</span>
                         </div>
                     </div>
-                    <div class="review-property-card-content" style="display: none;">
+                    <div class="review-property-card-content">
                         <div class="review-item">
                             <span class="review-label">نوع العقار:</span>
                             <span class="review-value">${propertyTypeLabel}</span>
@@ -1007,7 +996,7 @@
                             </div>
                             ${step1Data.companyName ? `
                                 <div class="review-item">
-                                    <span class="review-label">اسم الشركة:</span>
+                                    <span class="review-label">اسم الشركة/البائع:</span>
                                     <span class="review-value">${step1Data.companyName}</span>
                                 </div>
                             ` : ''}
@@ -1284,6 +1273,23 @@
         if (step === 1) {
             clearPropertyCardSelection();
             renderPropertyCardsContainer();
+        }
+
+        // Re-render step 5 with latest data when showing it
+        if (step === 5) {
+            const step5Element = document.getElementById('wizard-step-5');
+            if (step5Element) {
+                // Re-render step 5 with latest data
+                step5Element.outerHTML = renderStep5();
+                // Ensure step 5 is displayed
+                const newStep5Element = document.getElementById('wizard-step-5');
+                if (newStep5Element) {
+                    newStep5Element.style.display = 'block';
+                }
+                // Re-attach listeners
+                setupStep5Listeners();
+                lucide.createIcons();
+            }
         }
 
         // Re-initialize date and time pickers when showing step 3
@@ -1816,29 +1822,6 @@
                 renderPropertyCardsContainer();
             });
             numberOfPropertiesInput.addEventListener('input', () => {
-                saveStep1();
-            });
-        }
-
-        // Approval number input - show/hide company info
-        const approvalNumberInput = document.getElementById('auction-approval-number-step1');
-        const companyInfoContainer = document.getElementById('company-info-container');
-        if (approvalNumberInput && companyInfoContainer) {
-            approvalNumberInput.addEventListener('input', () => {
-                const hasApproval = approvalNumberInput.value.trim() !== '';
-                if (hasApproval) {
-                    companyInfoContainer.style.display = 'block';
-                    requestAnimationFrame(() => {
-                        companyInfoContainer.style.opacity = '1';
-                    });
-                } else {
-                    companyInfoContainer.style.opacity = '0';
-                    setTimeout(() => {
-                        if (!approvalNumberInput.value.trim()) {
-                            companyInfoContainer.style.display = 'none';
-                        }
-                    }, 300);
-                }
                 saveStep1();
             });
         }
@@ -2687,29 +2670,23 @@
                     // Don't expand if clicking on action buttons
                     if (e.target.closest('.review-property-card-actions')) return;
 
-                    const isExpanded = content.style.display !== 'none';
+                    const isExpanded = card.classList.contains('expanded');
                     if (isExpanded) {
-                        // Collapse
-                        content.style.display = 'none';
+                        // Collapse smoothly
                         card.classList.remove('expanded');
                     } else {
                         // Expand - collapse all others first
                         document.querySelectorAll('.review-property-card').forEach(otherCard => {
                             if (otherCard !== card) {
-                                const otherContent = otherCard.querySelector('.review-property-card-content');
-                                if (otherContent) {
-                                    otherContent.style.display = 'none';
-                                    otherCard.classList.remove('expanded');
-                                }
+                                otherCard.classList.remove('expanded');
                             }
                         });
-                        // Expand this card
-                        content.style.display = 'block';
+                        // Expand this card smoothly
                         card.classList.add('expanded');
-                        // Smooth scroll to card
+                        // Smooth scroll to card after expansion starts
                         setTimeout(() => {
                             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }, 100);
+                        }, 150);
                     }
                 });
             }
@@ -2721,9 +2698,7 @@
                 e.stopPropagation();
                 const index = parseInt(btn.getAttribute('data-property-index'));
                 const card = document.querySelector(`.review-property-card[data-property-index="${index}"]`);
-                const content = card?.querySelector('.review-property-card-content');
-                if (content) {
-                    content.style.display = 'none';
+                if (card) {
                     card.classList.remove('expanded');
                 }
             });
@@ -2883,12 +2858,26 @@
                         if (!auctionWizardRendered || auctionView.innerHTML.trim() === '') {
                             renderAuctionWizardView();
                         } else {
+                            // Save current property index before clearing (if any)
+                            const savedPropertyIndex = formData.currentPropertyIndex;
+
                             // Reset to step 1 when view becomes active
                             currentStep = 1;
                             autoSaveData();
                             showStep(1);
                             clearPropertyCardSelection();
                             renderPropertyCardsContainer();
+
+                            // If there was a selected property, restore it and load its data into step 2 inputs
+                            // This ensures inputs are always synced with the selected property
+                            if (savedPropertyIndex !== null && savedPropertyIndex >= 0) {
+                                if (formData.properties[savedPropertyIndex]) {
+                                    // Restore the selection visually and load data
+                                    // (selectPropertyCard already calls loadPropertyToStep2)
+                                    formData.currentPropertyIndex = savedPropertyIndex;
+                                    selectPropertyCard(savedPropertyIndex);
+                                }
+                            }
                         }
 
                         disableBackButton(500);
