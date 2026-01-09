@@ -277,6 +277,20 @@
     }
 
     /**
+     * Clear property card selection
+     */
+    function clearPropertyCardSelection() {
+        // Remove selected class from all cards
+        document.querySelectorAll('.property-card-item').forEach(card => {
+            card.classList.remove('selected');
+        });
+
+        // Clear current property index
+        formData.currentPropertyIndex = null;
+        autoSaveData();
+    }
+
+    /**
      * Load property data into step 2 for editing
      */
     function loadPropertyToStep2(propertyIndex) {
@@ -1262,8 +1276,9 @@
 
         updateProgressBar();
 
-        // Re-render property cards when going to step 1 to show selected state
+        // Clear property card selection when going to step 1
         if (step === 1) {
+            clearPropertyCardSelection();
             renderPropertyCardsContainer();
         }
 
@@ -1782,6 +1797,31 @@
     }
 
     /**
+     * Scroll to element smoothly
+     */
+    function scrollToElement(element) {
+        if (!element) return;
+        const scrollableContainer = document.querySelector('#add-new-auction-view .scrollable-container');
+        if (scrollableContainer) {
+            const elementRect = element.getBoundingClientRect();
+            const containerRect = scrollableContainer.getBoundingClientRect();
+            const scrollTop = scrollableContainer.scrollTop;
+            const elementTop = elementRect.top - containerRect.top + scrollTop;
+
+            scrollableContainer.scrollTo({
+                top: elementTop - 20, // Add some offset
+                behavior: 'smooth'
+            });
+        } else {
+            // Fallback to window scroll
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }
+
+    /**
      * Setup progress steps navigation - make them clickable
      */
     function setupProgressStepsNavigation() {
@@ -1794,6 +1834,31 @@
 
             // Add click event listener
             stepElement.addEventListener('click', function () {
+                // Check if authorization checkbox is unchecked
+                const authCheckbox = document.getElementById('authorization-checkbox');
+                const errorMessage = document.getElementById('authorization-error-message');
+
+                if (authCheckbox && !authCheckbox.checked && errorMessage) {
+                    // Scroll to error message smoothly
+                    scrollToElement(errorMessage);
+                    // Show error message
+                    requestAnimationFrame(() => {
+                        errorMessage.style.transition = 'opacity 0.3s ease';
+                        errorMessage.style.opacity = '1';
+                    });
+                    return; // Don't proceed with navigation
+                }
+
+                // Check if any property card is selected, if not, select the first one
+                const selectedCard = document.querySelector('.property-card-item.selected');
+                const firstCard = document.querySelector('.property-card-item[data-property-index="0"]');
+
+                if (!selectedCard && firstCard && formData.step1.numberOfProperties > 0) {
+                    selectPropertyCard(0);
+                    formData.currentPropertyIndex = 0;
+                    autoSaveData();
+                }
+
                 // Save current step data before switching
                 if (currentStep === 1) {
                     saveStep1();
