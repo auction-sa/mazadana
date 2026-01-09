@@ -18,11 +18,11 @@
             contactEmail: '',
             contactPhone: '',
             propertyCity: '',
-            propertyType: '',
-            propertyTypeOther: '',
             authorizationConfirmed: false
         },
         step2: {
+            propertyType: '',
+            propertyTypeOther: '',
             propertyTitle: '',
             propertyAddressUrl: '',
             propertySize: '',
@@ -130,6 +130,9 @@
                 </div>
 
                 <div class="auction-wizard-content-wrapper scrollable-container">
+
+                    <div id="number-of-auction-properties-container"></div>
+
                     <!-- Progress Bar -->
                     <div class="progress-bar" id="wizard-progress-bar"></div>
                     <div class="wizard-progress">
@@ -237,29 +240,10 @@
 
                     <!-- Property City -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">مدينة العقار</label>
+                        <label class="add-new-auction-form-label">مند العقارات</label>
                         <input type="text" class="add-new-auction-form-input" id="property-city" value="${data.propertyCity}" 
                                placeholder="مثل: الرياض، جدة، الدمام">
-                        <small class="form-helper">المدينة التي يقع فيها العقار</small>
-                    </div>
-
-                    <!-- Property Type -->
-                    <div class="form-group">
-                        <label class="add-new-auction-form-label">نوع العقار</label>
-                        <select class="add-new-auction-form-input" id="property-type">
-                            <option value="">اختر نوع العقار</option>
-                            <option value="residential" ${data.propertyType === 'residential' ? 'selected' : ''}>سكني</option>
-                            <option value="commercial" ${data.propertyType === 'commercial' ? 'selected' : ''}>تجاري</option>
-                            <option value="land" ${data.propertyType === 'land' ? 'selected' : ''}>أرض</option>
-                            <option value="industrial" ${data.propertyType === 'industrial' ? 'selected' : ''}>صناعي</option>
-                            <option value="others" ${data.propertyType === 'others' ? 'selected' : ''}>اخرى</option>
-                        </select>
-                        <!-- Other Property Type Input (shown when "اخرى" is selected) -->
-                        <div id="property-type-other-container" style="display: none; opacity: 0; transition: opacity 0.3s ease, max-height 0.3s ease; max-height: 0; overflow: hidden; margin-top: 0.5rem;">
-                            <input type="text" class="add-new-auction-form-input" id="property-type-other" value="${data.propertyTypeOther || ''}" 
-                                   placeholder="حدد نوع العقار">
-                        </div>
-                        <small class="form-helper">اختر نوع العقار المعروض</small>
+                        <small class="form-helper">المدن التي تقع فيها العقارات</small>
                     </div>
 
                     <!-- Authorization Checkbox -->
@@ -301,6 +285,25 @@
                 <p class="step-subtitle">أدخل تفاصيل العقار المعروض</p>
 
                 <form class="wizard-form" id="step2-form">
+                    <!-- Property Type -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">نوع العقار</label>
+                        <select class="add-new-auction-form-input" id="property-type">
+                            <option value="">اختر نوع العقار</option>
+                            <option value="residential" ${data.propertyType === 'residential' ? 'selected' : ''}>سكني</option>
+                            <option value="commercial" ${data.propertyType === 'commercial' ? 'selected' : ''}>تجاري</option>
+                            <option value="land" ${data.propertyType === 'land' ? 'selected' : ''}>أرض</option>
+                            <option value="industrial" ${data.propertyType === 'industrial' ? 'selected' : ''}>صناعي</option>
+                            <option value="others" ${data.propertyType === 'others' ? 'selected' : ''}>اخرى</option>
+                        </select>
+                        <!-- Other Property Type Input (shown when "اخرى" is selected) -->
+                        <div id="property-type-other-container" style="display: none; opacity: 0; transition: opacity 0.3s ease, max-height 0.3s ease; max-height: 0; overflow: hidden; margin-top: 0.5rem;">
+                            <input type="text" class="add-new-auction-form-input" id="property-type-other" value="${data.propertyTypeOther || ''}" 
+                                   placeholder="حدد نوع العقار">
+                        </div>
+                        <small class="form-helper">اختر نوع العقار المعروض</small>
+                    </div>
+
                     <!-- Property Title -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">رابط عنوان العقار (من قوقل ماب)</label>
@@ -651,14 +654,14 @@
                             <span class="review-label">مدينة العقار:</span>
                             <span class="review-value">${data.step1.propertyCity || 'غير محدد'}</span>
                         </div>
-                        <div class="review-item">
-                            <span class="review-label">نوع العقار:</span>
-                            <span class="review-value">${data.step1.propertyType === 'others' && data.step1.propertyTypeOther ? data.step1.propertyTypeOther : getPropertyTypeLabel(data.step1.propertyType)}</span>
-                        </div>
                     </div>
 
                     <div class="review-section">
                         <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
+                        <div class="review-item">
+                            <span class="review-label">نوع العقار:</span>
+                            <span class="review-value">${data.step2.propertyType === 'others' && data.step2.propertyTypeOther ? data.step2.propertyTypeOther : getPropertyTypeLabel(data.step2.propertyType)}</span>
+                        </div>
                         <div class="review-item">
                             <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
                             <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
@@ -873,10 +876,10 @@
         if (!data.step1.contactEmail) missing.push('البريد الإلكتروني');
         if (!data.step1.contactPhone) missing.push('رقم الهاتف');
         if (!data.step1.propertyCity) missing.push('مدينة العقار');
-        if (!data.step1.propertyType) missing.push('نوع العقار');
-        if (data.step1.propertyType === 'others' && !data.step1.propertyTypeOther) missing.push('تحديد نوع العقار (اخرى)');
 
         // Step 2
+        if (!data.step2.propertyType) missing.push('نوع العقار');
+        if (data.step2.propertyType === 'others' && !data.step2.propertyTypeOther) missing.push('تحديد نوع العقار (اخرى)');
         if (!data.step2.propertyTitle) missing.push('رابط عنوان العقار (من قوقل ماب)');
         if (!data.step2.propertySize) missing.push('مساحة العقار');
 
@@ -1002,8 +1005,6 @@
             contactEmail: document.getElementById('contact-email')?.value || '',
             contactPhone: document.getElementById('contact-phone')?.value || '',
             propertyCity: document.getElementById('property-city')?.value || '',
-            propertyType: document.getElementById('property-type')?.value || '',
-            propertyTypeOther: document.getElementById('property-type-other')?.value || '',
             authorizationConfirmed: document.getElementById('authorization-checkbox')?.checked || false
         };
         autoSaveData();
@@ -1018,6 +1019,8 @@
         const propertySizeClean = propertySizeValue.replace(/,/g, '');
 
         formData.step2 = {
+            propertyType: document.getElementById('property-type')?.value || '',
+            propertyTypeOther: document.getElementById('property-type-other')?.value || '',
             propertyTitle: document.getElementById('property-title')?.value || '',
             propertyAddressUrl: '',
             propertySize: propertySizeClean,
@@ -1317,14 +1320,14 @@
                     <span class="review-label">مدينة العقار:</span>
                     <span class="review-value">${data.step1.propertyCity || 'غير محدد'}</span>
                 </div>
-                <div class="review-item">
-                    <span class="review-label">نوع العقار:</span>
-                    <span class="review-value">${data.step1.propertyType === 'others' && data.step1.propertyTypeOther ? data.step1.propertyTypeOther : getPropertyTypeLabel(data.step1.propertyType)}</span>
-                </div>
             </div>
 
             <div class="review-section">
                 <h4 class="review-section-title">المرحلة 2: معلومات العقار</h4>
+                <div class="review-item">
+                    <span class="review-label">نوع العقار:</span>
+                    <span class="review-value">${data.step2.propertyType === 'others' && data.step2.propertyTypeOther ? data.step2.propertyTypeOther : getPropertyTypeLabel(data.step2.propertyType)}</span>
+                </div>
                 <div class="review-item">
                     <span class="review-label">رابط عنوان العقار (من قوقل ماب):</span>
                     <span class="review-value">${data.step2.propertyTitle || 'غير محدد'}</span>
@@ -1583,25 +1586,6 @@
             });
         });
 
-        // Property type change - show/hide other input
-        const propertyTypeSelect = document.getElementById('property-type');
-        if (propertyTypeSelect) {
-            propertyTypeSelect.addEventListener('change', function () {
-                togglePropertyTypeOtherInput();
-                saveStep1();
-            });
-
-            // Initialize on load
-            togglePropertyTypeOtherInput();
-        }
-
-        // Property type other input - save on change
-        const propertyTypeOtherInput = document.getElementById('property-type-other');
-        if (propertyTypeOtherInput) {
-            propertyTypeOtherInput.addEventListener('blur', saveStep1);
-            propertyTypeOtherInput.addEventListener('input', saveStep1);
-        }
-
         // Authorization checkbox - change button background and show/hide error message
         const authCheckbox = document.getElementById('authorization-checkbox');
         const errorMessage = document.getElementById('authorization-error-message');
@@ -1648,7 +1632,7 @@
         }
 
         // Save step 1 inputs
-        ['seller-name', 'contact-email', 'contact-phone', 'property-city', 'property-type'].forEach(id => {
+        ['seller-name', 'contact-email', 'contact-phone', 'property-city'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('blur', saveStep1);
@@ -1771,6 +1755,25 @@
      * Setup Step 2 listeners
      */
     function setupStep2Listeners() {
+        // Property type change - show/hide other input
+        const propertyTypeSelect = document.getElementById('property-type');
+        if (propertyTypeSelect) {
+            propertyTypeSelect.addEventListener('change', function () {
+                togglePropertyTypeOtherInput();
+                saveStep2();
+            });
+
+            // Initialize on load
+            togglePropertyTypeOtherInput();
+        }
+
+        // Property type other input - save on change
+        const propertyTypeOtherInput = document.getElementById('property-type-other');
+        if (propertyTypeOtherInput) {
+            propertyTypeOtherInput.addEventListener('blur', saveStep2);
+            propertyTypeOtherInput.addEventListener('input', saveStep2);
+        }
+
         // Image upload
         const imageInput = document.getElementById('property-images-input');
         const uploadPlaceholder = document.getElementById('upload-placeholder');
