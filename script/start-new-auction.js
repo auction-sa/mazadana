@@ -409,6 +409,23 @@
                 <p class="step-subtitle">ابدأ بإدخال معلومات المزاد الأساسية</p>
 
                 <form class="wizard-form" id="step1-form">
+                    <!-- Company Info (shown if approval number exists) -->
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">اسم الشركة/البائع</label>
+                        <input type="text" class="add-new-auction-form-input" id="company-name" value="${data.companyName || ''}" 
+                                placeholder="أدخل اسم الشركة">
+                    </div>
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">البريد الإلكتروني للشركة</label>
+                        <input type="email" class="add-new-auction-form-input" id="company-email" value="${data.companyEmail || ''}" 
+                                placeholder="example@company.com" dir="ltr">
+                    </div>
+                    <div class="form-group">
+                        <label class="add-new-auction-form-label">رقم هاتف الشركة</label>
+                        <input type="tel" class="add-new-auction-form-input" id="company-phone" value="${data.companyPhone || ''}" 
+                                placeholder="05xxxxxxxx" dir="ltr">
+                    </div>
+
                     <!-- Properties Locations -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">مواقع العقارات</label>
@@ -441,7 +458,7 @@
 
                     <!-- Auction Thumbnail -->
                     <div class="form-group">
-                        <label class="add-new-auction-form-label">صورة المزاد الرئيسية (إختياري)</label>
+                        <label class="add-new-auction-form-label">صورة بانر المزاد (إختياري)</label>
                         <div class="image-upload-area" id="thumbnail-upload-area">
                             <input type="file" id="auction-thumbnail-input" accept="image/*" style="display: none;">
                             <div class="upload-placeholder" id="thumbnail-upload-placeholder">
@@ -467,34 +484,17 @@
                         <small class="form-helper">رقم موافقة المزاد من الجهة المختصة</small>
                     </div>
 
-                    <!-- Company Info (shown if approval number exists) -->
-                        <div class="form-group">
-                            <label class="add-new-auction-form-label">اسم الشركة/البائع</label>
-                            <input type="text" class="add-new-auction-form-input" id="company-name" value="${data.companyName || ''}" 
-                                   placeholder="أدخل اسم الشركة">
-                        </div>
-                        <div class="form-group">
-                            <label class="add-new-auction-form-label">البريد الإلكتروني للشركة</label>
-                            <input type="email" class="add-new-auction-form-input" id="company-email" value="${data.companyEmail || ''}" 
-                                   placeholder="example@company.com" dir="ltr">
-                        </div>
-                        <div class="form-group">
-                            <label class="add-new-auction-form-label">رقم هاتف الشركة</label>
-                            <input type="tel" class="add-new-auction-form-input" id="company-phone" value="${data.companyPhone || ''}" 
-                                   placeholder="05xxxxxxxx" dir="ltr">
-                        </div>
-
                     <!-- Number of Properties -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">عدد العقارات</label>
                         <div class="number-input-wrapper">
-                            <button type="button" class="number-input-btn number-input-decrease" id="number-of-properties-decrease" aria-label="تقليل العدد">
-                                <i data-lucide="minus"></i>
+                            <button type="button" class="number-input-btn number-input-increase" id="number-of-properties-increase" aria-label="زيادة العدد">
+                                <i data-lucide="plus"></i>
                             </button>
                             <input type="number" class="add-new-auction-form-input number-input-center" id="number-of-properties" value="${data.numberOfProperties || 0}"
                                    placeholder="0" min="0" max="100" readonly dir="ltr">
-                            <button type="button" class="number-input-btn number-input-increase" id="number-of-properties-increase" aria-label="زيادة العدد">
-                                <i data-lucide="plus"></i>
+                            <button type="button" class="number-input-btn number-input-decrease" id="number-of-properties-decrease" aria-label="تقليل العدد">
+                                <i data-lucide="minus"></i>
                             </button>
                         </div>
                         <small class="form-helper">عدد العقارات في هذا المزاد</small>
@@ -542,7 +542,6 @@
                     <div class="form-group">
                         <label class="add-new-auction-form-label">نوع العقار</label>
                         <select class="add-new-auction-form-input" id="property-type">
-                            <option value="">اختر نوع العقار</option>
                             <option value="residential" ${data.propertyType === 'residential' ? 'selected' : ''}>سكني</option>
                             <option value="commercial" ${data.propertyType === 'commercial' ? 'selected' : ''}>تجاري</option>
                             <option value="land" ${data.propertyType === 'land' ? 'selected' : ''}>أرض</option>
@@ -560,7 +559,7 @@
                     <!-- Property Title -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">رابط عنوان العقار (من قوقل ماب)</label>
-                        <input type="text" class="add-new-auction-form-input" id="property-title" value="${data.propertyTitle}" 
+                        <input type="text" class="add-new-auction-form-input" id="auction-property-google-maps-url" value="${data.propertyTitle}" 
                                placeholder="الصق الرابط من قوقل ماب">
                         <small class="form-helper">ابحث عن موقع العقار في قوقل ماب واستخدمه هنا</small>
                     </div>
@@ -578,7 +577,7 @@
                     <!-- Property Description -->
                     <div class="form-group">
                         <label class="add-new-auction-form-label">وصف العقار</label>
-                        <textarea class="add-new-auction-form-input form-textarea" id="property-description" rows="5" 
+                        <textarea class="add-new-auction-form-input form-textarea" id="auction-property-description" rows="5" 
                                   placeholder="وصف تفصيلي للعقار...">${data.propertyDescription}</textarea>
                         <small class="form-helper">وصف شامل للعقار ومميزاته</small>
                     </div>
@@ -963,7 +962,7 @@
                             <span class="review-value">${step1Data.brochurePDF ? 'تم الرفع' : 'غير مرفق'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">صورة المزاد الرئيسية:</span>
+                            <span class="review-label">صورة بانر المزاد:</span>
                             <span class="review-value">${step1Data.auctionThumbnail ? 'تم الرفع' : 'غير مرفق'}</span>
                         </div>
                         <div class="review-item">
@@ -1111,23 +1110,47 @@
         const missing = [];
         const data = formData;
 
-        // Step 1
+        // Step 1 - Company Information
+        if (!data.step1.companyName || data.step1.companyName.trim() === '') {
+            missing.push('اسم الشركة/البائع');
+        }
+        if (!data.step1.companyEmail || data.step1.companyEmail.trim() === '') {
+            missing.push('البريد الإلكتروني للشركة');
+        }
+        if (!data.step1.companyPhone || data.step1.companyPhone.trim() === '') {
+            missing.push('رقم هاتف الشركة');
+        }
+        if (!data.step1.propertiesLocations || data.step1.propertiesLocations.trim() === '') {
+            missing.push('مواقع العقارات');
+        }
+
+        // Step 1 - Other fields
         if (!data.step1.sellerType) missing.push('نوع البائع');
         if (!data.step1.sellerName) missing.push('اسم البائع');
         if (!data.step1.contactEmail) missing.push('البريد الإلكتروني');
         if (!data.step1.contactPhone) missing.push('رقم الهاتف');
         if (!data.step1.propertyCity) missing.push('مدينة العقار');
 
-        // Step 2
+        // Step 2 - Note: propertyTitle and propertySize are validated per property below
         if (!data.step2.propertyType) missing.push('نوع العقار');
         if (data.step2.propertyType === 'others' && !data.step2.propertyTypeOther) missing.push('تحديد نوع العقار (اخرى)');
-        if (!data.step2.propertyTitle) missing.push('رابط عنوان العقار (من قوقل ماب)');
-        if (!data.step2.propertySize) missing.push('مساحة العقار');
 
         // Step 3
         if (!data.step3.startPrice) missing.push('سعر البداية');
         if (!data.step3.auctionStartDate) missing.push('تاريخ بدء المزاد');
         if (!data.step3.auctionEndDate) missing.push('تاريخ انتهاء المزاد');
+
+        // Check each property for missing fields
+        const properties = data.properties || [];
+        properties.forEach((property, index) => {
+            const propertyNumber = index + 1;
+            if (!property.propertyTitle || property.propertyTitle.trim() === '') {
+                missing.push(`رابط عنوان العقار (من قوقل ماب) (عقار ${propertyNumber})`);
+            }
+            if (!property.propertyDescription || property.propertyDescription.trim() === '') {
+                missing.push(`وصف العقار (عقار ${propertyNumber})`);
+            }
+        });
 
         return missing;
     }
@@ -1299,11 +1322,11 @@
         const propertyData = {
             propertyType: document.getElementById('property-type')?.value || '',
             propertyTypeOther: document.getElementById('property-type-other')?.value || '',
-            propertyTitle: document.getElementById('property-title')?.value || '',
+            propertyTitle: document.getElementById('auction-property-google-maps-url')?.value || '',
             propertyAddressUrl: '',
             propertySize: propertySizeClean,
             propertySizeUnit: 'م²',
-            propertyDescription: document.getElementById('property-description')?.value || '',
+            propertyDescription: document.getElementById('auction-property-description')?.value || '',
             propertyBoundaries: {
                 north: document.getElementById('property-boundary-north')?.value || '',
                 south: document.getElementById('property-boundary-south')?.value || '',
@@ -1658,13 +1681,16 @@
 
                 // If number of properties is valid, proceed with normal navigation
                 // Check if any property card is selected, if not, select the first one
-                const selectedCard = document.querySelector('.property-card-item.selected');
-                const firstCard = document.querySelector('.property-card-item[data-property-index="0"]');
+                // (but don't auto-select when navigating to step 5)
+                if (targetStep !== 5) {
+                    const selectedCard = document.querySelector('.property-card-item.selected');
+                    const firstCard = document.querySelector('.property-card-item[data-property-index="0"]');
 
-                if (!selectedCard && firstCard && formData.step1.numberOfProperties > 0) {
-                    selectPropertyCard(0);
-                    formData.currentPropertyIndex = 0;
-                    autoSaveData();
+                    if (!selectedCard && firstCard && formData.step1.numberOfProperties > 0) {
+                        selectPropertyCard(0);
+                        formData.currentPropertyIndex = 0;
+                        autoSaveData();
+                    }
                 }
 
                 // Save current step data before switching
@@ -1681,6 +1707,11 @@
                 // Update current step
                 currentStep = targetStep;
                 autoSaveData();
+
+                // If navigating to step 5, clear property card selections
+                if (targetStep === 5) {
+                    clearPropertyCardSelection();
+                }
 
                 // Show the target step with smooth transition
                 showStep(targetStep);
@@ -2218,7 +2249,7 @@
         setupCommaFormattedInput('property-size', saveStep2);
 
         // Save step 2 inputs (excluding property-size as it has its own listener)
-        ['property-title', 'property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
+        ['auction-property-google-maps-url', 'auction-property-description', 'property-boundary-north', 'property-boundary-south', 'property-boundary-east', 'property-boundary-west'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('blur', saveStep2);
