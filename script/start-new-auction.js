@@ -1053,12 +1053,6 @@
             : '<p class="property-detail-no-images">لا توجد صور</p>';
 
         return `
-            <div class="property-details-page-header">
-                <button type="button" class="property-details-back-btn" id="property-details-back-btn" aria-label="رجوع">
-                    <i data-lucide="arrow-right" class="property-details-back-icon"></i>
-                </button>
-                <h3 class="property-details-page-title">تفاصيل عقار ${propertyIndex + 1}</h3>
-            </div>
             <div class="property-details-page-content">
                 <div class="property-details-section">
                     <h4 class="property-details-section-title">معلومات العقار الأساسية</h4>
@@ -1127,6 +1121,12 @@
 
         if (!detailsPage || !wizardStep5) return;
 
+        // Update the header title to show property details
+        const headerTitle = document.querySelector('#start-auction-header h2.account-tabs-title');
+        if (headerTitle) {
+            headerTitle.innerText = `تفاصيل عقار ${propertyIndex + 1}`;
+        }
+
         // Render the property details content
         detailsPage.innerHTML = renderPropertyDetailsPageContent(propertyIndex);
 
@@ -1176,11 +1176,6 @@
             detailsPage.scrollTop = 0;
         }, 50);
 
-        // Attach header back button listener
-        const headerBackBtn = document.getElementById('property-details-back-btn');
-        if (headerBackBtn) {
-            headerBackBtn.onclick = closePropertyDetailsPage;
-        }
 
         // Attach button listeners using data-action attributes
         detailsPage.querySelectorAll('.property-detail-bottom-btn').forEach(btn => {
@@ -1193,6 +1188,12 @@
                 };
             } else if (action === 'edit') {
                 btn.onclick = () => {
+                    // Reset the header title back to default
+                    const headerTitle = document.querySelector('#start-auction-header h2.account-tabs-title');
+                    if (headerTitle) {
+                        headerTitle.innerText = 'بدأ مزاد جديد';
+                    }
+
                     // Close details page without showing step 5 (we're going to step 2)
                     const page = document.getElementById('start-new-auction-property-details-page');
                     if (page) {
@@ -1228,6 +1229,12 @@
         const wizardStep5 = document.getElementById('wizard-step-5');
 
         if (!detailsPage || !wizardStep5) return;
+
+        // Reset the header title back to default
+        const headerTitle = document.querySelector('#start-auction-header h2.account-tabs-title');
+        if (headerTitle) {
+            headerTitle.innerText = 'بدأ مزاد جديد';
+        }
 
         // Add closing class for fade out animation
         detailsPage.classList.remove('property-details-page-open');
@@ -1965,6 +1972,15 @@
         const backBtn = document.getElementById('start-auction-back-btn');
         if (backBtn) {
             backBtn.onclick = function () {
+                // Check if we're on the property details page (h2 text is not "بدأ مزاد جديد")
+                const headerTitle = document.querySelector('#start-auction-header h2.account-tabs-title');
+                if (headerTitle && headerTitle.innerText !== 'بدأ مزاد جديد') {
+                    // Close property details page instead of navigating back
+                    closePropertyDetailsPage();
+                    return;
+                }
+
+                // Otherwise, navigate back normally
                 const auctionView = document.getElementById('add-new-auction-view');
                 if (auctionView) {
                     auctionView.classList.remove('active');
@@ -3036,6 +3052,12 @@
                 }
 
                 autoSaveData();
+
+                // Reset the header title back to default
+                const headerTitle = document.querySelector('#start-auction-header h2.account-tabs-title');
+                if (headerTitle) {
+                    headerTitle.innerText = 'بدأ مزاد جديد';
+                }
 
                 // Close property details page before re-rendering (if it's open)
                 const propertyDetailsPage = document.getElementById('start-new-auction-property-details-page');
