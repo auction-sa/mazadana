@@ -1116,6 +1116,11 @@
      * Open the property details page for a specific property
      */
     function openPropertyDetailsPage(propertyIndex) {
+        /* Smooth scroll to the top page */
+        scrollToTop();
+
+
+
         const detailsPage = document.getElementById('start-new-auction-property-details-page');
         const wizardStep5 = document.getElementById('wizard-step-5');
 
@@ -1821,18 +1826,10 @@
         // Scroll the main scrollable container instantly
         const scrollableContainer = document.querySelector('#add-new-auction-view .scrollable-container');
         if (scrollableContainer) {
-            scrollableContainer.scrollTop = 0;
-        }
-
-        // Also scroll the property details page if it's visible (instant, unnoticeable)
-        const propertyDetailsPage = document.getElementById('start-new-auction-property-details-page');
-        if (propertyDetailsPage && propertyDetailsPage.style.display === 'block') {
-            propertyDetailsPage.scrollTop = 0;
-        }
-
-        // Fallback to window scroll (instant)
-        if (window.scrollY > 0) {
-            window.scrollTo(0, 0);
+            scrollableContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
     }
 
